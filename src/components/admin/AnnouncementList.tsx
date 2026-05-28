@@ -1,0 +1,140 @@
+"use client"
+
+import { useState } from "react"
+import {
+  deleteAnnouncement,
+  toggleAnnouncementPublished,
+} from "@/lib/actions/announcement.actions"
+import { Button } from "@/components/ui/button"
+import { Badge }  from "@/components/ui/badge"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+interface Announcement {
+  id: number
+  title: string
+  content: string
+  isPublished: boolean
+  publishedAt: Date | null
+  expiresAt: Date | null
+  createdAt: Date
+}
+
+interface AnnouncementListProps {
+  announcements: Announcement[]
+  mosqueId: number
+}
+
+export default function AnnouncementList({
+  announcements,
+  mosqueId,
+}: AnnouncementListProps) {
+  const [loadingId, setLoadingId] = useState<number | null>(null)
+
+  async function handleDelete(id: number) {
+    if (!confirm("Supprimer cette annonce ?")) return
+    setLoadingId(id)
+    const result = await deleteAnnouncement(id, mosqueId)
+    if (!result.success) alert(result.error)
+    setLoadingId(null)
+  }
+
+  async function handleToggle(id: number, current: boolean) {
+    setLoadingId(id)
+    const result = await toggleAnnouncementPublished(id, current)
+    if (!result.success) alert(result.error)
+    setLoadingId(null)
+  }
+
+  if (announcements.length === 0) {
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <p className="text-base mb-1">Aucune annonce</p>
+        <p className="text-sm">Créez votre première annonce ci-dessus.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-xl border bg-white overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Titre</TableHead>
+            <TableHead className="hidden sm:table-cell">Date</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {announcements.map((a) => (
+            <TableRow
+              key={a.id}
+              className={loadingId === a.id ? "opacity-50" : ""}
+            >
+              <TableCell>
+                <div>
+                  <p className="font-medium text-sm truncate max-w-[200px]">
+                    {a.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">
+                    {a.content}
+                  </p>
+                </div>
+              </TableCell>
+
+              <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                {a.publishedAt 
+                  ? new Date(a.publishedAt).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "short",
+                    })
+                  : "—"
+                }
+              </TableCell>
+
+              <TableCell>
+                <Badge
+                  variant={a.isPublished ? "default" : "secondary"}
+                  className={a.isPublished
+                    ? "bg-green-100 text-green-700 hover:bg-green-100"
+                    : ""
+                  }
+                >
+                  {a.isPublished ? "Publié" : "Brouillon"}
+                </Badge>
+              </TableCell>
+
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleToggle(a.id, a.isPublished)}
+                    disabled={loadingId === a.id}
+                  >
+                    {a.isPublished ? "Dépublier" : "Publier"}
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(a.id)}
+                    disabled={loadingId === a.id}
+                  >
+                    Supprimer
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}

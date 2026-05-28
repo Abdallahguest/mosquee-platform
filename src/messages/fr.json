@@ -1,0 +1,44 @@
+{
+  "common": {
+    "mosque": "Mosquée",
+    "mosques": "Mosquées",
+    "verified": "Vérifiée",
+    "back": "Retour",
+    "backToHome": "Retour à l'accueil",
+    "allMosques": "Toutes les mosquées",
+    "noContent": "Aucune annonce ni événement pour le moment."
+  },
+  "home": {
+    "title": "Plateforme Mosquée",
+    "subtitle": "Horaires de prière, annonces et événements.",
+    "adminAccess": "Accès administration"
+  },
+  "prayer": {
+    "nextPrayer": "Prochaine prière",
+    "schedule": "Horaires du jour",
+    "in": "dans",
+    "next": "Prochaine",
+    "Fajr": "Fajr",
+    "Sunrise": "Shuruq",
+    "Dhuhr": "Dhuhr",
+    "Asr": "Asr",
+    "Maghrib": "Maghrib",
+    "Isha": "Isha",
+    "method": "Méthode {method}"
+  },
+  "announcements": {
+    "title": "Annonces",
+    "empty": "Aucune annonce pour le moment."
+  },
+  "events": {
+    "title": "Événements à venir",
+    "empty": "Aucun événement à venir."
+  },
+  "footer": {
+    "tagline": "Plateforme halal · Sans riba · Sans ghich · Sans jahàla"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Cette mosquée n'existe pas dans notre base de données."
+  }
+}

@@ -1,6 +1,6 @@
 import { db } from "./index"
 import { mosques, announcements, events } from "./schema"
-import { eq, and, gt, desc, isNull, or, asc } from "drizzle-orm"
+import { eq, and, gt, desc, isNull, or, asc, sql } from "drizzle-orm"
 
 // ── MOSQUÉES ──
 
@@ -44,7 +44,7 @@ export async function getMosqueByAdminEmail(email: string) {
     const result = await db
       .select()
       .from(mosques)
-      .where(eq(mosques.adminEmail, email))
+      .where(sql`lower(${mosques.adminEmail}) = lower(${email})`)
       .limit(1)
     return result[0] ?? null
   } catch (error) {

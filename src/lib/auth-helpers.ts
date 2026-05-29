@@ -12,9 +12,17 @@ export async function requireSession() {
 
 export async function getSessionMosque() {
   const session = await requireSession()
+  // TEMPORAIRE — affiche l'email dans l'erreur
+  throw new Error(`DEBUG EMAIL = [${session.user.email}] | USER = ${JSON.stringify(session.user)}`)
+  const mosque = await getMosqueByAdminEmail(session.user.email)
+  return { session, mosque, mosqueId: mosque?.id ?? null }
+}
+/* export async function getSessionMosque() {
+  const session = await requireSession()
   console.log("🔍 EMAIL SESSION:", JSON.stringify(session.user.email))
   console.log("🔍 USER COMPLET:", JSON.stringify(session.user))
   const mosque = await getMosqueByAdminEmail(session.user.email)
   console.log("🔍 MOSQUÉE:", mosque?.name ?? "AUCUNE")
   return { session, mosque, mosqueId: mosque?.id ?? null }
 }
+ */

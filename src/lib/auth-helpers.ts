@@ -14,3 +14,11 @@ export async function getSessionMosque() {
   const mosque = await getMosqueByAdminEmail(session.user.email)
   return { session, mosque, mosqueId: mosque?.id ?? null }
 }
+
+export async function requireSuperAdmin() {
+  const session = await requireSession()
+  if (session.user.role !== "super_admin") {
+    redirect("/admin")  // un admin normal est renvoyé vers son dashboard
+  }
+  return session
+}

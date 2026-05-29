@@ -13,7 +13,8 @@ export function proxy(request: NextRequest) {
   }
 
   // Détecter routes admin/auth (avec ou sans préfixe locale)
-  const isAdminRoute = pathname.includes("/admin")
+  const isAdminRoute =
+  pathname.includes("/admin") || pathname.includes("/super-admin")
   const isAuthRoute =
     pathname.includes("/login") ||
     pathname.includes("/register") ||

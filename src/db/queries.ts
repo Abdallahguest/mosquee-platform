@@ -1,6 +1,36 @@
 import { db } from "./index"
-import { mosques, announcements, events } from "./schema"
+import { mosques, announcements, events, users } from "./schema"
 import { eq, and, gt, desc, isNull, or, asc, sql } from "drizzle-orm"
+
+// ── SUPER-ADMIN ──
+
+export async function getAllMosquesAdmin() {
+  try {
+    return await db.select().from(mosques).orderBy(mosques.name)
+  } catch (error) {
+    console.error("Erreur récupération mosquées (super-admin):", error)
+    return []
+  }
+}
+
+export async function getAllUsers() {
+  try {
+    return await db
+      .select({
+        id:            users.id,
+        name:          users.name,
+        email:         users.email,
+        emailVerified: users.emailVerified,
+        role:          users.role,
+        createdAt:     users.createdAt,
+      })
+      .from(users)
+      .orderBy(users.createdAt)
+  } catch (error) {
+    console.error("Erreur récupération utilisateurs:", error)
+    return []
+  }
+}
 
 // ── MOSQUÉES ──
 

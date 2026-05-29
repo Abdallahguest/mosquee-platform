@@ -33,9 +33,11 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      // Champs métier non modifiables par l'utilisateur à l'inscription
-      role:     { type: "string", required: false, defaultValue: "member", input: false },
-      mosqueId: { type: "number", required: false, input: false },
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "admin",
+      },
     },
   },
 

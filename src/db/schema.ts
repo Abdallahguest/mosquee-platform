@@ -48,7 +48,7 @@ export const users = pgTable("users", {
   email:         varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image:         text("image"),
-  role:          varchar("role", { length: 20 }).notNull().default("member"),
+  role:          text("role").notNull().default("admin"),  // "admin" ou "super_admin"
   mosqueId:      integer("mosque_id").references(() => mosques.id),
   createdAt:     timestamp("created_at").notNull().defaultNow(),
   updatedAt:     timestamp("updated_at").notNull().defaultNow(),

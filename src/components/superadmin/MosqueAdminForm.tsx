@@ -1,0 +1,126 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "@/i18n/navigation"
+import { createMosque, updateMosqueAdmin } from "@/lib/actions/superadmin.actions"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+
+interface MosqueAdminFormProps {
+  mosque?: {
+    id: number; slug: string; name: string; city: string; country: string
+    latitude: number; longitude: number; timezone: string
+    calculationMethod: string; adminEmail: string; isVerified: boolean
+  }
+}
+
+export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
+  const router = useRouter()
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const isEdit = !!mosque
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError("")
+    setLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const result = isEdit
+      ? await updateMosqueAdmin(mosque.id, formData)
+      : await createMosque(formData)
+
+    setLoading(false)
+    if (!result.success) {
+      setError(result.error)
+      return
+    }
+    router.push("/super-admin")
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+
+      <div className="space-y-1.5">
+        <Label htmlFor="name">Nom de la mosquée</Label>
+        <Input id="name" name="name" required defaultValue={mosque?.name} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="slug">Slug URL (ex: masdjid-taqwa)</Label>
+        <Input id="slug" name="slug" required defaultValue={mosque?.slug} placeholder="minuscules-avec-tirets" />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="city">Ville</Label>
+          <Input id="city" name="city" required defaultValue={mosque?.city} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="country">Pays</Label>
+          <Input id="country" name="country" required defaultValue={mosque?.country ?? "Guinée"} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="latitude">Latitude</Label>
+          <Input id="latitude" name="latitude" type="number" step="any" required defaultValue={mosque?.latitude} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="longitude">Longitude</Label>
+          <Input id="longitude" name="longitude" type="number" step="any" required defaultValue={mosque?.longitude} />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="timezone">Fuseau horaire</Label>
+        <Input id="timezone" name="timezone" required defaultValue={mosque?.timezone ?? "Africa/Conakry"} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="calculationMethod">Méthode de calcul</Label>
+        <select
+          id="calculationMethod"
+          name="calculationMethod"
+          required
+          defaultValue={mosque?.calculationMethod ?? "MWL"}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+        >
+          <option value="MWL">Muslim World League</option>
+          <option value="ISNA">ISNA (Amérique du Nord)</option>
+          <option value="Egyptian">Egyptian</option>
+          <option value="UmmAlQura">Umm Al-Qura</option>
+          <option value="Karachi">Karachi</option>
+        </select>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="adminEmail">Email de l&apos;admin de cette mosquée</Label>
+        <Input id="adminEmail" name="adminEmail" type="email" required defaultValue={mosque?.adminEmail} />
+        <p className="text-xs text-gray-400">
+          Le compte avec cet email aura accès à l&apos;administration de cette mosquée.
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          id="isVerified"
+          name="isVerified"
+          type="checkbox"
+          value="true"
+          defaultChecked={mosque?.isVerified}
+          className="rounded"
+        />
+        <Label htmlFor="isVerified">Mosquée vérifiée</Label>
+      </div>
+
+      <Button type="submit" disabled={loading} className="w-full bg-green-700 hover:bg-green-800">
+        {loading ? "Enregistrement..." : isEdit ? "Mettre à jour" : "Créer la mosquée"}
+      </Button>
+    </form>
+  )
+}

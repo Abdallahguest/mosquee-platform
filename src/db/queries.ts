@@ -39,6 +39,20 @@ export async function getMosqueById(id: number) {
   return result[0] ?? null
 }
 
+export async function getMosqueByAdminEmail(email: string) {
+  try {
+    const result = await db
+      .select()
+      .from(mosques)
+      .where(eq(mosques.adminEmail, email))
+      .limit(1)
+    return result[0] ?? null
+  } catch (error) {
+    console.error("Erreur récupération mosquée par admin:", error)
+    return null
+  }
+}
+
 // ── ANNONCES ──
 
 export async function getActiveAnnouncements(mosqueId: number) {

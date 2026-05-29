@@ -33,7 +33,7 @@ fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 
 | Couche | Technologie |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Langage | TypeScript (strict) |
 | UI | Tailwind CSS + shadcn/ui |
 | Base de données | PostgreSQL (Neon) |
@@ -41,7 +41,7 @@ fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 | Authentification | Better-Auth |
 | Horaires | adhan-js |
 | Validation | Zod |
-| Tests | Vitest (36 tests, 95%+ couverture) |
+| Tests | Vitest (43 tests, 95%+ couverture) |
 | Hébergement | Vercel |
 
 ## 🏗️ Architecture

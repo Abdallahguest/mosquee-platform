@@ -5,7 +5,7 @@ import LanguageSwitcher from "@/components/public/LanguageSwitcher"
 
 export default async function HomePage() {
   const t = await getTranslations("home")
-  const tc = await getTranslations("common")
+  const tp = await getTranslations("privacy")
   const mosques = await getAllMosques()
 
   return (
@@ -39,10 +39,13 @@ export default async function HomePage() {
           ))}
         </div>
 
-        <div className="mt-10 text-center">
-          <a href="/admin" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+        <div className="mt-10 text-center flex items-center justify-center gap-4">
+          <Link href="/admin" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
             {t("adminAccess")} →
-          </a>
+          </Link>
+          <Link href="/privacy" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            {tp("link")}
+          </Link>
         </div>
       </div>
     </main>

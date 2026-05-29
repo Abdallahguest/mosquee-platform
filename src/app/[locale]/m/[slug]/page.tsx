@@ -35,6 +35,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
   const ta = await getTranslations("announcements")
   const te = await getTranslations("events")
   const tc = await getTranslations("common")
+  const tp = await getTranslations("privacy")
 
   const [activeAnnouncements, upcomingEvents] = await Promise.all([
     getActiveAnnouncements(mosque.id),
@@ -152,12 +153,20 @@ export default async function MosquePublicPage({ params }: PageProps) {
 
         {/* Footer */}
         <footer className="border-t border-gray-200 pt-6 text-center">
-          <Link
-            href="/"
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ← {tc("allMosques")}
-          </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ← {tc("allMosques")}
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {tp("link")}
+            </Link>
+          </div>
           <p className="text-xs text-gray-300 mt-2">
             Plateforme halal · Sans riba · Sans ghich · Sans jahàla
           </p>

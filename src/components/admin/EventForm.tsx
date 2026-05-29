@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { createEvent } from "@/lib/actions/event.actions"
+import { createEvent, updateEvent } from "@/lib/actions/event.actions"
+import { useRouter } from "@/i18n/navigation"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -9,7 +10,29 @@ import { Label }    from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function EventForm({ mosqueId }: { mosqueId: number }) {
+interface EventFormProps {
+  event?: {
+    id: number
+    title: string
+    description: string | null
+    location: string
+    startAt: Date
+    endAt: Date | null
+    isPublished: boolean
+  }
+}
+
+// Format une Date pour un <input type="datetime-local"> (heure locale, sans secondes)
+function toLocalInput(date: Date | null | undefined): string | undefined {
+  if (!date) return undefined
+  const d = new Date(date)
+  const pad = (n: number) => String(n).padStart(2, "0")
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+export default function EventForm({ event }: EventFormProps) {
+  const isEdit = event != null
+  const router = useRouter()
   const [error, setError]     = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -22,13 +45,20 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    formData.set("mosqueId", String(mosqueId))
 
-    const result = await createEvent(formData)
+    const result = isEdit
+      ? await updateEvent(event.id, formData)
+      : await createEvent(formData)
 
     if (!result.success) {
       setError(result.error)
       setLoading(false)
+      return
+    }
+
+    if (isEdit) {
+      router.push("/admin/events")
+      router.refresh()
       return
     }
 
@@ -41,7 +71,9 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Nouvel événement</CardTitle>
+        <CardTitle className="text-base">
+          {isEdit ? "Modifier l'événement" : "Nouvel événement"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
@@ -59,7 +91,7 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
 
           <div className="space-y-1.5">
             <Label htmlFor="title">Titre <span className="text-destructive">*</span></Label>
-            <Input id="title" name="title" required maxLength={100} placeholder="Titre de l'événement" />
+            <Input id="title" name="title" required maxLength={100} placeholder="Titre de l'événement" defaultValue={event?.title} />
           </div>
 
           <div className="space-y-1.5">
@@ -71,6 +103,7 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
               maxLength={1000}
               className="resize-none"
               placeholder="Description optionnelle..."
+              defaultValue={event?.description ?? undefined}
             />
           </div>
 
@@ -80,18 +113,18 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
               id="location"
               name="location"
               required
-              defaultValue="À la mosquée"
+              defaultValue={event?.location ?? "À la mosquée"}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="startAt">Début <span className="text-destructive">*</span></Label>
-              <Input id="startAt" name="startAt" type="datetime-local" required />
+              <Input id="startAt" name="startAt" type="datetime-local" required defaultValue={toLocalInput(event?.startAt)} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="endAt">Fin</Label>
-              <Input id="endAt" name="endAt" type="datetime-local" />
+              <Input id="endAt" name="endAt" type="datetime-local" defaultValue={toLocalInput(event?.endAt)} />
             </div>
           </div>
 
@@ -101,6 +134,7 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
               name="isPublished"
               id="eventPublished"
               value="true"
+              defaultChecked={event?.isPublished}
               className="w-4 h-4 accent-green-600"
             />
             <Label htmlFor="eventPublished" className="font-normal cursor-pointer">
@@ -113,7 +147,11 @@ export default function EventForm({ mosqueId }: { mosqueId: number }) {
             disabled={loading}
             className="bg-green-700 hover:bg-green-800"
           >
-            {loading ? "Création..." : "Créer l'événement"}
+            {loading
+              ? "Enregistrement..."
+              : isEdit
+                ? "Enregistrer"
+                : "Créer l'événement"}
           </Button>
 
         </form>

@@ -1,10 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { z } from "zod"
-import { auth } from "@/lib/auth"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -33,8 +31,10 @@ export async function updateMosqueSettings(
   id: number,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const { mosqueId } = await getSessionMosque()
+  if (mosqueId == null || mosqueId !== id) {
+    return { success: false, error: "Action non autorisée pour cette mosquée." }
+  }
 
   const raw = {
     name:              formData.get("name"),

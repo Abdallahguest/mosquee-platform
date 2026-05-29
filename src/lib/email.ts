@@ -9,7 +9,6 @@ export async function sendEmail({ to, subject, html }: {
   subject: string
   html: string
 }) {
-  console.log("📧 Tentative d'envoi email à:", to)  // ← ajout
   try {
     const result = await resend.emails.send({
       from: `Plateforme Mosquée <${FROM}>`,
@@ -17,7 +16,6 @@ export async function sendEmail({ to, subject, html }: {
       subject,
       html,
     })
-    console.log("📧 Résultat Resend:", JSON.stringify(result))  // ← ajout
     return { success: true, result }
   } catch (error) {
     console.error("❌ Erreur envoi email:", error)

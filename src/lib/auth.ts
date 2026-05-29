@@ -9,12 +9,35 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      user:         schema.authUser,
+      user:         schema.users,
       session:      schema.session,
       account:      schema.account,
       verification: schema.verification,
+      rateLimit:    schema.rateLimit,
     },
   }),
+
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+    window: 60, // fenêtre par défaut : 60 s
+    max: 100,
+    customRules: {
+      // Anti-brute-force : limites strictes sur les endpoints sensibles
+      "/sign-in/email":           { window: 60, max: 5 },
+      "/sign-up/email":           { window: 60, max: 5 },
+      "/request-password-reset":  { window: 60, max: 3 },
+      "/reset-password":          { window: 60, max: 5 },
+    },
+  },
+
+  user: {
+    additionalFields: {
+      // Champs métier non modifiables par l'utilisateur à l'inscription
+      role:     { type: "string", required: false, defaultValue: "member", input: false },
+      mosqueId: { type: "number", required: false, input: false },
+    },
+  },
 
   emailAndPassword: {
     enabled: true,

@@ -1,7 +1,11 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { createAnnouncement } from "@/lib/actions/announcement.actions"
+import {
+  createAnnouncement,
+  updateAnnouncement,
+} from "@/lib/actions/announcement.actions"
+import { useRouter } from "@/i18n/navigation"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,10 +19,17 @@ import {
 } from "@/components/ui/card"
 
 interface AnnouncementFormProps {
-  mosqueId: number
+  announcement?: {
+    id: number
+    title: string
+    content: string
+    isPublished: boolean
+  }
 }
 
-export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
+export default function AnnouncementForm({ announcement }: AnnouncementFormProps) {
+  const isEdit = announcement != null
+  const router = useRouter()
   const [error, setError]     = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -31,13 +42,20 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    formData.set("mosqueId", String(mosqueId))
 
-    const result = await createAnnouncement(formData)
+    const result = isEdit
+      ? await updateAnnouncement(announcement.id, formData)
+      : await createAnnouncement(formData)
 
     if (!result.success) {
       setError(result.error)
       setLoading(false)
+      return
+    }
+
+    if (isEdit) {
+      router.push("/admin/announcements")
+      router.refresh()
       return
     }
 
@@ -50,7 +68,9 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Nouvelle annonce</CardTitle>
+        <CardTitle className="text-base">
+          {isEdit ? "Modifier l'annonce" : "Nouvelle annonce"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
@@ -77,6 +97,7 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
               required
               maxLength={100}
               placeholder="Titre de l'annonce"
+              defaultValue={announcement?.title}
             />
           </div>
 
@@ -92,6 +113,7 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
               rows={4}
               placeholder="Contenu de l'annonce..."
               className="resize-none"
+              defaultValue={announcement?.content}
             />
             <p className="text-xs text-muted-foreground mt-1">
               Markdown supporté : **gras**, *italique*, [lien](url), listes avec -
@@ -104,6 +126,7 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
               name="isPublished"
               id="isPublished"
               value="true"
+              defaultChecked={announcement?.isPublished}
               className="w-4 h-4 accent-green-600"
             />
             <Label htmlFor="isPublished" className="font-normal cursor-pointer">
@@ -116,7 +139,11 @@ export default function AnnouncementForm({ mosqueId }: AnnouncementFormProps) {
             disabled={loading}
             className="bg-green-700 hover:bg-green-800"
           >
-            {loading ? "Création..." : "Créer l'annonce"}
+            {loading
+              ? "Enregistrement..."
+              : isEdit
+                ? "Enregistrer"
+                : "Créer l'annonce"}
           </Button>
 
         </form>

@@ -8,6 +8,7 @@ import {
   timestamp,
   doublePrecision,
   integer,
+  bigint,
 } from "drizzle-orm/pg-core"
 
 // ── TABLE MOSQUÉES ──
@@ -40,15 +41,17 @@ export const mosques = pgTable("mosques", {
   adjustIsha:    integer("adjust_isha").notNull().default(0),
 })
 
-// ── TABLE UTILISATEURS ──
+// ── TABLE UTILISATEURS ── (gérée par Better-Auth ; role + mosqueId sont des champs métier)
 export const users = pgTable("users", {
-  id:          serial("id").primaryKey(),
-  name:        varchar("name", { length: 200 }).notNull(),
-  email:       varchar("email", { length: 255 }).notNull().unique(),
-  role:        varchar("role", { length: 20 }).notNull().default("member"),
-  mosqueId:    integer("mosque_id").references(() => mosques.id),
-  createdAt:   timestamp("created_at").notNull().defaultNow(),
-  lastLoginAt: timestamp("last_login_at"),
+  id:            varchar("id", { length: 255 }).primaryKey(),
+  name:          varchar("name", { length: 200 }).notNull(),
+  email:         varchar("email", { length: 255 }).notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image:         text("image"),
+  role:          varchar("role", { length: 20 }).notNull().default("member"),
+  mosqueId:      integer("mosque_id").references(() => mosques.id),
+  createdAt:     timestamp("created_at").notNull().defaultNow(),
+  updatedAt:     timestamp("updated_at").notNull().defaultNow(),
 })
 
 // ── TABLE ANNONCES ──
@@ -57,7 +60,7 @@ export const announcements = pgTable("announcements", {
   mosqueId:    integer("mosque_id").notNull().references(() => mosques.id),
   title:       varchar("title", { length: 100 }).notNull(),
   content:     text("content").notNull(),
-  authorId:    integer("author_id").notNull().references(() => users.id),
+  authorId:    varchar("author_id", { length: 255 }).notNull().references(() => users.id),
   publishedAt: timestamp("published_at"),
   expiresAt:   timestamp("expires_at"),
   isPublished: boolean("is_published").notNull().default(false),
@@ -122,13 +125,10 @@ export const verification = pgTable("verification", {
   updatedAt:  timestamp("updated_at").notNull().defaultNow(),
 })
 
-// Table auth_user séparée de votre table users métier
-export const authUser = pgTable("auth_user", {
-  id:            varchar("id", { length: 255 }).primaryKey(),
-  name:          varchar("name", { length: 200 }).notNull(),
-  email:         varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  image:         text("image"),
-  createdAt:     timestamp("created_at").notNull().defaultNow(),
-  updatedAt:     timestamp("updated_at").notNull().defaultNow(),
+// ── TABLE RATE-LIMIT ── (compteurs persistés par Better-Auth, storage="database")
+export const rateLimit = pgTable("rate_limit", {
+  id:          varchar("id", { length: 255 }).primaryKey(),
+  key:         varchar("key", { length: 255 }),
+  count:       integer("count"),
+  lastRequest: bigint("last_request", { mode: "number" }),
 })

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { deleteEvent, toggleEventPublished } from "@/lib/actions/event.actions"
+import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge }  from "@/components/ui/badge"
 import {
@@ -19,16 +20,15 @@ interface Event {
 
 interface EventListProps {
   events: Event[]
-  mosqueId: number
 }
 
-export default function EventList({ events, mosqueId }: EventListProps) {
+export default function EventList({ events }: EventListProps) {
   const [loadingId, setLoadingId] = useState<number | null>(null)
 
   async function handleDelete(id: number) {
     if (!confirm("Supprimer cet événement ?")) return
     setLoadingId(id)
-    await deleteEvent(id, mosqueId)
+    await deleteEvent(id)
     setLoadingId(null)
   }
 
@@ -90,6 +90,9 @@ export default function EventList({ events, mosqueId }: EventListProps) {
 
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/admin/events/${event.id}/edit`}>Éditer</Link>
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"

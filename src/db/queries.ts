@@ -68,6 +68,15 @@ export async function getAllAnnouncements(mosqueId: number) {
     .orderBy(desc(announcements.publishedAt))
 }
 
+export async function getAnnouncementById(id: number, mosqueId: number) {
+  const result = await db
+    .select()
+    .from(announcements)
+    .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
+    .limit(1)
+  return result[0] ?? null
+}
+
 // ── ÉVÉNEMENTS ──
 
 export async function getUpcomingEvents(mosqueId: number) {
@@ -92,4 +101,13 @@ export async function getAllEvents(mosqueId: number) {
     .from(events)
     .where(eq(events.mosqueId, mosqueId))
     .orderBy(desc(events.startAt))
+}
+
+export async function getEventById(id: number, mosqueId: number) {
+  const result = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
+    .limit(1)
+  return result[0] ?? null
 }

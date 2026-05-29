@@ -40,5 +40,21 @@
   "notFound": {
     "title": "Page not found",
     "description": "This mosque does not exist in our database."
+  },
+  "privacy": {
+    "link": "Privacy",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: May 2026",
+    "intro": "This platform follows the principle of jahàla: nothing is hidden. Here is exactly what data we process and why.",
+    "dataTitle": "Data we process",
+    "dataBody": "Administrators: name, email address and password (encrypted). Mosque: name, city, geographic coordinates and prayer-time calculation method. No data is collected about visitors to the public page.",
+    "trackingTitle": "No tracking",
+    "trackingBody": "No advertising cookies, no third-party trackers, no selling of data. Only the cookies strictly necessary for authentication are used.",
+    "retentionTitle": "Retention and export",
+    "retentionBody": "Your data belongs to you. You can export it at any time from the settings and request its deletion unconditionally.",
+    "thirdPartyTitle": "Service providers",
+    "thirdPartyBody": "The database is hosted by Neon and emails are sent through Resend. These providers only access data to deliver their service.",
+    "contactTitle": "Contact",
+    "contactBody": "For any question about your data, contact the administrator of your mosque."
   }
 }

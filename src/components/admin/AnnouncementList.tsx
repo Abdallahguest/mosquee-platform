@@ -5,6 +5,7 @@ import {
   deleteAnnouncement,
   toggleAnnouncementPublished,
 } from "@/lib/actions/announcement.actions"
+import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge }  from "@/components/ui/badge"
 import {
@@ -28,19 +29,17 @@ interface Announcement {
 
 interface AnnouncementListProps {
   announcements: Announcement[]
-  mosqueId: number
 }
 
 export default function AnnouncementList({
   announcements,
-  mosqueId,
 }: AnnouncementListProps) {
   const [loadingId, setLoadingId] = useState<number | null>(null)
 
   async function handleDelete(id: number) {
     if (!confirm("Supprimer cette annonce ?")) return
     setLoadingId(id)
-    const result = await deleteAnnouncement(id, mosqueId)
+    const result = await deleteAnnouncement(id)
     if (!result.success) alert(result.error)
     setLoadingId(null)
   }
@@ -113,6 +112,9 @@ export default function AnnouncementList({
 
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/admin/announcements/${a.id}/edit`}>Éditer</Link>
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"

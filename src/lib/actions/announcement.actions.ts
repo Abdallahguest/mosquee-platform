@@ -1,18 +1,15 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { z } from "zod"
-import { auth } from "@/lib/auth"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
-import { announcements, users } from "@/db/schema"
+import { announcements } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 
 const AnnouncementSchema = z.object({
-  title:       z.string().min(1, "Titre requis").max(200),
+  title:       z.string().min(1, "Titre requis").max(100),
   content:     z.string().min(1, "Contenu requis").max(2000),
-  mosqueId:    z.number().int().positive(),
   isPublished: z.boolean().default(false),
   expiresAt:   z.string().optional(),
 })
@@ -21,77 +18,113 @@ export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }
   | { success: false; error: string; data?: never  }
 
-async function requireSession() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
-  return session
-}
+const NO_MOSQUE = "Aucune mosquée n'est associée à votre compte."
 
 export async function createAnnouncement(
   formData: FormData
 ): Promise<ActionResult<{ id: number }>> {
   try {
-    await requireSession()
+    const { session, mosqueId } = await getSessionMosque()
+    if (mosqueId == null) return { success: false, error: NO_MOSQUE }
 
     const raw = {
       title:       formData.get("title"),
       content:     formData.get("content"),
-      mosqueId:    Number(formData.get("mosqueId")),
       isPublished: formData.get("isPublished") === "true",
       expiresAt:   formData.get("expiresAt") || undefined,
     }
 
-    console.log("Raw data:", raw)
-
     const parsed = AnnouncementSchema.safeParse(raw)
     if (!parsed.success) {
-      console.error("Validation error:", parsed.error.issues)
       return {
         success: false,
         error: parsed.error.issues[0]?.message ?? "Données invalides",
       }
     }
 
-    // TODO: Créer un lien entre authUser et users pour récupérer le bon authorId
-    // Récupérer le premier utilisateur disponible
-    const firstUser = await db.select().from(users).limit(1)
-    const authorId = firstUser[0]?.id ?? 1
-    
-    console.log("Using authorId:", authorId)
-
     const [announcement] = await db
       .insert(announcements)
       .values({
-        mosqueId:    parsed.data.mosqueId,
+        mosqueId,
         title:       parsed.data.title,
         content:     parsed.data.content,
-        authorId:    authorId,
+        authorId:    session.user.id,
         isPublished: parsed.data.isPublished,
         publishedAt: parsed.data.isPublished ? new Date() : undefined,
         expiresAt:   parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : undefined,
       })
       .returning({ id: announcements.id })
 
-    console.log("Announcement created:", announcement)
-
     revalidatePath("/admin/announcements")
-    revalidatePath(`/m/${parsed.data.mosqueId}`)
+    revalidatePath(`/m/${mosqueId}`)
 
     return { success: true, data: { id: announcement.id } }
   } catch (error) {
-    console.error("Error creating announcement:", error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "Erreur lors de la création." 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erreur lors de la création.",
     }
   }
 }
 
-export async function deleteAnnouncement(
+export async function updateAnnouncement(
   id: number,
-  mosqueId: number
+  formData: FormData
 ): Promise<ActionResult> {
-  await requireSession()
+  try {
+    const { mosqueId } = await getSessionMosque()
+    if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+
+    const raw = {
+      title:       formData.get("title"),
+      content:     formData.get("content"),
+      isPublished: formData.get("isPublished") === "true",
+      expiresAt:   formData.get("expiresAt") || undefined,
+    }
+
+    const parsed = AnnouncementSchema.safeParse(raw)
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message ?? "Données invalides",
+      }
+    }
+
+    const [existing] = await db
+      .select({ publishedAt: announcements.publishedAt })
+      .from(announcements)
+      .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
+      .limit(1)
+
+    if (!existing) return { success: false, error: "Annonce introuvable." }
+
+    await db
+      .update(announcements)
+      .set({
+        title:       parsed.data.title,
+        content:     parsed.data.content,
+        isPublished: parsed.data.isPublished,
+        publishedAt: parsed.data.isPublished
+          ? existing.publishedAt ?? new Date()
+          : existing.publishedAt,
+      })
+      .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
+
+    revalidatePath("/admin/announcements")
+    revalidatePath(`/m/${mosqueId}`)
+
+    return { success: true, data: undefined }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erreur lors de la mise à jour.",
+    }
+  }
+}
+
+export async function deleteAnnouncement(id: number): Promise<ActionResult> {
+  const { mosqueId } = await getSessionMosque()
+  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
@@ -109,16 +142,17 @@ export async function toggleAnnouncementPublished(
   id: number,
   current: boolean
 ): Promise<ActionResult> {
-  await requireSession()
+  const { mosqueId } = await getSessionMosque()
+  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
       .update(announcements)
-      .set({ 
+      .set({
         isPublished: !current,
         publishedAt: !current ? new Date() : undefined,
       })
-      .where(eq(announcements.id, id))
+      .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidatePath("/admin/announcements")
     return { success: true, data: undefined }

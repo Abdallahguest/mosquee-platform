@@ -40,5 +40,21 @@
   "notFound": {
     "title": "Page introuvable",
     "description": "Cette mosquée n'existe pas dans notre base de données."
+  },
+  "privacy": {
+    "link": "Confidentialité",
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : mai 2026",
+    "intro": "Cette plateforme respecte le principe de jahàla : rien n'est caché. Voici exactement quelles données nous traitons et pourquoi.",
+    "dataTitle": "Données que nous traitons",
+    "dataBody": "Administrateurs : nom, adresse email et mot de passe (chiffré). Mosquée : nom, ville, coordonnées géographiques et méthode de calcul des horaires. Aucune donnée n'est collectée sur les visiteurs de la page publique.",
+    "trackingTitle": "Aucun pistage",
+    "trackingBody": "Pas de cookies publicitaires, pas de traceurs tiers, pas de revente de données. Seuls les cookies strictement nécessaires à l'authentification sont utilisés.",
+    "retentionTitle": "Conservation et export",
+    "retentionBody": "Vos données vous appartiennent. Vous pouvez les exporter à tout moment depuis les paramètres et demander leur suppression sans condition.",
+    "thirdPartyTitle": "Prestataires",
+    "thirdPartyBody": "La base de données est hébergée par Neon et l'envoi des emails est assuré par Resend. Ces prestataires n'accèdent aux données que pour fournir leur service.",
+    "contactTitle": "Contact",
+    "contactBody": "Pour toute question relative à vos données, contactez l'administrateur de votre mosquée."
   }
 }

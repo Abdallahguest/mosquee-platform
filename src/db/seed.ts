@@ -1,19 +1,61 @@
 import "dotenv/config"
 import { db } from "./index"
-import { mosques, users, announcements, events } from "./schema"
+import { auth } from "@/lib/auth"
+import {
+  mosques,
+  users,
+  announcements,
+  events,
+  account,
+  session,
+  verification,
+} from "./schema"
+import { eq } from "drizzle-orm"
+
+// Mot de passe commun aux comptes de démo (>= 8 caractères)
+const DEMO_PASSWORD = "Password123"
+
+// Crée un compte via Better-Auth (hash du mot de passe + table account),
+// puis fixe role / mosqueId / emailVerified directement en base.
+async function createAdmin(input: {
+  name: string
+  email: string
+  role: string
+  mosqueId: number
+}): Promise<string> {
+  await auth.api.signUpEmail({
+    body: { name: input.name, email: input.email, password: DEMO_PASSWORD },
+  })
+
+  await db
+    .update(users)
+    .set({ role: input.role, mosqueId: input.mosqueId, emailVerified: true })
+    .where(eq(users.email, input.email))
+
+  const [row] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, input.email))
+    .limit(1)
+
+  return row.id
+}
 
 async function seed() {
   console.log("🌱 Début du seeding...")
 
   try {
-    // ── ÉTAPE 1 : Nettoyer les tables (ordre important à cause des foreign keys)
+    // ── ÉTAPE 1 : Nettoyer (ordre important à cause des foreign keys)
     console.log("🧹 Nettoyage des tables...")
     await db.delete(events)
     await db.delete(announcements)
+    await db.delete(account)
+    await db.delete(session)
+    await db.delete(verification)
     await db.delete(users)
     await db.delete(mosques)
 
-    // ── ÉTAPE 2 : Insérer les mosquées
+    // ── ÉTAPE 2 : Mosquées
     console.log("🕌 Insertion des mosquées...")
     const [mosque1, mosque2] = await db
       .insert(mosques)
@@ -45,37 +87,32 @@ async function seed() {
       ])
       .returning()
 
-    console.log(`✅ ${2} mosquées insérées`)
+    console.log("✅ 2 mosquées insérées")
 
-    // ── ÉTAPE 3 : Insérer les utilisateurs
-    console.log("👥 Insertion des utilisateurs...")
-    const [admin1, member1, admin2] = await db
-      .insert(users)
-      .values([
-        {
-          name: "Abdoulaye Diallo",
-          email: "abdoulaye@masdjid-taqwa.com",
-          role: "admin",
-          mosqueId: mosque1.id,
-        },
-        {
-          name: "Mamadou Bah",
-          email: "mamadou@masdjid-taqwa.com",
-          role: "member",
-          mosqueId: mosque1.id,
-        },
-        {
-          name: "Aissatou Sow",
-          email: "aissatou@mosquee-labe.com",
-          role: "admin",
-          mosqueId: mosque2.id,
-        },
-      ])
-      .returning()
+    // ── ÉTAPE 3 : Comptes (via Better-Auth, connectables)
+    console.log("👥 Création des comptes...")
+    const admin1Id = await createAdmin({
+      name: "Abdoulaye Diallo",
+      email: "abdoulaye@masdjid-taqwa.com",
+      role: "admin",
+      mosqueId: mosque1.id,
+    })
+    const member1Id = await createAdmin({
+      name: "Mamadou Bah",
+      email: "mamadou@masdjid-taqwa.com",
+      role: "member",
+      mosqueId: mosque1.id,
+    })
+    const admin2Id = await createAdmin({
+      name: "Aissatou Sow",
+      email: "aissatou@mosquee-labe.com",
+      role: "admin",
+      mosqueId: mosque2.id,
+    })
 
-    console.log(`✅ ${3} utilisateurs insérés`)
+    console.log("✅ 3 comptes créés (mot de passe :", DEMO_PASSWORD, ")")
 
-    // ── ÉTAPE 4 : Insérer les annonces
+    // ── ÉTAPE 4 : Annonces
     console.log("📢 Insertion des annonces...")
     await db.insert(announcements).values([
       {
@@ -83,7 +120,7 @@ async function seed() {
         title: "Horaires Ramadan 2027",
         content:
           "Les horaires spéciaux du Ramadan commenceront le 1er Ramadan 1449. Tarawih après Isha.",
-        authorId: admin1.id,
+        authorId: admin1Id,
         publishedAt: new Date("2026-05-01"),
         isPublished: true,
       },
@@ -91,7 +128,7 @@ async function seed() {
         mosqueId: mosque1.id,
         title: "Fermeture exceptionnelle",
         content: "La mosquée sera fermée pour travaux du 1er au 15 avril.",
-        authorId: admin1.id,
+        authorId: admin1Id,
         publishedAt: new Date("2026-04-01"),
         expiresAt: new Date("2026-04-15"),
         isPublished: true,
@@ -100,7 +137,7 @@ async function seed() {
         mosqueId: mosque1.id,
         title: "Brouillon - Cours de Coran",
         content: "Contenu en cours de rédaction...",
-        authorId: member1.id,
+        authorId: member1Id,
         publishedAt: new Date("2026-05-20"),
         isPublished: false,
       },
@@ -109,15 +146,15 @@ async function seed() {
         title: "Nouveau programme éducatif",
         content:
           "Lancement d'un nouveau programme d'enseignement du Coran pour les enfants.",
-        authorId: admin2.id,
+        authorId: admin2Id,
         publishedAt: new Date("2026-05-15"),
         isPublished: true,
       },
     ])
 
-    console.log(`✅ ${4} annonces insérées`)
+    console.log("✅ 4 annonces insérées")
 
-    // ── ÉTAPE 5 : Insérer les événements
+    // ── ÉTAPE 5 : Événements
     console.log("📅 Insertion des événements...")
     await db.insert(events).values([
       {
@@ -151,8 +188,7 @@ async function seed() {
       },
     ])
 
-    console.log(`✅ ${3} événements insérés`)
-
+    console.log("✅ 3 événements insérés")
     console.log("\n🎉 Seeding terminé avec succès !")
   } catch (error) {
     console.error("❌ Erreur lors du seeding:", error)
@@ -160,7 +196,6 @@ async function seed() {
   }
 }
 
-// Exécuter le seeding
 seed()
   .then(() => {
     console.log("✨ Base de données prête à l'emploi")

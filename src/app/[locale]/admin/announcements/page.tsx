@@ -1,10 +1,14 @@
-import { getAllAnnouncements, getAllMosques } from "@/db/queries"
+import { requireSession } from "@/lib/auth-helpers"
+import { getAllAnnouncements } from "@/db/queries"
 import AnnouncementForm from "@/components/admin/AnnouncementForm"
 import AnnouncementList from "@/components/admin/AnnouncementList"
+import NoMosque from "@/components/admin/NoMosque"
 
 export default async function AnnouncementsPage() {
-  const allMosques = await getAllMosques()
-  const mosqueId = allMosques.length > 0 ? allMosques[0].id : 1
+  const session = await requireSession()
+  const mosqueId = session.user.mosqueId
+  if (mosqueId == null) return <NoMosque />
+
   const announcements = await getAllAnnouncements(mosqueId)
 
   return (
@@ -25,7 +29,7 @@ export default async function AnnouncementsPage() {
             <h2 className="font-semibold text-gray-900 mb-4">
               Nouvelle annonce
             </h2>
-            <AnnouncementForm mosqueId={mosqueId} />
+            <AnnouncementForm />
           </div>
         </div>
 
@@ -36,7 +40,7 @@ export default async function AnnouncementsPage() {
               Annonces ({announcements.length})
             </h2>
           </div>
-          <AnnouncementList announcements={announcements} mosqueId={mosqueId} />
+          <AnnouncementList announcements={announcements} />
         </div>
       </div>
     </main>

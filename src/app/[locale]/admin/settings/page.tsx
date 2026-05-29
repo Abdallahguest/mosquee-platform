@@ -1,29 +1,17 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
-import { getMosqueById, getAllMosques } from "@/db/queries"
+import { requireSession } from "@/lib/auth-helpers"
+import { getMosqueById } from "@/db/queries"
 import MosqueSettingsForm from "@/components/admin/MosqueSettingsForm"
 import ExportButton from "@/components/admin/ExportButton"
+import NoMosque from "@/components/admin/NoMosque"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export default async function AdminSettingsPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const session = await requireSession()
+  const mosqueId = session.user.mosqueId
+  if (mosqueId == null) return <NoMosque />
 
-  const allMosques = await getAllMosques()
-  const mosqueId = allMosques.length > 0 ? allMosques[0].id : 1
   const mosque = await getMosqueById(mosqueId)
-  
-  if (!mosque) {
-    return (
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-          <p className="text-red-700">Aucune mosquée trouvée. Veuillez exécuter le seed.</p>
-          <code className="text-xs bg-red-100 px-2 py-1 rounded mt-2 inline-block">pnpm db:seed</code>
-        </div>
-      </div>
-    )
-  }
+  if (!mosque) return <NoMosque />
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">

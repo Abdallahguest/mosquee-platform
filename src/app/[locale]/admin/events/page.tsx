@@ -1,16 +1,14 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
-import { getAllEvents, getAllMosques } from "@/db/queries"
+import { requireSession } from "@/lib/auth-helpers"
+import { getAllEvents } from "@/db/queries"
 import EventForm from "@/components/admin/EventForm"
 import EventList from "@/components/admin/EventList"
+import NoMosque from "@/components/admin/NoMosque"
 
 export default async function AdminEventsPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const session = await requireSession()
+  const mosqueId = session.user.mosqueId
+  if (mosqueId == null) return <NoMosque />
 
-  const allMosques = await getAllMosques()
-  const mosqueId = allMosques.length > 0 ? allMosques[0].id : 1
   const allEvents = await getAllEvents(mosqueId)
 
   return (
@@ -22,10 +20,10 @@ export default async function AdminEventsPage() {
         </p>
       </div>
 
-      <EventForm mosqueId={mosqueId} />
+      <EventForm />
 
       <div className="mt-8">
-        <EventList events={allEvents} mosqueId={mosqueId} />
+        <EventList events={allEvents} />
       </div>
     </div>
   )

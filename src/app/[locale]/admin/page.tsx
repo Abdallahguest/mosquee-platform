@@ -1,38 +1,19 @@
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
 import Link from "next/link"
+import { requireSession } from "@/lib/auth-helpers"
 import LogoutButton from "@/components/LogoutButton"
-import { getAllAnnouncements, getAllEvents, getAllMosques } from "@/db/queries"
+import NoMosque from "@/components/admin/NoMosque"
+import { getMosqueById, getAllAnnouncements, getAllEvents } from "@/db/queries"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default async function AdminPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const session = await requireSession()
+  const mosqueId = session.user.mosqueId
+  if (mosqueId == null) return <NoMosque />
 
-  // Récupérer toutes les mosquées
-  const allMosques = await getAllMosques()
-  
-  if (allMosques.length === 0) {
-    return (
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <Alert>
-          <AlertDescription>
-            <p className="font-medium mb-1">Aucune mosquée trouvée</p>
-            <p className="text-sm">Exécutez le seed pour créer des données de test</p>
-            <code className="text-xs bg-muted px-2 py-1 rounded mt-2 inline-block">pnpm db:seed</code>
-          </AlertDescription>
-        </Alert>
-      </div>
-    )
-  }
-  
-  // Pour l'instant, utiliser la première mosquée
-  // TODO: Permettre à l'utilisateur de sélectionner sa mosquée
-  const mosque = allMosques[0]
-  const mosqueId = mosque.id
+  const mosque = await getMosqueById(mosqueId)
+  if (!mosque) return <NoMosque />
 
   const [allAnnouncements, allEvents] = await Promise.all([
     getAllAnnouncements(mosqueId),
@@ -83,35 +64,18 @@ export default async function AdminPage() {
           <LogoutButton />
         </div>
 
-        {/* Sélecteur de mosquée */}
-        {allMosques.length > 1 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-            <p className="text-sm text-blue-700 mb-2">
-              <strong>Mosquée active :</strong> {mosque.name}
-            </p>
-            <details className="text-xs text-blue-600">
-              <summary className="cursor-pointer hover:underline">
-                Voir toutes les mosquées ({allMosques.length})
-              </summary>
-              <ul className="mt-2 space-y-1 ml-4">
-                {allMosques.map((m) => (
-                  <li key={m.id}>
-                    • {m.name} - {m.city} {m.id === mosque.id && "(active)"}
-                  </li>
-                ))}
-              </ul>
-            </details>
-          </div>
-        )}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+          <p className="text-sm text-blue-700">
+            <strong>Mosquée :</strong> {mosque.name} — {mosque.city}
+          </p>
+        </div>
 
-        {mosque && (
-          <Link
-            href={`/m/${mosque.slug}`}
-            className="inline-flex items-center gap-1 text-xs text-green-700 hover:underline"
-          >
-            🕌 Voir la page publique →
-          </Link>
-        )}
+        <Link
+          href={`/m/${mosque.slug}`}
+          className="inline-flex items-center gap-1 text-xs text-green-700 hover:underline"
+        >
+          🕌 Voir la page publique →
+        </Link>
       </div>
 
       {/* Stats rapides */}

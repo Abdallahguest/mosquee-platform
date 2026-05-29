@@ -1,8 +1,6 @@
 "use server"
 
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { mosques, announcements, events } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -11,8 +9,10 @@ export async function exportMosqueData(mosqueId: number): Promise <
   | { success: true; data: string }
   | { success: false; error: string }
 > {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const { mosqueId: sessionMosqueId } = await getSessionMosque()
+  if (sessionMosqueId == null || sessionMosqueId !== mosqueId) {
+    return { success: false, error: "Action non autorisée pour cette mosquée." }
+  }
 
   try {
     const [mosque, allAnnouncements, allEvents] = await Promise.all([

@@ -6,6 +6,71 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import { auth } from "@/lib/auth"
+import { users } from "@/db/schema"
+
+const CreateUserSchema = z.object({
+  name:     z.string().min(1, "Nom requis").max(100),
+  email:    z.string().email("Email invalide"),
+  password: z.string().min(8, "Mot de passe : 8 caractères minimum"),
+})
+
+export async function createUserAccount(formData: FormData): Promise<ActionResult<{ email: string }>> {
+  await requireSuperAdmin()
+
+  const parsed = CreateUserSchema.safeParse({
+    name:     formData.get("name"),
+    email:    String(formData.get("email") ?? "").trim().toLowerCase(),
+    password: formData.get("password"),
+  })
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
+  }
+
+  try {
+    // Créer le compte via l'API Better-Auth (hash correct du mot de passe)
+    await auth.api.signUpEmail({
+      body: {
+        name:     parsed.data.name,
+        email:    parsed.data.email,
+        password: parsed.data.password,
+      },
+    })
+
+    // Marquer l'email comme vérifié directement (c'est le super-admin qui crée)
+    await db
+      .update(users)
+      .set({ emailVerified: true })
+      .where(eq(users.email, parsed.data.email))
+
+    revalidatePath("/super-admin/users")
+    return { success: true, data: { email: parsed.data.email } }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error && error.message.toLowerCase().includes("exist")
+        ? "Un compte existe déjà avec cet email."
+        : "Erreur lors de la création du compte.",
+    }
+  }
+}
+
+export async function setUserVerified(userId: string, verified: boolean): Promise<ActionResult> {
+  await requireSuperAdmin()
+
+  try {
+    await db
+      .update(users)
+      .set({ emailVerified: verified })
+      .where(eq(users.id, userId))
+
+    revalidatePath("/super-admin/users")
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "Erreur lors de la mise à jour." }
+  }
+}
 
 export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }

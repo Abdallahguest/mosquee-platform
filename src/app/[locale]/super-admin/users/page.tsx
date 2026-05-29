@@ -2,8 +2,10 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { getAllUsers } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import CreateUserForm from "@/components/superadmin/CreateUserForm"
+import UserVerifyButton from "@/components/superadmin/UserVerifyButton"
 
 export default async function UsersPage() {
   await requireSuperAdmin()
@@ -15,6 +17,18 @@ export default async function UsersPage() {
         <h1 className="text-2xl font-bold text-gray-900">Comptes ({users.length})</h1>
         <Link href="/super-admin"><Button variant="outline">← Mosquées</Button></Link>
       </div>
+
+      {/* Création de compte */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-base">Créer un compte admin</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CreateUserForm />
+        </CardContent>
+      </Card>
+
+      {/* Liste des comptes */}
       <div className="space-y-2">
         {users.map((u) => (
           <Card key={u.id}>
@@ -28,6 +42,9 @@ export default async function UsersPage() {
                 {u.emailVerified
                   ? <Badge variant="secondary">✓ vérifié</Badge>
                   : <Badge variant="outline">non vérifié</Badge>}
+                {u.role !== "super_admin" && (
+                  <UserVerifyButton userId={u.id} verified={u.emailVerified} />
+                )}
               </div>
             </CardContent>
           </Card>

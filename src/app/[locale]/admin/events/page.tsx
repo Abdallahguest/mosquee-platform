@@ -1,13 +1,12 @@
-import { requireSession } from "@/lib/auth-helpers"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import { getAllEvents } from "@/db/queries"
 import EventForm from "@/components/admin/EventForm"
 import EventList from "@/components/admin/EventList"
 import NoMosque from "@/components/admin/NoMosque"
 
 export default async function AdminEventsPage() {
-  const session = await requireSession()
-  const mosqueId = session.user.mosqueId
-  if (mosqueId == null) return <NoMosque />
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return <NoMosque />
 
   const allEvents = await getAllEvents(mosqueId)
 

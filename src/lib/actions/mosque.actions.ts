@@ -31,8 +31,8 @@ export async function updateMosqueSettings(
   id: number,
   formData: FormData
 ): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null || mosqueId !== id) {
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null || mosqueId !== id) {
     return { success: false, error: "Action non autorisée pour cette mosquée." }
   }
 
@@ -67,7 +67,7 @@ export async function updateMosqueSettings(
 
     revalidatePath("/admin")
     revalidatePath("/admin/settings")
-    revalidatePath(`/m/${formData.get("slug")}`)
+    revalidatePath(`/m/${mosque.slug}`)
 
     return { success: true, data: undefined }
   } catch {

@@ -20,12 +20,19 @@ export type ActionResult<T = void> =
 
 const NO_MOSQUE = "Aucune mosquée n'est associée à votre compte."
 
+// Helper : revalide les pages affectées par un changement de contenu
+function revalidateContent(slug: string) {
+  revalidatePath("/admin/announcements")
+  revalidatePath("/admin")
+  revalidatePath(`/m/${slug}`)
+}
+
 export async function createAnnouncement(
   formData: FormData
 ): Promise<ActionResult<{ id: number }>> {
   try {
-    const { session, mosqueId } = await getSessionMosque()
-    if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+    const { session, mosque, mosqueId } = await getSessionMosque()
+    if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
     const raw = {
       title:       formData.get("title"),
@@ -55,8 +62,7 @@ export async function createAnnouncement(
       })
       .returning({ id: announcements.id })
 
-    revalidatePath("/admin/announcements")
-    revalidatePath(`/m/${mosqueId}`)
+    revalidateContent(mosque.slug)
 
     return { success: true, data: { id: announcement.id } }
   } catch (error) {
@@ -72,8 +78,8 @@ export async function updateAnnouncement(
   formData: FormData
 ): Promise<ActionResult> {
   try {
-    const { mosqueId } = await getSessionMosque()
-    if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+    const { mosque, mosqueId } = await getSessionMosque()
+    if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
     const raw = {
       title:       formData.get("title"),
@@ -110,8 +116,7 @@ export async function updateAnnouncement(
       })
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/announcements")
-    revalidatePath(`/m/${mosqueId}`)
+    revalidateContent(mosque.slug)
 
     return { success: true, data: undefined }
   } catch (error) {
@@ -123,15 +128,15 @@ export async function updateAnnouncement(
 }
 
 export async function deleteAnnouncement(id: number): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
       .delete(announcements)
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/announcements")
+    revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la suppression." }
@@ -142,8 +147,8 @@ export async function toggleAnnouncementPublished(
   id: number,
   current: boolean
 ): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
@@ -154,7 +159,7 @@ export async function toggleAnnouncementPublished(
       })
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/announcements")
+    revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la mise à jour." }

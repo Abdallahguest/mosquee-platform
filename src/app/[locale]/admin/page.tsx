@@ -1,19 +1,15 @@
 import Link from "next/link"
-import { requireSession } from "@/lib/auth-helpers"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import LogoutButton from "@/components/LogoutButton"
 import NoMosque from "@/components/admin/NoMosque"
-import { getMosqueById, getAllAnnouncements, getAllEvents } from "@/db/queries"
+import { getAllAnnouncements, getAllEvents } from "@/db/queries"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default async function AdminPage() {
-  const session = await requireSession()
-  const mosqueId = session.user.mosqueId
-  if (mosqueId == null) return <NoMosque />
-
-  const mosque = await getMosqueById(mosqueId)
-  if (!mosque) return <NoMosque />
+  const { session, mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return <NoMosque />
 
   const [allAnnouncements, allEvents] = await Promise.all([
     getAllAnnouncements(mosqueId),

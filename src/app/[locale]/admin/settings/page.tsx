@@ -1,17 +1,12 @@
-import { requireSession } from "@/lib/auth-helpers"
-import { getMosqueById } from "@/db/queries"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import MosqueSettingsForm from "@/components/admin/MosqueSettingsForm"
 import ExportButton from "@/components/admin/ExportButton"
 import NoMosque from "@/components/admin/NoMosque"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export default async function AdminSettingsPage() {
-  const session = await requireSession()
-  const mosqueId = session.user.mosqueId
-  if (mosqueId == null) return <NoMosque />
-
-  const mosque = await getMosqueById(mosqueId)
-  if (!mosque) return <NoMosque />
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return <NoMosque />
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">

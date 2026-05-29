@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { requireSession } from "@/lib/auth-helpers"
+import { getSessionMosque } from "@/lib/auth-helpers"
 import { getAnnouncementById } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import AnnouncementForm from "@/components/admin/AnnouncementForm"
@@ -10,9 +10,8 @@ interface PageProps {
 }
 
 export default async function EditAnnouncementPage({ params }: PageProps) {
-  const session = await requireSession()
-  const mosqueId = session.user.mosqueId
-  if (mosqueId == null) return <NoMosque />
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return <NoMosque />
 
   const { id } = await params
   const announcement = await getAnnouncementById(Number(id), mosqueId)

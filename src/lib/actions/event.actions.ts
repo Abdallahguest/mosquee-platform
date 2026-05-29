@@ -14,7 +14,10 @@ const EventSchema = z.object({
   startAt:     z.string().min(1, "Date de début requise"),
   endAt:       z.string().optional(),
   isPublished: z.boolean().default(false),
-})
+}).refine(
+  (data) => !data.endAt || new Date(data.endAt) >= new Date(data.startAt),
+  { message: "La date de fin ne peut pas être antérieure à la date de début.", path: ["endAt"] }
+)
 
 export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }
@@ -22,11 +25,17 @@ export type ActionResult<T = void> =
 
 const NO_MOSQUE = "Aucune mosquée n'est associée à votre compte."
 
+function revalidateContent(slug: string) {
+  revalidatePath("/admin/events")
+  revalidatePath("/admin")
+  revalidatePath(`/m/${slug}`)
+}
+
 export async function createEvent(
   formData: FormData
 ): Promise<ActionResult<{ id: number }>> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   const raw = {
     title:       formData.get("title"),
@@ -59,8 +68,7 @@ export async function createEvent(
       })
       .returning({ id: events.id })
 
-    revalidatePath("/admin/events")
-    revalidatePath(`/m/${mosqueId}`)
+    revalidateContent(mosque.slug)
 
     return { success: true, data: { id: event.id } }
   } catch {
@@ -72,8 +80,8 @@ export async function updateEvent(
   id: number,
   formData: FormData
 ): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   const raw = {
     title:       formData.get("title"),
@@ -113,8 +121,7 @@ export async function updateEvent(
       })
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/events")
-    revalidatePath(`/m/${mosqueId}`)
+    revalidateContent(mosque.slug)
 
     return { success: true, data: undefined }
   } catch {
@@ -123,15 +130,15 @@ export async function updateEvent(
 }
 
 export async function deleteEvent(id: number): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
       .delete(events)
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/events")
+    revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la suppression." }
@@ -142,8 +149,8 @@ export async function toggleEventPublished(
   id: number,
   current: boolean
 ): Promise<ActionResult> {
-  const { mosqueId } = await getSessionMosque()
-  if (mosqueId == null) return { success: false, error: NO_MOSQUE }
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
 
   try {
     await db
@@ -151,7 +158,7 @@ export async function toggleEventPublished(
       .set({ isPublished: !current })
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
-    revalidatePath("/admin/events")
+    revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la mise à jour." }

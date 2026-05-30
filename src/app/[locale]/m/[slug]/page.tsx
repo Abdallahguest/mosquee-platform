@@ -8,6 +8,7 @@ import { getDailyPrayerTimes } from "@/lib/prayer-times"
 import PrayerSchedule from "@/components/public/PrayerSchedule"
 import AnnouncementCard from "@/components/public/AnnouncementCard"
 import EventCard from "@/components/public/EventCard"
+import PublicFooter from "@/components/public/PublicFooter"
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -152,26 +153,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
         )}
 
         {/* Footer */}
-        <footer className="border-t border-gray-200 pt-6 text-center">
-          <div className="flex items-center justify-center gap-4">
-            <Link
-              href="/"
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              ← {tc("allMosques")}
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              {tp("link")}
-            </Link>
-          </div>
-          <p className="text-xs text-gray-300 mt-2">
-            Plateforme halal · Sans riba · Sans ghich · Sans jahàla
-          </p>
-        </footer>
-
+        <PublicFooter mosque={mosque} />
       </div>
     </main>
   )

@@ -1,6 +1,6 @@
 import { db } from "./index"
 import { mosques, announcements, events, users } from "./schema"
-import { eq, and, gt, desc, isNull, or, asc, sql } from "drizzle-orm"
+import { eq, and, gt, desc, isNull, or, asc, sql, count } from "drizzle-orm"
 
 // ── SUPER-ADMIN ──
 
@@ -29,6 +29,38 @@ export async function getAllUsers() {
   } catch (error) {
     console.error("Erreur récupération utilisateurs:", error)
     return []
+  }
+}
+
+export async function getSuperAdminStats() {
+  try {
+    const [
+      mosqueCount,
+      verifiedMosques,
+      userCount,
+      verifiedUsers,
+      announcementCount,
+      eventCount,
+    ] = await Promise.all([
+      db.select({ v: count() }).from(mosques),
+      db.select({ v: count() }).from(mosques).where(eq(mosques.isVerified, true)),
+      db.select({ v: count() }).from(users),
+      db.select({ v: count() }).from(users).where(eq(users.emailVerified, true)),
+      db.select({ v: count() }).from(announcements),
+      db.select({ v: count() }).from(events),
+    ])
+
+    return {
+      mosques:        mosqueCount[0]?.v ?? 0,
+      mosquesVerified: verifiedMosques[0]?.v ?? 0,
+      users:          userCount[0]?.v ?? 0,
+      usersVerified:  verifiedUsers[0]?.v ?? 0,
+      announcements:  announcementCount[0]?.v ?? 0,
+      events:         eventCount[0]?.v ?? 0,
+    }
+  } catch (error) {
+    console.error("Erreur stats super-admin:", error)
+    return { mosques: 0, mosquesVerified: 0, users: 0, usersVerified: 0, announcements: 0, events: 0 }
   }
 }
 

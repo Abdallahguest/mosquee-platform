@@ -25,6 +25,9 @@ export const mosques = pgTable("mosques", {
   adminEmail:        varchar("admin_email", { length: 255 }).notNull(),
   isVerified:        boolean("is_verified").notNull().default(false),
   createdAt:         timestamp("created_at").notNull().defaultNow(),
+  donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel
+  contactEmail: varchar("contact_email", { length: 255 }),  // optionnel
+  contactPhone: varchar("contact_phone", { length: 50 }),   // optionnel
 
   // Ajustements iqama en minutes (décalage après l'adhan)
   iqamaFajr:    integer("iqama_fajr").notNull().default(20),

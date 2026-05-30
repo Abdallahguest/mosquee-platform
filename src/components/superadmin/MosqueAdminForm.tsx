@@ -13,6 +13,9 @@ interface MosqueAdminFormProps {
     id: number; slug: string; name: string; city: string; country: string
     latitude: number; longitude: number; timezone: string
     calculationMethod: string; adminEmail: string; isVerified: boolean
+    donationUrl?: string | null
+    contactEmail?: string | null
+    contactPhone?: string | null
   }
 }
 
@@ -116,6 +119,21 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
           className="rounded"
         />
         <Label htmlFor="isVerified">Mosquée vérifiée</Label>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="contactEmail">Email de contact public (optionnel)</Label>
+        <Input id="contactEmail" name="contactEmail" type="email" defaultValue={mosque?.contactEmail ?? ""} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="contactPhone">Téléphone de contact (optionnel)</Label>
+        <Input id="contactPhone" name="contactPhone" defaultValue={mosque?.contactPhone ?? ""} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="donationUrl">Lien de don externe (optionnel)</Label>
+        <Input id="donationUrl" name="donationUrl" type="url" defaultValue={mosque?.donationUrl ?? ""} placeholder="https://..." />
       </div>
 
       <Button type="submit" disabled={loading} className="w-full bg-green-700 hover:bg-green-800">

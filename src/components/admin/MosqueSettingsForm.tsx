@@ -31,6 +31,9 @@ interface Mosque {
   iqamaAsr: number
   iqamaMaghrib: number
   iqamaIsha: number
+  donationUrl: string | null
+  contactEmail: string | null
+  contactPhone: string | null
 }
 
 const METHODS = [
@@ -261,6 +264,55 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
                 defaultValue={mosque.iqamaIsha}
               />
             </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Contact et don */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Contact et don</CardTitle>
+          <CardDescription>
+            Informations affichées dans le pied de page public (toutes optionnelles)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="contactEmail">Email de contact public</Label>
+            <Input
+              id="contactEmail"
+              name="contactEmail"
+              type="email"
+              defaultValue={mosque.contactEmail ?? ""}
+              placeholder="contact@mamosquee.com"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="contactPhone">Téléphone de contact</Label>
+            <Input
+              id="contactPhone"
+              name="contactPhone"
+              defaultValue={mosque.contactPhone ?? ""}
+              placeholder="+224 6XX XX XX XX"
+            />
+          </div>
+
+          <Separator />
+
+          <div className="space-y-1.5">
+            <Label htmlFor="donationUrl">Lien de don (URL externe)</Label>
+            <Input
+              id="donationUrl"
+              name="donationUrl"
+              type="url"
+              defaultValue={mosque.donationUrl ?? ""}
+              placeholder="https://..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Lien vers votre page de don. Il s&apos;ouvrira dans un nouvel onglet.
+              Le don est géré directement par la mosquée — la plateforme ne traite aucun paiement.
+            </p>
           </div>
         </CardContent>
       </Card>

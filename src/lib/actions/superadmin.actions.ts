@@ -87,6 +87,9 @@ const MosqueSchema = z.object({
   calculationMethod: z.enum(["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi"]),
   adminEmail:        z.string().email("Email invalide"),
   isVerified:        z.boolean().default(false),
+  donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
+  contactEmail: z.string().email("Email invalide").or(z.literal("")).optional(),
+  contactPhone: z.string().max(50).optional(),
 })
 
 function parseForm(formData: FormData) {
@@ -101,6 +104,9 @@ function parseForm(formData: FormData) {
     calculationMethod: formData.get("calculationMethod"),
     adminEmail:        String(formData.get("adminEmail") ?? "").trim().toLowerCase(),
     isVerified:        formData.get("isVerified") === "true",
+    donationUrl:  formData.get("donationUrl") || null,
+    contactEmail: formData.get("contactEmail") || null,
+    contactPhone: formData.get("contactPhone") || null,
   }
 }
 
@@ -115,7 +121,12 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
   try {
     const [mosque] = await db
       .insert(mosques)
-      .values(parsed.data)
+      .values({
+        ...parsed.data,
+        donationUrl:  parsed.data.donationUrl  || null,
+        contactEmail: parsed.data.contactEmail || null,
+        contactPhone: parsed.data.contactPhone || null,
+      })
       .returning({ id: mosques.id })
 
     revalidatePath("/super-admin")
@@ -140,7 +151,14 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
   }
 
   try {
-    await db.update(mosques).set(parsed.data).where(eq(mosques.id, id))
+    await db.update(mosques)
+    .set({
+      ...parsed.data,
+      donationUrl:  parsed.data.donationUrl  || null,
+      contactEmail: parsed.data.contactEmail || null,
+      contactPhone: parsed.data.contactPhone || null,
+    })
+    .where(eq(mosques.id, id))
     revalidatePath("/super-admin")
     revalidatePath(`/m/${parsed.data.slug}`)
     return { success: true, data: undefined }

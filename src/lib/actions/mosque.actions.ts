@@ -15,12 +15,15 @@ const MosqueSettingsSchema = z.object({
   longitude:         z.number().min(-180).max(180),
   timezone:          z.string().min(1),
   calculationMethod: z.enum(["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi"]),
-  // Ajustements iqama (0 à 60 minutes)
   iqamaFajr:    z.number().int().min(0).max(60),
   iqamaDhuhr:   z.number().int().min(0).max(60),
   iqamaAsr:     z.number().int().min(0).max(60),
   iqamaMaghrib: z.number().int().min(0).max(60),
   iqamaIsha:    z.number().int().min(0).max(60),
+  // Contact et don (optionnels)
+  donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
+  contactEmail: z.string().email("Email de contact invalide").or(z.literal("")).optional(),
+  contactPhone: z.string().max(50).optional(),
 })
 
 export type ActionResult<T = void> =
@@ -49,6 +52,9 @@ export async function updateMosqueSettings(
     iqamaAsr:     Number(formData.get("iqamaAsr")),
     iqamaMaghrib: Number(formData.get("iqamaMaghrib")),
     iqamaIsha:    Number(formData.get("iqamaIsha")),
+    donationUrl:  formData.get("donationUrl") || "",
+    contactEmail: formData.get("contactEmail") || "",
+    contactPhone: formData.get("contactPhone") || "",
   }
 
   const parsed = MosqueSettingsSchema.safeParse(raw)
@@ -62,7 +68,13 @@ export async function updateMosqueSettings(
   try {
     await db
       .update(mosques)
-      .set(parsed.data)
+      .set({
+        ...parsed.data,
+        // Chaîne vide → null en base (cohérent et propre)
+        donationUrl:  parsed.data.donationUrl  || null,
+        contactEmail: parsed.data.contactEmail || null,
+        contactPhone: parsed.data.contactPhone || null,
+      })
       .where(eq(mosques.id, id))
 
     revalidatePath("/admin")

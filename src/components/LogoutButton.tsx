@@ -1,7 +1,6 @@
 "use client"
 
 import { signOut } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
 
 export default function LogoutButton() {
   async function handleLogout() {
@@ -11,8 +10,11 @@ export default function LogoutButton() {
   }
 
   return (
-    <Button variant="outline" size="sm" onClick={handleLogout}>
+    <button
+      onClick={handleLogout}
+      className="text-sm text-white border border-white/40 hover:bg-white/10 px-3 py-1.5 rounded-md transition-colors whitespace-nowrap"
+    >
       Se déconnecter
-    </Button>
+    </button>
   )
 }

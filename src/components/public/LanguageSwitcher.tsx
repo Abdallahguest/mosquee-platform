@@ -10,7 +10,11 @@ const LABELS: Record<string, string> = {
   ar: "ع",
 }
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  variant?: "onLight" | "onGreen"
+}
+
+export default function LanguageSwitcher({ variant = "onLight" }: LanguageSwitcherProps) {
   const locale = useLocale()
   const pathname = usePathname()
   const router = useRouter()
@@ -19,16 +23,29 @@ export default function LanguageSwitcher() {
     router.replace(pathname, { locale: newLocale })
   }
 
+  const containerClass =
+    variant === "onGreen"
+      ? "bg-green-950/40"
+      : "border border-gray-200 bg-white"
+
+  const activeClass =
+    variant === "onGreen"
+      ? "bg-white text-green-800 font-medium"
+      : "bg-green-700 text-white"
+
+  const inactiveClass =
+    variant === "onGreen"
+      ? "text-green-100 hover:text-white"
+      : "text-gray-600 hover:text-gray-900"
+
   return (
-    <div className="inline-flex rounded-lg border border-gray-200 bg-white p-0.5">
+    <div className={`inline-flex rounded-lg p-0.5 ${containerClass}`}>
       {routing.locales.map((loc) => (
         <button
           key={loc}
           onClick={() => switchTo(loc)}
           className={`px-3 py-1 text-sm rounded-md transition-colors ${
-            locale === loc
-              ? "bg-green-700 text-white"
-              : "text-gray-600 hover:text-gray-900"
+            locale === loc ? activeClass : inactiveClass
           }`}
         >
           {LABELS[loc]}

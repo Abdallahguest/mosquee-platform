@@ -32,7 +32,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
           {/* Logo / nom mosquée */}
           <Link href="/admin" className="flex items-center gap-2 font-semibold">
             <span>🕌</span>
-            <span className="truncate max-w-[160px]">{mosqueName ?? "Administration"}</span>
+            <span className="max-w-40 truncate">{mosqueName ?? "Administration"}</span>
           </Link>
 
           {/* Liens desktop */}

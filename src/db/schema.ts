@@ -9,6 +9,7 @@ import {
   doublePrecision,
   integer,
   bigint,
+  unique
 } from "drizzle-orm/pg-core"
 
 // ── TABLE MOSQUÉES ──
@@ -57,6 +58,18 @@ export const users = pgTable("users", {
   updatedAt:     timestamp("updated_at").notNull().defaultNow(),
 })
 
+// ── TABLE DE LIAISON MOSQUÉE ↔ ADMINS ──
+// Un admin peut gérer plusieurs mosquées ; une mosquée peut avoir plusieurs admins.
+export const mosqueAdmins = pgTable("mosque_admins", {
+  id:        serial("id").primaryKey(),
+  mosqueId:  integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
+  userId:    varchar("user_id", { length: 255 }).notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  // Empêche de lier deux fois le même user à la même mosquée
+  uniqueLink: unique("mosque_admins_mosque_user_unique").on(table.mosqueId, table.userId),
+}))
+
 // ── TABLE ANNONCES ──
 export const announcements = pgTable("announcements", {
   id:          serial("id").primaryKey(),
@@ -91,6 +104,8 @@ export type Event        = typeof events.$inferSelect
 export type NewEvent     = typeof events.$inferInsert
 export type User         = typeof users.$inferSelect
 export type NewUser      = typeof users.$inferInsert
+export type MosqueAdmin    = typeof mosqueAdmins.$inferSelect
+export type NewMosqueAdmin = typeof mosqueAdmins.$inferInsert
 
 
 // ── TABLES BETTER-AUTH ──

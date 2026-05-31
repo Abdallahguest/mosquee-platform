@@ -1,7 +1,7 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
-import { getMosqueByAdminEmail } from "@/db/queries"
+import { getPrimaryMosqueByUserId } from "@/db/queries"
 import AdminNav from "@/components/admin/AdminNav"
 import AdminFooter from "@/components/admin/AdminFooter"
 
@@ -14,7 +14,7 @@ export default async function AdminLayout({
   if (!session) redirect("/login")
 
   // Récupérer la mosquée pour afficher son nom dans la navbar
-  const mosque = await getMosqueByAdminEmail(session.user.email)
+  const mosque = await getPrimaryMosqueByUserId(session.user.id)
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

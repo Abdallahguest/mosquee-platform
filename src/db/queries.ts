@@ -1,6 +1,44 @@
 import { db } from "./index"
-import { mosques, announcements, events, users } from "./schema"
+import { mosques, announcements, events, users, mosqueAdmins } from "./schema"
 import { eq, and, gt, desc, isNull, or, asc, sql, count } from "drizzle-orm"
+
+// ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
+// Retourne les mosquées administrées par un utilisateur (par son ID)
+export async function getMosquesByUserId(userId: string) {
+  try {
+    const rows = await db
+      .select({ mosque: mosques })
+      .from(mosqueAdmins)
+      .innerJoin(mosques, eq(mosqueAdmins.mosqueId, mosques.id))
+      .where(eq(mosqueAdmins.userId, userId))
+      .orderBy(mosques.name)
+    return rows.map((r) => r.mosque)
+  } catch (error) {
+    console.error("Erreur récupération mosquées par user:", error)
+    return []
+  }
+}
+
+// Retourne la mosquée principale (la première) d'un utilisateur, ou null
+export async function getPrimaryMosqueByUserId(userId: string) {
+  const list = await getMosquesByUserId(userId)
+  return list[0] ?? null
+}
+
+// Vérifie si un utilisateur est admin d'une mosquée donnée (pour les contrôles d'accès)
+export async function isUserAdminOfMosque(userId: string, mosqueId: number) {
+  try {
+    const result = await db
+      .select({ id: mosqueAdmins.id })
+      .from(mosqueAdmins)
+      .where(and(eq(mosqueAdmins.userId, userId), eq(mosqueAdmins.mosqueId, mosqueId)))
+      .limit(1)
+    return result.length > 0
+  } catch (error) {
+    console.error("Erreur vérification admin mosquée:", error)
+    return false
+  }
+}
 
 // ── SUPER-ADMIN ──
 

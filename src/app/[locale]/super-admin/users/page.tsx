@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import CreateUserForm from "@/components/superadmin/CreateUserForm"
 import UserVerifyButton from "@/components/superadmin/UserVerifyButton"
+import ResetPasswordButton from "@/components/superadmin/ResetPasswordButton"
 
 export default async function UsersPage() {
   await requireSuperAdmin()
@@ -43,7 +44,10 @@ export default async function UsersPage() {
                   ? <Badge variant="secondary">✓ vérifié</Badge>
                   : <Badge variant="outline">non vérifié</Badge>}
                 {u.role !== "super_admin" && (
-                  <UserVerifyButton userId={u.id} verified={u.emailVerified} />
+                  <>
+                    <UserVerifyButton userId={u.id} verified={u.emailVerified} />
+                    <ResetPasswordButton userId={u.id} />
+                  </>
                 )}
               </div>
             </CardContent>

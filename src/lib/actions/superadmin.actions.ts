@@ -178,3 +178,36 @@ export async function deleteMosque(id: number): Promise<ActionResult> {
     return { success: false, error: "Erreur lors de la suppression. Vérifiez qu'aucune donnée n'y est rattachée." }
   }
 }
+
+const ResetPasswordSchema = z.object({
+  userId:      z.string().min(1),
+  newPassword: z.string().min(8, "Mot de passe : 8 caractères minimum"),
+})
+
+export async function resetUserPassword(formData: FormData): Promise<ActionResult> {
+  await requireSuperAdmin()
+
+  const parsed = ResetPasswordSchema.safeParse({
+    userId:      formData.get("userId"),
+    newPassword: formData.get("newPassword"),
+  })
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
+  }
+
+  try {
+    // Better-Auth : définir un nouveau mot de passe via l'API admin
+    const ctx = await auth.$context
+    const hashed = await ctx.password.hash(parsed.data.newPassword)
+    await ctx.internalAdapter.updatePassword(parsed.data.userId, hashed)
+
+    revalidatePath("/super-admin/users")
+    return { success: true, data: undefined }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erreur lors de la réinitialisation.",
+    }
+  }
+}

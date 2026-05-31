@@ -7,6 +7,7 @@ import { db } from "@/db/index"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
 import { mosques, users, mosqueAdmins } from "@/db/schema"
+import { canSuperAdminActOnUser } from "@/lib/authorization"
 
 export async function assignAdminToMosque(mosqueId: number, userId: string): Promise<ActionResult> {
   await requireSuperAdmin()
@@ -87,14 +88,26 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
 }
 
 export async function setUserVerified(userId: string, verified: boolean): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
+
+  // Récupérer le compte cible pour vérifier qu'on a le droit d'agir dessus
+  const [target] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1)
+
+  if (!target) return { success: false, error: "Compte introuvable." }
+
+  if (!canSuperAdminActOnUser(
+    { id: session.user.id, role: "super_admin" },   // garanti par requireSuperAdmin()
+    { id: target.id, role: target.role }
+  )) {
+    return { success: false, error: "Action non autorisée sur ce compte." }
+  }
 
   try {
-    await db
-      .update(users)
-      .set({ emailVerified: verified })
-      .where(eq(users.id, userId))
-
+    await db.update(users).set({ emailVerified: verified }).where(eq(users.id, userId))
     revalidatePath("/super-admin/users")
     return { success: true, data: undefined }
   } catch {
@@ -217,8 +230,9 @@ const ResetPasswordSchema = z.object({
 })
 
 export async function resetUserPassword(formData: FormData): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
+  // 1. Valider les entrées
   const parsed = ResetPasswordSchema.safeParse({
     userId:      formData.get("userId"),
     newPassword: formData.get("newPassword"),
@@ -228,8 +242,25 @@ export async function resetUserPassword(formData: FormData): Promise<ActionResul
     return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
   }
 
+  // 2. Récupérer le compte cible pour vérifier qu'on a le droit d'agir dessus
+  const [target] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(eq(users.id, parsed.data.userId))
+    .limit(1)
+
+  if (!target) return { success: false, error: "Compte introuvable." }
+
+  // 3. Un super-admin ne peut pas réinitialiser le mot de passe d'un autre super-admin
+  if (!canSuperAdminActOnUser(
+    { id: session.user.id, role: "super_admin" },   // garanti par requireSuperAdmin()
+    { id: target.id, role: target.role }
+  )) {
+    return { success: false, error: "Action non autorisée sur ce compte." }
+  }
+
+  // 4. Réinitialiser le mot de passe via l'API interne Better-Auth
   try {
-    // Better-Auth : définir un nouveau mot de passe via l'API admin
     const ctx = await auth.$context
     const hashed = await ctx.password.hash(parsed.data.newPassword)
     await ctx.internalAdapter.updatePassword(parsed.data.userId, hashed)

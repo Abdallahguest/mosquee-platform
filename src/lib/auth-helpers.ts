@@ -1,12 +1,12 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
-import { getPrimaryMosqueByUserId } from "@/db/queries"
+import { auth, type Session } from "@/lib/auth"
+import { getPrimaryMosqueByUserId, getMosquesByUserId } from "@/db/queries"
 
-export async function requireSession() {
+export async function requireSession(): Promise<Session> {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect("/login")
-  return session
+  return session as Session
 }
 
 export async function getSessionMosque() {
@@ -15,8 +15,19 @@ export async function getSessionMosque() {
   return { session, mosque, mosqueId: mosque?.id ?? null }
 }
 
-export async function requireSuperAdmin() {
+export async function requireSuperAdmin(): Promise<Session> {
   const session = await requireSession()
   if (session.user.role !== "super_admin") redirect("/admin")
   return session
+}
+
+// Retourne l'utilisateur + la liste des IDs de ses mosquées (pour l'autorisation)
+export async function getSessionAuth() {
+  const session = await requireSession()
+  const mosquesList = await getMosquesByUserId(session.user.id)
+  return {
+    session,
+    user: { id: session.user.id, role: session.user.role },
+    userMosqueIds: mosquesList.map((m) => m.id),
+  }
 }

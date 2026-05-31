@@ -39,7 +39,7 @@ export default async function SuperAdminPage() {
                     {m.isVerified && <Badge variant="secondary">✓ Vérifiée</Badge>}
                   </div>
                   <p className="text-sm text-gray-500">
-                    {m.city}, {m.country} · /{m.slug} · admin : {m.adminEmail}
+                    {m.city}, {m.country} · /{m.slug}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -48,6 +48,9 @@ export default async function SuperAdminPage() {
                   </Link>
                   <Link href={`/super-admin/mosques/${m.id}/edit`}>
                     <Button variant="outline" size="sm">Modifier</Button>
+                  </Link>
+                  <Link href={`/super-admin/mosques/${m.id}/admins`}>
+                    <Button variant="outline" size="sm">Admins</Button>
                   </Link>
                 </div>
               </CardContent>

@@ -9,6 +9,7 @@ import {
   account,
   session,
   verification,
+  mosqueAdmins,
 } from "./schema"
 import { eq } from "drizzle-orm"
 
@@ -16,12 +17,11 @@ import { eq } from "drizzle-orm"
 const DEMO_PASSWORD = "Password123"
 
 // Crée un compte via Better-Auth (hash du mot de passe + table account),
-// puis fixe role / mosqueId / emailVerified directement en base.
+// puis fixe role / emailVerified directement en base. Retourne l'ID du compte.
 async function createAdmin(input: {
   name: string
   email: string
   role: string
-  mosqueId: number
 }): Promise<string> {
   await auth.api.signUpEmail({
     body: { name: input.name, email: input.email, password: DEMO_PASSWORD },
@@ -29,7 +29,7 @@ async function createAdmin(input: {
 
   await db
     .update(users)
-    .set({ role: input.role, mosqueId: input.mosqueId, emailVerified: true })
+    .set({ role: input.role, emailVerified: true })
     .where(eq(users.email, input.email))
 
   const [row] = await db
@@ -49,6 +49,7 @@ async function seed() {
     console.log("🧹 Nettoyage des tables...")
     await db.delete(events)
     await db.delete(announcements)
+    await db.delete(mosqueAdmins)   // ← AJOUT (avant users et mosques)
     await db.delete(account)
     await db.delete(session)
     await db.delete(verification)
@@ -95,22 +96,27 @@ async function seed() {
       name: "Abdoulaye Diallo",
       email: "abdoulaye@masdjid-taqwa.com",
       role: "admin",
-      mosqueId: mosque1.id,
     })
     const member1Id = await createAdmin({
       name: "Mamadou Bah",
       email: "mamadou@masdjid-taqwa.com",
       role: "member",
-      mosqueId: mosque1.id,
     })
     const admin2Id = await createAdmin({
       name: "Aissatou Sow",
       email: "aissatou@mosquee-labe.com",
       role: "admin",
-      mosqueId: mosque2.id,
     })
 
     console.log("✅ 3 comptes créés (mot de passe :", DEMO_PASSWORD, ")")
+
+    // ── ÉTAPE 3bis : Lier les admins à leurs mosquées (table de liaison)
+    console.log("🔗 Liaison admins ↔ mosquées...")
+    await db.insert(mosqueAdmins).values([
+      { mosqueId: mosque1.id, userId: admin1Id },   // Abdoulaye → TAQWA
+      { mosqueId: mosque2.id, userId: admin2Id },   // Aissatou → Labé
+    ])
+    console.log("✅ Liens créés")
 
     // ── ÉTAPE 4 : Annonces
     console.log("📢 Insertion des annonces...")

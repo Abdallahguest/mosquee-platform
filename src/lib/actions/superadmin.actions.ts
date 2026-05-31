@@ -5,9 +5,41 @@ import { z } from "zod"
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { mosques } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
 import { users } from "@/db/schema"
+import { mosqueAdmins } from "@/db/schema"
+
+export async function assignAdminToMosque(mosqueId: number, userId: string): Promise<ActionResult> {
+  await requireSuperAdmin()
+
+  try {
+    await db
+      .insert(mosqueAdmins)
+      .values({ mosqueId, userId })
+      .onConflictDoNothing()  // évite le doublon si déjà lié
+
+    revalidatePath(`/super-admin/mosques/${mosqueId}/admins`)
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "Erreur lors de l'assignation." }
+  }
+}
+
+export async function removeAdminFromMosque(mosqueId: number, userId: string): Promise<ActionResult> {
+  await requireSuperAdmin()
+
+  try {
+    await db
+      .delete(mosqueAdmins)
+      .where(and(eq(mosqueAdmins.mosqueId, mosqueId), eq(mosqueAdmins.userId, userId)))
+
+    revalidatePath(`/super-admin/mosques/${mosqueId}/admins`)
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "Erreur lors du retrait." }
+  }
+}
 
 const CreateUserSchema = z.object({
   name:     z.string().min(1, "Nom requis").max(100),
@@ -85,7 +117,6 @@ const MosqueSchema = z.object({
   longitude:         z.number().min(-180).max(180),
   timezone:          z.string().min(1),
   calculationMethod: z.enum(["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi"]),
-  adminEmail:        z.string().email("Email invalide"),
   isVerified:        z.boolean().default(false),
   donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
   contactEmail: z.string().email("Email invalide").or(z.literal("")).optional(),
@@ -102,7 +133,6 @@ function parseForm(formData: FormData) {
     longitude:         Number(formData.get("longitude")),
     timezone:          formData.get("timezone"),
     calculationMethod: formData.get("calculationMethod"),
-    adminEmail:        String(formData.get("adminEmail") ?? "").trim().toLowerCase(),
     isVerified:        formData.get("isVerified") === "true",
     donationUrl:  formData.get("donationUrl") || null,
     contactEmail: formData.get("contactEmail") || null,

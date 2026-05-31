@@ -23,7 +23,7 @@ export const mosques = pgTable("mosques", {
   longitude:         doublePrecision("longitude").notNull(),
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
   calculationMethod: varchar("calculation_method", { length: 50 }).notNull().default("MWL"),
-  adminEmail:        varchar("admin_email", { length: 255 }).notNull(),
+  adminEmail:        varchar("admin_email", { length: 255 }),
   isVerified:        boolean("is_verified").notNull().default(false),
   createdAt:         timestamp("created_at").notNull().defaultNow(),
   donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel
@@ -53,7 +53,6 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").notNull().default(false),
   image:         text("image"),
   role:          text("role").notNull().default("admin"),  // "admin" ou "super_admin"
-  mosqueId:      integer("mosque_id").references(() => mosques.id),
   createdAt:     timestamp("created_at").notNull().defaultNow(),
   updatedAt:     timestamp("updated_at").notNull().defaultNow(),
 })

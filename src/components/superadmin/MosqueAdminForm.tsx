@@ -12,7 +12,7 @@ interface MosqueAdminFormProps {
   mosque?: {
     id: number; slug: string; name: string; city: string; country: string
     latitude: number; longitude: number; timezone: string
-    calculationMethod: string; adminEmail: string; isVerified: boolean
+    calculationMethod: string; isVerified: boolean
     donationUrl?: string | null
     contactEmail?: string | null
     contactPhone?: string | null
@@ -100,14 +100,7 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
           <option value="Karachi">Karachi</option>
         </select>
       </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="adminEmail">Email de l&apos;admin de cette mosquée</Label>
-        <Input id="adminEmail" name="adminEmail" type="email" required defaultValue={mosque?.adminEmail} />
-        <p className="text-xs text-gray-400">
-          Le compte avec cet email aura accès à l&apos;administration de cette mosquée.
-        </p>
-      </div>
+      
 
       <div className="flex items-center gap-2">
         <input

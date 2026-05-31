@@ -1,6 +1,6 @@
 import { db } from "./index"
 import { mosques, announcements, events, users, mosqueAdmins } from "./schema"
-import { eq, and, gt, desc, isNull, or, asc, sql, count } from "drizzle-orm"
+import { eq, and, gt, desc, isNull, or, asc, count } from "drizzle-orm"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)
@@ -139,20 +139,6 @@ export async function getMosqueById(id: number) {
   return result[0] ?? null
 }
 
-export async function getMosqueByAdminEmail(email: string) {
-  try {
-    const result = await db
-      .select()
-      .from(mosques)
-      .where(sql`lower(${mosques.adminEmail}) = lower(${email})`)
-      .limit(1)
-    return result[0] ?? null
-  } catch (error) {
-    console.error("Erreur récupération mosquée par admin:", error)
-    return null
-  }
-}
-
 // ── ANNONCES ──
 
 export async function getActiveAnnouncements(mosqueId: number) {
@@ -224,4 +210,49 @@ export async function getEventById(id: number, mosqueId: number) {
     .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
     .limit(1)
   return result[0] ?? null
+}
+
+// Liste les admins liés à une mosquée (avec leurs infos)
+export async function getMosqueAdmins(mosqueId: number) {
+  try {
+    const rows = await db
+      .select({
+        linkId: mosqueAdmins.id,
+        userId: users.id,
+        name:   users.name,
+        email:  users.email,
+        role:   users.role,
+      })
+      .from(mosqueAdmins)
+      .innerJoin(users, eq(mosqueAdmins.userId, users.id))
+      .where(eq(mosqueAdmins.mosqueId, mosqueId))
+      .orderBy(users.name)
+    return rows
+  } catch (error) {
+    console.error("Erreur récupération admins de la mosquée:", error)
+    return []
+  }
+}
+
+// Liste les comptes NON encore liés à cette mosquée (candidats à assigner)
+export async function getUsersNotAdminOfMosque(mosqueId: number) {
+  try {
+    const linked = await db
+      .select({ userId: mosqueAdmins.userId })
+      .from(mosqueAdmins)
+      .where(eq(mosqueAdmins.mosqueId, mosqueId))
+
+    const linkedIds = linked.map((l) => l.userId)
+
+    const allUsers = await db
+      .select({ id: users.id, name: users.name, email: users.email, role: users.role })
+      .from(users)
+      .orderBy(users.name)
+
+    // Exclure ceux déjà liés
+    return allUsers.filter((u) => !linkedIds.includes(u.id))
+  } catch (error) {
+    console.error("Erreur récupération comptes assignables:", error)
+    return []
+  }
 }

@@ -4,11 +4,9 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
-import { mosques } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
-import { users } from "@/db/schema"
-import { mosqueAdmins } from "@/db/schema"
+import { mosques, users, mosqueAdmins } from "@/db/schema"
 
 export async function assignAdminToMosque(mosqueId: number, userId: string): Promise<ActionResult> {
   await requireSuperAdmin()
@@ -134,9 +132,9 @@ function parseForm(formData: FormData) {
     timezone:          formData.get("timezone"),
     calculationMethod: formData.get("calculationMethod"),
     isVerified:        formData.get("isVerified") === "true",
-    donationUrl:  formData.get("donationUrl") || null,
-    contactEmail: formData.get("contactEmail") || null,
-    contactPhone: formData.get("contactPhone") || null,
+    donationUrl:  formData.get("donationUrl")  ?? "",
+    contactEmail: formData.get("contactEmail") ?? "",
+    contactPhone: formData.get("contactPhone") ?? "",
   }
 }
 
@@ -145,7 +143,9 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
 
   const parsed = MosqueSchema.safeParse(parseForm(formData))
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
+    const issue = parsed.error.issues[0]
+    const champ = issue?.path?.join(".") ?? "champ inconnu"
+    return { success: false, error: `Problème sur "${champ}" : ${issue?.message ?? "valeur invalide"}` }
   }
 
   try {
@@ -177,7 +177,9 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
 
   const parsed = MosqueSchema.safeParse(parseForm(formData))
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
+    const issue = parsed.error.issues[0]
+    const champ = issue?.path?.join(".") ?? "champ inconnu"
+    return { success: false, error: `Problème sur "${champ}" : ${issue?.message ?? "valeur invalide"}` }
   }
 
   try {

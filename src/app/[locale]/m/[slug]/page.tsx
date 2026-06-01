@@ -40,36 +40,32 @@ export default async function MosquePublicPage({ params }: PageProps) {
     getUpcomingEvents(mosque.id),
   ])
 
-  const adjustments = {
-    adjust: {
-      Fajr:    mosque.adjustFajr,
-      Dhuhr:   mosque.adjustDhuhr,
-      Asr:     mosque.adjustAsr,
-      Maghrib: mosque.adjustMaghrib,
-      Isha:    mosque.adjustIsha,
-    },
-    iqama: {
-      Fajr:    mosque.iqamaFajr,
-      Dhuhr:   mosque.iqamaDhuhr,
-      Asr:     mosque.iqamaAsr,
-      Maghrib: mosque.iqamaMaghrib,
-      Isha:    mosque.iqamaIsha,
-    },
-  }
-
-  const { prayers, nextPrayer } = getDailyPrayerTimes(
-    mosque.latitude,
-    mosque.longitude,
-    mosque.timezone,
-    mosque.calculationMethod,
-    new Date(),
-    adjustments
-  )
+  // ── Horaires MANUELS (Approche A) ──
+  // On lit directement les colonnes de la mosquée. Plus aucun calcul ici.
+  // Les heures non renseignées (null) s'affichent "—" et sont ignorées du countdown.
+  const { prayers, nextPrayer } = getDailyPrayerTimes({
+    fajrTime:    mosque.fajrTime,
+    dhuhrTime:   mosque.dhuhrTime,
+    asrTime:     mosque.asrTime,
+    maghribTime: mosque.maghribTime,
+    ishaTime:    mosque.ishaTime,
+    jumuaTime:   mosque.jumuaTime,
+    iqamaFajr:    mosque.iqamaFajr,
+    iqamaDhuhr:   mosque.iqamaDhuhr,
+    iqamaAsr:     mosque.iqamaAsr,
+    iqamaMaghrib: mosque.iqamaMaghrib,
+    iqamaIsha:    mosque.iqamaIsha,
+    timezone:     mosque.timezone,
+    latitude:     mosque.latitude,
+    longitude:    mosque.longitude,
+    calculationMethod: mosque.calculationMethod,
+  })
 
   const today = new Date().toLocaleDateString("fr-FR", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: mosque.timezone,
   })
 
   return (
@@ -97,8 +93,10 @@ export default async function MosquePublicPage({ params }: PageProps) {
           {/* Horaires */}
           <section>
             <PrayerSchedule prayers={prayers} nextPrayer={nextPrayer} />
+            {/* Mention de source : horaires communiqués par la mosquée
+                (anti-ghich : on ne prétend pas calculer, c'est la mosquée qui fixe). */}
             <p className="text-center text-xs text-gray-400 mt-3">
-              {t("method", { method: mosque.calculationMethod })} · {mosque.timezone}
+              {t("manualSource")} · {mosque.timezone}
             </p>
           </section>
 

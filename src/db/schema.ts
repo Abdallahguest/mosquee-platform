@@ -43,6 +43,16 @@ export const mosques = pgTable("mosques", {
   adjustAsr:     integer("adjust_asr").notNull().default(0),
   adjustMaghrib: integer("adjust_maghrib").notNull().default(0),
   adjustIsha:    integer("adjust_isha").notNull().default(0),
+
+  // ── Horaires manuels (Approche A) ──
+  // Format "HH:MM", null = non renseigné → la page publique affiche "—".
+  // Source de vérité affichée. Le calcul MWL n'est plus qu'une suggestion admin.
+  fajrTime:    varchar("fajr_time",    { length: 5 }),
+  dhuhrTime:   varchar("dhuhr_time",   { length: 5 }),
+  asrTime:     varchar("asr_time",     { length: 5 }),
+  maghribTime: varchar("maghrib_time", { length: 5 }),
+  ishaTime:    varchar("isha_time",    { length: 5 }),
+  jumuaTime:   varchar("jumua_time",   { length: 5 }),  // vendredi, affiché EN PLUS de Dhuhr
 })
 
 // ── TABLE UTILISATEURS ── (gérée par Better-Auth ; role + mosqueId sont des champs métier)

@@ -7,7 +7,7 @@
     "backToHome": "Retour à l'accueil",
     "allMosques": "Toutes les mosquées",
     "noContent": "Aucune annonce ni événement pour le moment.",
-    "contentOriginal": "Contenu dans sa langue d'origine"
+    "contentInLang": "Contenu en {lang}"
   },
   "home": {
     "title": "Plateforme Mosquée",

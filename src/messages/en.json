@@ -7,7 +7,7 @@
     "backToHome": "Back to home",
     "allMosques": "All mosques",
     "noContent": "No announcements or events yet.",
-    "contentOriginal": "Content in its original language"
+    "contentInLang": "Content in {lang}"
   },
   "home": {
     "title": "Mosque Platform",

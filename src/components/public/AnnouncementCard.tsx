@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server"
-import { routing } from "@/i18n/routing"
+import { contentLanguageName, shouldShowContentLangNote } from "@/lib/content-language"
 import MarkdownContent from "./MarkdownContent"
 
 interface Announcement {
@@ -16,7 +16,7 @@ interface AnnouncementCardProps {
 export default async function AnnouncementCard({ announcement }: AnnouncementCardProps) {
   const locale = await getLocale()
   const t = await getTranslations("common")
-  const contentInOtherLang = locale !== routing.defaultLocale
+  const showLangNote = shouldShowContentLangNote(locale)
 
   const dateString = announcement.publishedAt
     ? new Date(announcement.publishedAt).toLocaleDateString(locale, {
@@ -36,8 +36,10 @@ export default async function AnnouncementCard({ announcement }: AnnouncementCar
           <span className="shrink-0 text-xs text-gray-500 mt-0.5" dir="ltr">{dateString}</span>
         )}
       </div>
-      {contentInOtherLang && (
-        <p className="text-[11px] text-gray-400 mb-2">{t("contentOriginal")}</p>
+      {showLangNote && (
+        <p className="text-[11px] text-gray-400 mb-2">
+          {t("contentInLang", { lang: contentLanguageName(locale) })}
+        </p>
       )}
       <div className="text-sm text-gray-600">
         <MarkdownContent content={announcement.content} />

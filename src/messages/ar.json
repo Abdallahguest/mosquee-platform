@@ -7,7 +7,7 @@
     "backToHome": "العودة إلى الرئيسية",
     "allMosques": "جميع المساجد",
     "noContent": "لا توجد إعلانات أو فعاليات حالياً.",
-    "contentOriginal": "المحتوى بلغته الأصلية"
+    "contentInLang": "المحتوى بـ{lang}"
   },
   "home": {
     "title": "منصة المساجد",

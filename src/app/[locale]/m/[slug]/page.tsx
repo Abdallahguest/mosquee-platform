@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { getMosqueBySlug } from "@/db/queries"
 import { getActiveAnnouncements } from "@/db/queries"
@@ -32,6 +32,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
   const ta = await getTranslations("announcements")
   const te = await getTranslations("events")
   const tc = await getTranslations("common")
+  const locale = await getLocale()
 
   const [activeAnnouncements, upcomingEvents] = await Promise.all([
     getActiveAnnouncements(mosque.id),
@@ -50,7 +51,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
     timezone:     mosque.timezone,
   }
 
-  const today = new Date().toLocaleDateString("fr-FR", {
+  const today = new Date().toLocaleDateString(locale, {
     weekday: "long", day: "numeric", month: "long", timeZone: mosque.timezone,
   })
 

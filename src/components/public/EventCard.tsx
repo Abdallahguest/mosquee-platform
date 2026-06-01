@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server"
-import { routing } from "@/i18n/routing"
+import { contentLanguageName, shouldShowContentLangNote } from "@/lib/content-language"
 
 interface Event {
   id: number
@@ -17,10 +17,7 @@ interface EventCardProps {
 export default async function EventCard({ event }: EventCardProps) {
   const locale = await getLocale()
   const t = await getTranslations("common")
-  // Le contenu est saisi dans la langue par défaut de la plateforme (fr).
-  // Si l'on affiche dans une autre langue, on le signale honnêtement (R1),
-  // sans prétendre traduire (anti-ghich).
-  const contentInOtherLang = locale !== routing.defaultLocale
+  const showLangNote = shouldShowContentLangNote(locale)
   const start = new Date(event.startAt)
   const end = event.endAt ? new Date(event.endAt) : null
 
@@ -58,8 +55,10 @@ export default async function EventCard({ event }: EventCardProps) {
         <h3 className="font-semibold text-gray-900 mb-1 leading-snug">
           {event.title}
         </h3>
-        {contentInOtherLang && (
-          <p className="text-[11px] text-gray-400 mb-1">{t("contentOriginal")}</p>
+        {showLangNote && (
+          <p className="text-[11px] text-gray-400 mb-1">
+            {t("contentInLang", { lang: contentLanguageName(locale) })}
+          </p>
         )}
         {event.description && (
           <p className="text-sm text-gray-600 mb-2 leading-relaxed line-clamp-2">

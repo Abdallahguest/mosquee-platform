@@ -6,7 +6,8 @@
     "back": "Back",
     "backToHome": "Back to home",
     "allMosques": "All mosques",
-    "noContent": "No announcements or events yet."
+    "noContent": "No announcements or events yet.",
+    "contentOriginal": "Content in its original language"
   },
   "home": {
     "title": "Mosque Platform",
@@ -27,7 +28,8 @@
     "Maghrib": "Maghrib",
     "Isha": "Isha'",
     "Jumua": "Jumu'ah",
-    "passed": "Past prayer"
+    "passed": "Past prayer",
+    "scheduleLegend": "Congregational prayer shown large · Call to prayer on tap"
   },
   "announcements": {
     "title": "Announcements",

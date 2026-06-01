@@ -20,8 +20,8 @@ export default function PublicFooter({ mosque }: PublicFooterProps) {
 
         {(mosque.contactEmail || mosque.contactPhone) && (
           <div className="text-xs text-green-200 space-y-0.5">
-            {mosque.contactEmail && <p>✉ {mosque.contactEmail}</p>}
-            {mosque.contactPhone && <p>☎ {mosque.contactPhone}</p>}
+            {mosque.contactEmail && <p dir="ltr">✉ {mosque.contactEmail}</p>}
+            {mosque.contactPhone && <p dir="ltr">☎ {mosque.contactPhone}</p>}
           </div>
         )}
 

@@ -6,7 +6,8 @@
     "back": "Retour",
     "backToHome": "Retour à l'accueil",
     "allMosques": "Toutes les mosquées",
-    "noContent": "Aucune annonce ni événement pour le moment."
+    "noContent": "Aucune annonce ni événement pour le moment.",
+    "contentOriginal": "Contenu dans sa langue d'origine"
   },
   "home": {
     "title": "Plateforme Mosquée",
@@ -27,7 +28,8 @@
     "Maghrib": "Maghrib",
     "Isha": "Isha'",
     "Jumua": "Jumu'ah",
-    "passed": "Prière passée"
+    "passed": "Prière passée",
+    "scheduleLegend": "Prière de groupe affichée en grand · Appel à la prière au clic"
   },
   "announcements": {
     "title": "Annonces",

@@ -82,7 +82,7 @@ export default function PrayerSchedule({ schedule }: PrayerScheduleProps) {
         {/* Légende discrète : explique les deux heures sans jargon */}
         <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
           <p className="text-[11px] text-gray-500">
-            {t("iqamaLabel")} affichée en grand · {t("adhanLabel")} au clic
+            {t("scheduleLegend")}
           </p>
         </div>
       </div>
@@ -148,7 +148,7 @@ function PrayerRow({ prayer }: { prayer: PrayerTime }) {
           </span>
         )}
         {prayer.isPast && !prayer.isNext && (
-          <span className="text-xs text-gray-500" aria-label={t("passed")}>✓</span>
+          <span className="text-xs text-gray-500 ms-1" aria-label={t("passed")}>✓</span>
         )}
       </div>
 

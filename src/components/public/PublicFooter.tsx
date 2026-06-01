@@ -43,7 +43,7 @@ export default function PublicFooter({ mosque }: PublicFooterProps) {
 
         <div className="border-t border-green-800 pt-3">
           <p className="text-[11px] text-green-400">
-            Plateforme halal · Sans riba · Sans ghich · Sans jahàla
+            Plateforme respectueuse · sans intérêt ni tromperie · rien de caché
           </p>
         </div>
       </div>

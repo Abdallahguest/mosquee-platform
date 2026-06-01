@@ -18,13 +18,15 @@
     "schedule": "Today's schedule",
     "in": "in",
     "next": "Next",
+    "adhanLabel": "Call to prayer",
+    "iqamaLabel": "Congregational prayer",
+    "fridayOnly": "Friday only",
     "Fajr": "Fajr",
-    "Sunrise": "Sunrise",
     "Dhuhr": "Dhuhr",
     "Asr": "Asr",
     "Maghrib": "Maghrib",
-    "Isha": "Isha",
-    "method": "{method} method"
+    "Isha": "Isha'",
+    "Jumua": "Jumu'ah"
   },
   "announcements": {
     "title": "Announcements",
@@ -35,7 +37,7 @@
     "empty": "No upcoming events."
   },
   "footer": {
-    "tagline": "Halal platform · No riba · No ghich · No jahàla"
+    "tagline": "Respectful platform · no interest, no deception · nothing hidden"
   },
   "notFound": {
     "title": "Page not found",

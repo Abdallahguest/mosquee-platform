@@ -18,13 +18,15 @@
     "schedule": "Horaires du jour",
     "in": "dans",
     "next": "Prochaine",
+    "adhanLabel": "Appel à la prière",
+    "iqamaLabel": "Prière de groupe",
+    "fridayOnly": "Vendredi uniquement",
     "Fajr": "Fajr",
-    "Sunrise": "Shuruq",
     "Dhuhr": "Dhuhr",
     "Asr": "Asr",
     "Maghrib": "Maghrib",
-    "Isha": "Isha",
-    "method": "Méthode {method}"
+    "Isha": "Isha'",
+    "Jumua": "Jumu'ah"
   },
   "announcements": {
     "title": "Annonces",
@@ -35,7 +37,7 @@
     "empty": "Aucun événement à venir."
   },
   "footer": {
-    "tagline": "Plateforme halal · Sans riba · Sans ghich · Sans jahàla"
+    "tagline": "Plateforme respectueuse · sans intérêt ni tromperie · rien de caché"
   },
   "notFound": {
     "title": "Page introuvable",

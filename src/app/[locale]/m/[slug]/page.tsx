@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import { getMosqueBySlug } from "@/db/queries"
 import { getActiveAnnouncements } from "@/db/queries"
 import { getUpcomingEvents } from "@/db/queries"
-import { getDailyPrayerTimes } from "@/lib/prayer-times"
 import PublicNav from "@/components/public/PublicNav"
 import PrayerSchedule from "@/components/public/PrayerSchedule"
 import AnnouncementCard from "@/components/public/AnnouncementCard"
@@ -30,7 +29,6 @@ export default async function MosquePublicPage({ params }: PageProps) {
   const mosque = await getMosqueBySlug(slug)
   if (!mosque) notFound()
 
-  const t  = await getTranslations("prayer")
   const ta = await getTranslations("announcements")
   const te = await getTranslations("events")
   const tc = await getTranslations("common")
@@ -40,32 +38,20 @@ export default async function MosquePublicPage({ params }: PageProps) {
     getUpcomingEvents(mosque.id),
   ])
 
-  // ── Horaires MANUELS, modèle adhan + iqama (Approche A) ──
-  // L'iqama est l'heure principale ; l'adhan est secondaire (optionnel).
-  const { prayers, nextPrayer } = getDailyPrayerTimes({
-    fajrAdhan:    mosque.fajrAdhan,
-    fajrIqama:    mosque.fajrIqama,
-    dhuhrAdhan:   mosque.dhuhrAdhan,
-    dhuhrIqama:   mosque.dhuhrIqama,
-    asrAdhan:     mosque.asrAdhan,
-    asrIqama:     mosque.asrIqama,
-    maghribAdhan: mosque.maghribAdhan,
-    maghribIqama: mosque.maghribIqama,
-    ishaAdhan:    mosque.ishaAdhan,
-    ishaIqama:    mosque.ishaIqama,
-    jumuaAdhan:   mosque.jumuaAdhan,
-    jumuaIqama:   mosque.jumuaIqama,
+  // On passe les heures BRUTES + le fuseau : le composant client recompose et
+  // s'auto-actualise (la prochaine prière bascule sans rechargement).
+  const schedule = {
+    fajrAdhan:    mosque.fajrAdhan,    fajrIqama:    mosque.fajrIqama,
+    dhuhrAdhan:   mosque.dhuhrAdhan,   dhuhrIqama:   mosque.dhuhrIqama,
+    asrAdhan:     mosque.asrAdhan,     asrIqama:     mosque.asrIqama,
+    maghribAdhan: mosque.maghribAdhan, maghribIqama: mosque.maghribIqama,
+    ishaAdhan:    mosque.ishaAdhan,    ishaIqama:    mosque.ishaIqama,
+    jumuaAdhan:   mosque.jumuaAdhan,   jumuaIqama:   mosque.jumuaIqama,
     timezone:     mosque.timezone,
-    latitude:     mosque.latitude,
-    longitude:    mosque.longitude,
-    calculationMethod: mosque.calculationMethod,
-  })
+  }
 
   const today = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    timeZone: mosque.timezone,
+    weekday: "long", day: "numeric", month: "long", timeZone: mosque.timezone,
   })
 
   return (
@@ -87,10 +73,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
           <p className="text-sm text-gray-500 capitalize text-center">{today}</p>
 
           <section>
-            <PrayerSchedule prayers={prayers} nextPrayer={nextPrayer} />
-            <p className="text-center text-xs text-gray-400 mt-3">
-              {t("manualSource")} · {mosque.timezone}
-            </p>
+            <PrayerSchedule schedule={schedule} />
           </section>
 
           {activeAnnouncements.length > 0 && (
@@ -102,8 +85,8 @@ export default async function MosquePublicPage({ params }: PageProps) {
                 </span>
               </h2>
               <div className="flex flex-col gap-3">
-                {activeAnnouncements.map((announcement) => (
-                  <AnnouncementCard key={announcement.id} announcement={announcement} />
+                {activeAnnouncements.map((a) => (
+                  <AnnouncementCard key={a.id} announcement={a} />
                 ))}
               </div>
             </section>
@@ -118,8 +101,8 @@ export default async function MosquePublicPage({ params }: PageProps) {
                 </span>
               </h2>
               <div className="flex flex-col gap-3">
-                {upcomingEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
+                {upcomingEvents.map((ev) => (
+                  <EventCard key={ev.id} event={ev} />
                 ))}
               </div>
             </section>

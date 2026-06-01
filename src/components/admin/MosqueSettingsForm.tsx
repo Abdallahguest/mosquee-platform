@@ -26,11 +26,6 @@ interface Mosque {
   longitude: number
   timezone: string
   calculationMethod: string
-  iqamaFajr: number
-  iqamaDhuhr: number
-  iqamaAsr: number
-  iqamaMaghrib: number
-  iqamaIsha: number
   donationUrl: string | null
   contactEmail: string | null
   contactPhone: string | null
@@ -114,7 +109,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
         <CardHeader>
           <CardTitle className="text-base">Géolocalisation</CardTitle>
           <CardDescription>
-            Utilisée pour le calcul précis des horaires.{" "}
+            Position de la mosquée sur la carte.{" "}
             <a
               href="https://www.latlong.net"
               target="_blank"
@@ -130,38 +125,47 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
             <div className="space-y-1.5">
               <Label htmlFor="latitude">Latitude <span className="text-destructive">*</span></Label>
               <Input
-                id="latitude"
-                name="latitude"
-                type="number"
-                step="0.0001"
-                required
-                defaultValue={mosque.latitude}
+                id="latitude" name="latitude" type="number" step="0.0001"
+                required defaultValue={mosque.latitude}
               />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="longitude">Longitude <span className="text-destructive">*</span></Label>
               <Input
-                id="longitude"
-                name="longitude"
-                type="number"
-                step="0.0001"
-                required
-                defaultValue={mosque.longitude}
+                id="longitude" name="longitude" type="number" step="0.0001"
+                required defaultValue={mosque.longitude}
               />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Horaires */}
+      {/* Fuseau + méthode de suggestion */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Calcul des horaires</CardTitle>
-          <CardDescription>Choisissez la méthode reconnue dans votre région</CardDescription>
+          <CardTitle className="text-base">Fuseau horaire et aide au calcul</CardTitle>
+          <CardDescription>
+            Les horaires affichés sont ceux que vous saisissez vous-même (carte
+            « Horaires de prière »). La méthode ci-dessous sert uniquement de base
+            au bouton « Proposer les horaires » et ne change rien à ce qui est affiché.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label>Méthode de calcul <span className="text-destructive">*</span></Label>
+            <Label htmlFor="timezone">Fuseau horaire <span className="text-destructive">*</span></Label>
+            <Input
+              id="timezone" name="timezone" required
+              defaultValue={mosque.timezone} placeholder="Africa/Conakry"
+            />
+            <p className="text-xs text-muted-foreground">
+              Pour la Guinée : Africa/Conakry. Ailleurs : Europe/Paris, Asia/Riyadh…
+            </p>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-1.5">
+            <Label>Méthode de calcul (pour la proposition seulement)</Label>
             <Select value={method} onValueChange={setMethod}>
               <SelectTrigger>
                 <SelectValue />
@@ -175,99 +179,9 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
               </SelectContent>
             </Select>
           </div>
-
-          <Separator />
-
-          <div className="space-y-1.5">
-            <Label htmlFor="timezone">Fuseau horaire <span className="text-destructive">*</span></Label>
-            <Input
-              id="timezone"
-              name="timezone"
-              required
-              defaultValue={mosque.timezone}
-              placeholder="Africa/Conakry"
-            />
-            <p className="text-xs text-muted-foreground">
-              Exemples : Africa/Conakry, Europe/Paris, Asia/Riyadh
-            </p>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Ajustements iqama */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Ajustements iqama</CardTitle>
-          <CardDescription>
-            Délai en minutes entre l&apos;adhan et l&apos;iqama, pour chaque prière
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="iqamaFajr">Fajr (min)</Label>
-              <Input
-                id="iqamaFajr"
-                name="iqamaFajr"
-                type="number"
-                min={0}
-                max={60}
-                required
-                defaultValue={mosque.iqamaFajr}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="iqamaDhuhr">Dhuhr (min)</Label>
-              <Input
-                id="iqamaDhuhr"
-                name="iqamaDhuhr"
-                type="number"
-                min={0}
-                max={60}
-                required
-                defaultValue={mosque.iqamaDhuhr}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="iqamaAsr">Asr (min)</Label>
-              <Input
-                id="iqamaAsr"
-                name="iqamaAsr"
-                type="number"
-                min={0}
-                max={60}
-                required
-                defaultValue={mosque.iqamaAsr}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="iqamaMaghrib">Maghrib (min)</Label>
-              <Input
-                id="iqamaMaghrib"
-                name="iqamaMaghrib"
-                type="number"
-                min={0}
-                max={60}
-                required
-                defaultValue={mosque.iqamaMaghrib}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="iqamaIsha">Isha (min)</Label>
-              <Input
-                id="iqamaIsha"
-                name="iqamaIsha"
-                type="number"
-                min={0}
-                max={60}
-                required
-                defaultValue={mosque.iqamaIsha}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
       {/* Contact et don */}
       <Card>
         <CardHeader>
@@ -280,21 +194,16 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           <div className="space-y-1.5">
             <Label htmlFor="contactEmail">Email de contact public</Label>
             <Input
-              id="contactEmail"
-              name="contactEmail"
-              type="email"
-              defaultValue={mosque.contactEmail ?? ""}
-              placeholder="contact@mamosquee.com"
+              id="contactEmail" name="contactEmail" type="email"
+              defaultValue={mosque.contactEmail ?? ""} placeholder="contact@mamosquee.com"
             />
           </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="contactPhone">Téléphone de contact</Label>
             <Input
-              id="contactPhone"
-              name="contactPhone"
-              defaultValue={mosque.contactPhone ?? ""}
-              placeholder="+224 6XX XX XX XX"
+              id="contactPhone" name="contactPhone"
+              defaultValue={mosque.contactPhone ?? ""} placeholder="+224 6XX XX XX XX"
             />
           </div>
 
@@ -303,11 +212,8 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           <div className="space-y-1.5">
             <Label htmlFor="donationUrl">Lien de don (URL externe)</Label>
             <Input
-              id="donationUrl"
-              name="donationUrl"
-              type="url"
-              defaultValue={mosque.donationUrl ?? ""}
-              placeholder="https://..."
+              id="donationUrl" name="donationUrl" type="url"
+              defaultValue={mosque.donationUrl ?? ""} placeholder="https://..."
             />
             <p className="text-xs text-muted-foreground">
               Lien vers votre page de don. Il s&apos;ouvrira dans un nouvel onglet.
@@ -318,10 +224,8 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
       </Card>
 
       <Button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-green-700 hover:bg-green-800"
-        size="lg"
+        type="submit" disabled={loading}
+        className="w-full bg-green-700 hover:bg-green-800" size="lg"
       >
         {loading ? "Sauvegarde..." : "Sauvegarder les paramètres"}
       </Button>

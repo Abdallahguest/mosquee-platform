@@ -31,14 +31,17 @@ function makeMosque(overrides: Partial<MosqueScheduleInput> = {}): MosqueSchedul
 const at = (iso: string) => new Date(iso)
 
 describe("structure (modèle adhan/iqama)", () => {
-  it("retourne 5 prières un jour de semaine", () => {
+  it("retourne 6 lignes en semaine (5 prières + Jumu'ah grisée en dernier)", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    expect(prayers).toHaveLength(5)
+    expect(prayers).toHaveLength(6)
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua?.isInactive).toBe(true)
+    expect(prayers[prayers.length - 1].name).toBe("Jumua") // en dernier
   })
 
-  it("ordre correct", () => {
+  it("ordre correct en semaine (Jumu'ah en dernier, inactive)", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    expect(prayers.map((p) => p.name)).toEqual(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"])
+    expect(prayers.map((p) => p.name)).toEqual(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha", "Jumua"])
   })
 
   it("iqamaString = l'heure d'iqama saisie (heure principale)", () => {
@@ -163,15 +166,28 @@ describe("Jumu'ah (vendredi)", () => {
     expect(jumua?.adhanString).toBe("13:00")
   })
 
-  it("pas de Jumu'ah en semaine", () => {
-    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T08:00:00Z"))
-    expect(prayers.map((p) => p.name)).not.toContain("Jumua")
+  it("en semaine, Jumu'ah est présente mais inactive et jamais prochaine", () => {
+    const { prayers, nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T08:00:00Z"))
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua).toBeDefined()
+    expect(jumua?.isInactive).toBe(true)
+    expect(jumua?.isNext).toBe(false)
+    expect(jumua?.isPast).toBe(false)
+    expect(nextPrayer?.name).not.toBe("Jumua")
   })
 
-  it("le vendredi sans jumuaIqama → pas de ligne Jumu'ah", () => {
+  it("le vendredi sans jumuaIqama → ligne Jumu'ah présente, heure '—'", () => {
     const m = makeMosque({ jumuaIqama: null })
     const { prayers } = getDailyPrayerTimes(m, at("2026-06-05T08:00:00Z"))
-    expect(prayers.map((p) => p.name)).not.toContain("Jumua")
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua).toBeDefined()
+    expect(jumua?.iqamaString).toBe("—")
+  })
+
+  it("en semaine, Jumu'ah affiche bien son heure d'iqama (grisée mais lisible)", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T08:00:00Z"))
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua?.iqamaString).toBe("13:15")
   })
 })
 

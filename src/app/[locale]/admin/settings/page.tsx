@@ -1,5 +1,6 @@
 import { getSessionMosque } from "@/lib/auth-helpers"
 import MosqueSettingsForm from "@/components/admin/MosqueSettingsForm"
+import PrayerTimesForm from "@/components/admin/PrayerTimesForm"
 import ExportButton from "@/components/admin/ExportButton"
 import NoMosque from "@/components/admin/NoMosque"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -16,7 +17,33 @@ export default async function AdminSettingsPage() {
           Configuration de votre mosquée
         </p>
       </div>
+
+      {/* Horaires de prière — en haut, le plus visible (Bug A : saisie possible) */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">Horaires de prière</CardTitle>
+          <CardDescription>
+            Saisissez les heures réelles affichées dans votre mosquée.
+            Ce sont elles qui apparaissent sur la page publique.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PrayerTimesForm
+            mosqueId={mosque.id}
+            initial={{
+              fajrAdhan: mosque.fajrAdhan,       fajrIqama: mosque.fajrIqama,
+              dhuhrAdhan: mosque.dhuhrAdhan,     dhuhrIqama: mosque.dhuhrIqama,
+              asrAdhan: mosque.asrAdhan,         asrIqama: mosque.asrIqama,
+              maghribAdhan: mosque.maghribAdhan, maghribIqama: mosque.maghribIqama,
+              ishaAdhan: mosque.ishaAdhan,       ishaIqama: mosque.ishaIqama,
+              jumuaAdhan: mosque.jumuaAdhan,     jumuaIqama: mosque.jumuaIqama,
+            }}
+          />
+        </CardContent>
+      </Card>
+
       <MosqueSettingsForm mosque={mosque} />
+
       <Card className="mt-6">
         <CardHeader>
           <CardTitle className="text-base">Vos données</CardTitle>

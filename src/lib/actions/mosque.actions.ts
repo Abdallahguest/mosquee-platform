@@ -7,6 +7,11 @@ import { db } from "@/db/index"
 import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
+// Note : les délais iqama (minutes) ont été retirés — le modèle d'horaires
+// est désormais "adhan + iqama saisis en HH:MM" (voir PrayerTimesForm).
+// La méthode de calcul ne sert plus qu'à la SUGGESTION d'adhan, pas à
+// l'affichage. Ce schéma ne couvre donc que l'identité, la géo, le fuseau,
+// la méthode (pour la suggestion) et le contact/don.
 const MosqueSettingsSchema = z.object({
   name:              z.string().min(1).max(200),
   city:              z.string().min(1).max(100),
@@ -15,11 +20,6 @@ const MosqueSettingsSchema = z.object({
   longitude:         z.number().min(-180).max(180),
   timezone:          z.string().min(1),
   calculationMethod: z.enum(["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi"]),
-  iqamaFajr:    z.number().int().min(0).max(60),
-  iqamaDhuhr:   z.number().int().min(0).max(60),
-  iqamaAsr:     z.number().int().min(0).max(60),
-  iqamaMaghrib: z.number().int().min(0).max(60),
-  iqamaIsha:    z.number().int().min(0).max(60),
   // Contact et don (optionnels)
   donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
   contactEmail: z.string().email("Email de contact invalide").or(z.literal("")).optional(),
@@ -47,11 +47,6 @@ export async function updateMosqueSettings(
     longitude:         Number(formData.get("longitude")),
     timezone:          formData.get("timezone"),
     calculationMethod: formData.get("calculationMethod"),
-    iqamaFajr:    Number(formData.get("iqamaFajr")),
-    iqamaDhuhr:   Number(formData.get("iqamaDhuhr")),
-    iqamaAsr:     Number(formData.get("iqamaAsr")),
-    iqamaMaghrib: Number(formData.get("iqamaMaghrib")),
-    iqamaIsha:    Number(formData.get("iqamaIsha")),
     donationUrl:  formData.get("donationUrl") || "",
     contactEmail: formData.get("contactEmail") || "",
     contactPhone: formData.get("contactPhone") || "",

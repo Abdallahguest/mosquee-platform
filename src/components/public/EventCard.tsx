@@ -1,3 +1,5 @@
+import { getLocale } from "next-intl/server"
+
 interface Event {
   id: number
   title: string
@@ -11,28 +13,31 @@ interface EventCardProps {
   event: Event
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default async function EventCard({ event }: EventCardProps) {
+  const locale = await getLocale()
   const start = new Date(event.startAt)
+  const end = event.endAt ? new Date(event.endAt) : null
 
-  const dayNumber = start.toLocaleDateString("fr-FR", { day: "numeric" })
-  const monthName = start.toLocaleDateString("fr-FR", { month: "short" })
-  const timeString = start.toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  })
-  const endString = event.endAt
-    ? new Date(event.endAt).toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
+  const dayNumber = start.toLocaleDateString(locale, { day: "numeric" })
+  const monthName = start.toLocaleDateString(locale, { month: "short" })
+  const fmtTime = (d: Date) =>
+    d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false })
+
+  // Si l'événement finit un autre jour, on montre la date de fin (corrige B4 :
+  // évite de laisser croire que tout se passe le même jour).
+  const sameDay =
+    end &&
+    start.toLocaleDateString(locale) === end.toLocaleDateString(locale)
+  const endLabel = end
+    ? sameDay
+      ? fmtTime(end)
+      : `${end.toLocaleDateString(locale, { day: "numeric", month: "short" })} ${fmtTime(end)}`
     : null
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 flex gap-4 hover:shadow-sm transition-shadow">
 
-      {/* Calendrier mini */}
+      {/* Calendrier mini — flex se retourne automatiquement en RTL */}
       <div className="shrink-0 w-14 text-center">
         <div className="bg-green-700 text-white text-xs font-semibold py-1 rounded-t-lg uppercase">
           {monthName}
@@ -53,8 +58,8 @@ export default function EventCard({ event }: EventCardProps) {
           </p>
         )}
         <div className="flex flex-wrap gap-3 text-xs text-gray-500">
-          <span>🕐 {timeString}{endString ? ` → ${endString}` : ""}</span>
-          <span>📍 {event.location}</span>
+          <span><span aria-hidden="true">🕐</span> {fmtTime(start)}{endLabel ? ` → ${endLabel}` : ""}</span>
+          <span><span aria-hidden="true">📍</span> {event.location}</span>
         </div>
       </div>
 

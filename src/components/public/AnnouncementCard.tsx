@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server"
 import MarkdownContent from "./MarkdownContent"
 
 interface Announcement {
@@ -11,14 +12,18 @@ interface AnnouncementCardProps {
   announcement: Announcement
 }
 
-export default function AnnouncementCard({ announcement }: AnnouncementCardProps) {
-  const dateString = announcement.publishedAt 
-    ? new Date(announcement.publishedAt).toLocaleDateString("fr-FR", {
+// Server Component async : on lit la locale courante pour formater la date
+// dans la bonne langue (corrige B2), au lieu de "fr-FR" en dur.
+export default async function AnnouncementCard({ announcement }: AnnouncementCardProps) {
+  const locale = await getLocale()
+
+  const dateString = announcement.publishedAt
+    ? new Date(announcement.publishedAt).toLocaleDateString(locale, {
         day: "numeric",
         month: "long",
         year: "numeric",
       })
-    : "Non publié"
+    : null // page publique : annonces toujours publiées → pas de "Non publié" (corrige B3)
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-sm transition-shadow">
@@ -26,7 +31,9 @@ export default function AnnouncementCard({ announcement }: AnnouncementCardProps
         <h3 className="font-semibold text-gray-900 leading-snug">
           {announcement.title}
         </h3>
-        <span className="shrink-0 text-xs text-gray-400 mt-0.5">{dateString}</span>
+        {dateString && (
+          <span className="shrink-0 text-xs text-gray-500 mt-0.5">{dateString}</span>
+        )}
       </div>
       <div className="text-sm text-gray-600">
         <MarkdownContent content={announcement.content} />

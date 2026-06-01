@@ -35,14 +35,14 @@ export default function PublicFooter({ mosque }: PublicFooterProps) {
             >
               Faire un don
             </a>
-            <p className="text-[11px] text-green-400 mt-1">
+            <p className="text-[11px] text-green-300 mt-1">
               Don géré directement par la mosquée (lien externe)
             </p>
           </div>
         )}
 
         <div className="border-t border-green-800 pt-3">
-          <p className="text-[11px] text-green-400">
+          <p className="text-[11px] text-green-300">
             Plateforme respectueuse · sans intérêt ni tromperie · rien de caché
           </p>
         </div>

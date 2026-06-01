@@ -26,7 +26,8 @@
     "Asr": "العصر",
     "Maghrib": "المغرب",
     "Isha": "العشاء",
-    "Jumua": "الجمعة"
+    "Jumua": "الجمعة",
+    "passed": "صلاة فائتة"
   },
   "announcements": {
     "title": "الإعلانات",

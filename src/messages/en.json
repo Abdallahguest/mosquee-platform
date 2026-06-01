@@ -26,7 +26,8 @@
     "Asr": "Asr",
     "Maghrib": "Maghrib",
     "Isha": "Isha'",
-    "Jumua": "Jumu'ah"
+    "Jumua": "Jumu'ah",
+    "passed": "Past prayer"
   },
   "announcements": {
     "title": "Announcements",

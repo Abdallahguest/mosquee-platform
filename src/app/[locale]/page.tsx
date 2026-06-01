@@ -17,7 +17,7 @@ export default async function HomePage() {
           </div>
 
           <div className="text-center mb-10">
-            <div className="text-5xl mb-4">🕌</div>
+            <div className="text-5xl mb-4" aria-hidden="true">🕌</div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("title")}</h1>
             <p className="text-gray-500">{t("subtitle")}</p>
           </div>
@@ -35,7 +35,7 @@ export default async function HomePage() {
                   </p>
                   <p className="text-sm text-gray-500">{mosque.city}, {mosque.country}</p>
                 </div>
-                <span className="text-gray-400 rtl:rotate-180 group-hover:text-green-700 transition-colors">→</span>
+                <span className="text-gray-400 rtl:rotate-180 group-hover:text-green-700 transition-colors" aria-hidden="true">→</span>
               </Link>
             ))}
           </div>

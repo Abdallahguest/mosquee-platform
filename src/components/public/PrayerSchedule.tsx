@@ -52,11 +52,11 @@ export default function PrayerSchedule({ schedule }: PrayerScheduleProps) {
       {/* Prochaine prière + compte à rebours (basé sur l'iqama) */}
       {nextPrayer && (
         <div className="bg-green-700 text-white rounded-2xl p-6 text-center shadow-sm">
-          <p className="text-green-200 text-sm mb-1">{t("nextPrayer")}</p>
+          <p className="text-green-100 text-sm mb-1">{t("nextPrayer")}</p>
           <p className="text-3xl font-bold mb-1">{t(nextPrayer.name)}</p>
           <p className="text-5xl font-mono font-bold mb-2">{nextPrayer.iqamaString}</p>
           {nextPrayer.adhanString && (
-            <p className="text-green-200 text-xs mb-3">
+            <p className="text-green-100 text-xs mb-3">
               {t("adhanLabel")} · {nextPrayer.adhanString}
             </p>
           )}
@@ -81,7 +81,7 @@ export default function PrayerSchedule({ schedule }: PrayerScheduleProps) {
         </div>
         {/* Légende discrète : explique les deux heures sans jargon */}
         <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
-          <p className="text-[11px] text-gray-400">
+          <p className="text-[11px] text-gray-500">
             {t("iqamaLabel")} affichée en grand · {t("adhanLabel")} au clic
           </p>
         </div>
@@ -99,25 +99,44 @@ function PrayerRow({ prayer }: { prayer: PrayerTime }) {
   // Jumu'ah en semaine : grisée, non cliquable, pas d'état "prochaine/passée".
   if (prayer.isInactive) {
     return (
-      <div className="px-6 py-3.5 flex items-center justify-between opacity-40">
+      <div className="px-6 py-3.5 flex items-center justify-between opacity-50">
         <span className="font-medium text-gray-900">{t(prayer.name)}</span>
         <div className="text-right">
           <span className="font-mono text-lg font-semibold block text-gray-700">
             {prayer.iqamaString}
           </span>
-          <span className="text-[11px] text-gray-400">{t("fridayOnly")}</span>
+          <span className="text-[11px] text-gray-500">{t("fridayOnly")}</span>
         </div>
       </div>
     )
   }
 
+  // Ligne révélable : accessible au clavier (role/tabIndex/Enter-Espace) — corrige A1.
+  const interactiveProps = hasAdhan
+    ? {
+        role: "button" as const,
+        tabIndex: 0,
+        "aria-expanded": open,
+        "aria-label": `${t(prayer.name)} — ${t("iqamaLabel")} ${prayer.iqamaString}${
+          prayer.adhanString ? `, ${t("adhanLabel")} ${prayer.adhanString}` : ""
+        }`,
+        onClick: () => setOpen((v) => !v),
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setOpen((v) => !v)
+          }
+        },
+      }
+    : {}
+
   return (
     <div
-      onClick={() => hasAdhan && setOpen((v) => !v)}
+      {...interactiveProps}
       title={hasAdhan ? `${t("adhanLabel")} ${prayer.adhanString}` : undefined}
-      className={`px-6 py-3.5 flex items-center justify-between transition-colors ${
+      className={`px-6 py-3.5 flex items-center justify-between transition-colors outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-inset ${
         hasAdhan ? "cursor-pointer" : ""
-      } ${prayer.isNext ? "bg-green-50" : prayer.isPast ? "opacity-40" : ""}`}
+      } ${prayer.isNext ? "bg-green-50" : prayer.isPast ? "opacity-50" : ""}`}
     >
       <div className="flex items-center gap-3">
         <span className={`font-medium ${prayer.isNext ? "text-green-700" : "text-gray-900"}`}>
@@ -129,18 +148,18 @@ function PrayerRow({ prayer }: { prayer: PrayerTime }) {
           </span>
         )}
         {prayer.isPast && !prayer.isNext && (
-          <span className="text-xs text-gray-400">✓</span>
+          <span className="text-xs text-gray-500" aria-label={t("passed")}>✓</span>
         )}
       </div>
 
-      <div className="text-right">
+      <div className="text-end">
         <span className={`font-mono text-lg font-semibold block ${
           prayer.isNext ? "text-green-700" : "text-gray-700"
         }`}>
           {prayer.iqamaString}
         </span>
         {hasAdhan && open && (
-          <span className="text-[11px] text-gray-400">
+          <span className="text-[11px] text-gray-500">
             {t("adhanLabel")} · {prayer.adhanString}
           </span>
         )}

@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import type { ReactNode } from "react"
 
 export default function MarkdownContent({ content }: { content: string }) {
   return (
@@ -7,18 +8,11 @@ export default function MarkdownContent({ content }: { content: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          // Sécurité : forcer les liens externes en nouvel onglet + noopener
-          a: ({ href, children }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="text-green-700 hover:underline"
-            >
+          a: ({ href, children }: { href?: string; children?: ReactNode }) => (
+            <a href={href} target="_blank" rel="noopener noreferrer nofollow" className="text-green-700 hover:underline">
               {children}
             </a>
           ),
-          // Empêcher les images (sécurité + simplicité)
           img: () => null,
         }}
       >

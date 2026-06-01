@@ -1,10 +1,10 @@
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 
 export default function NotFound() {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="text-center">
-        <div className="text-6xl mb-4">🕌</div>
+        <div className="text-6xl mb-4" aria-hidden="true">🕌</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Page introuvable</h1>
         <p className="text-gray-500 mb-8">
           Cette mosquée n&apos;existe pas dans notre base de données.

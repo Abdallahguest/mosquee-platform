@@ -10,6 +10,13 @@ const LABELS: Record<string, string> = {
   ar: "ع",
 }
 
+// Noms complets pour les lecteurs d'écran (corrige A4)
+const NAMES: Record<string, string> = {
+  fr: "Français",
+  en: "English",
+  ar: "العربية",
+}
+
 interface LanguageSwitcherProps {
   variant?: "onLight" | "onGreen"
 }
@@ -39,18 +46,24 @@ export default function LanguageSwitcher({ variant = "onLight" }: LanguageSwitch
       : "text-gray-600 hover:text-gray-900"
 
   return (
-    <div className={`inline-flex rounded-lg p-0.5 ${containerClass}`}>
-      {routing.locales.map((loc) => (
-        <button
-          key={loc}
-          onClick={() => switchTo(loc)}
-          className={`px-3 py-1 text-sm rounded-md transition-colors ${
-            locale === loc ? activeClass : inactiveClass
-          }`}
-        >
-          {LABELS[loc]}
-        </button>
-      ))}
+    <div className={`inline-flex rounded-lg p-0.5 ${containerClass}`} role="group" aria-label="Langue">
+      {routing.locales.map((loc) => {
+        const isActive = locale === loc
+        return (
+          <button
+            key={loc}
+            onClick={() => switchTo(loc)}
+            lang={loc}
+            aria-label={NAMES[loc]}
+            aria-current={isActive ? "true" : undefined}
+            className={`px-3 py-1 text-sm rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 ${
+              isActive ? activeClass : inactiveClass
+            }`}
+          >
+            {LABELS[loc]}
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -7,22 +7,25 @@ import type { PrayerTimesActionState } from "@/lib/actions/prayer-times-types"
 interface Props {
   mosqueId: number
   initial: {
-    fajrTime: string | null
-    dhuhrTime: string | null
-    asrTime: string | null
-    maghribTime: string | null
-    ishaTime: string | null
-    jumuaTime: string | null
+    fajrAdhan: string | null;    fajrIqama: string | null
+    dhuhrAdhan: string | null;   dhuhrIqama: string | null
+    asrAdhan: string | null;     asrIqama: string | null
+    maghribAdhan: string | null; maghribIqama: string | null
+    ishaAdhan: string | null;    ishaIqama: string | null
+    jumuaAdhan: string | null;   jumuaIqama: string | null
   }
 }
 
-const FIELDS = [
-  { key: "fajrTime",    label: "Fajr" },
-  { key: "dhuhrTime",   label: "Dhuhr" },
-  { key: "asrTime",     label: "Asr" },
-  { key: "maghribTime", label: "Maghrib" },
-  { key: "ishaTime",    label: "Isha" },
-] as const
+type FieldKey = keyof Props["initial"]
+
+// Lignes quotidiennes : chaque prière a un champ adhan + un champ iqama.
+const ROWS: { label: string; adhan: FieldKey; iqama: FieldKey }[] = [
+  { label: "Fajr",    adhan: "fajrAdhan",    iqama: "fajrIqama" },
+  { label: "Dhuhr",   adhan: "dhuhrAdhan",   iqama: "dhuhrIqama" },
+  { label: "Asr",     adhan: "asrAdhan",     iqama: "asrIqama" },
+  { label: "Maghrib", adhan: "maghribAdhan", iqama: "maghribIqama" },
+  { label: "Isha",    adhan: "ishaAdhan",    iqama: "ishaIqama" },
+]
 
 const initialState: PrayerTimesActionState = { ok: false, message: "" }
 
@@ -31,17 +34,16 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
   const [suggesting, startSuggest] = useTransition()
   const [suggestMsg, setSuggestMsg] = useState("")
 
-  // Valeurs contrôlées : permettent au bouton "Pré-remplir" de remplir les champs.
-  const [values, setValues] = useState({
-    fajrTime:    initial.fajrTime ?? "",
-    dhuhrTime:   initial.dhuhrTime ?? "",
-    asrTime:     initial.asrTime ?? "",
-    maghribTime: initial.maghribTime ?? "",
-    ishaTime:    initial.ishaTime ?? "",
-    jumuaTime:   initial.jumuaTime ?? "",
+  const [values, setValues] = useState<Record<FieldKey, string>>({
+    fajrAdhan:    initial.fajrAdhan ?? "",    fajrIqama:    initial.fajrIqama ?? "",
+    dhuhrAdhan:   initial.dhuhrAdhan ?? "",   dhuhrIqama:   initial.dhuhrIqama ?? "",
+    asrAdhan:     initial.asrAdhan ?? "",     asrIqama:     initial.asrIqama ?? "",
+    maghribAdhan: initial.maghribAdhan ?? "", maghribIqama: initial.maghribIqama ?? "",
+    ishaAdhan:    initial.ishaAdhan ?? "",    ishaIqama:    initial.ishaIqama ?? "",
+    jumuaAdhan:   initial.jumuaAdhan ?? "",   jumuaIqama:   initial.jumuaIqama ?? "",
   })
 
-  function set(key: string, v: string) {
+  function set(key: FieldKey, v: string) {
     setValues((prev) => ({ ...prev, [key]: v }))
   }
 
@@ -53,16 +55,17 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         setSuggestMsg(res.message)
         return
       }
-      // Pré-remplit SANS écraser Jumu'ah (pas concerné par le calcul).
+      // Pré-remplit uniquement les ADHANS quotidiens. Ne touche jamais les iqamas
+      // (décision humaine) ni Jumu'ah.
       setValues((prev) => ({
         ...prev,
-        fajrTime:    res.suggested.fajrTime,
-        dhuhrTime:   res.suggested.dhuhrTime,
-        asrTime:     res.suggested.asrTime,
-        maghribTime: res.suggested.maghribTime,
-        ishaTime:    res.suggested.ishaTime,
+        fajrAdhan:    res.suggested.fajrAdhan,
+        dhuhrAdhan:   res.suggested.dhuhrAdhan,
+        asrAdhan:     res.suggested.asrAdhan,
+        maghribAdhan: res.suggested.maghribAdhan,
+        ishaAdhan:    res.suggested.ishaAdhan,
       }))
-      setSuggestMsg("Calcul inséré. Corrige selon le panneau de la mosquée, puis Enregistrer.")
+      setSuggestMsg("Adhans calculés insérés. L'iqama reste à fixer selon votre mosquée.")
     })
   }
 
@@ -76,8 +79,8 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         <div>
           <h2 className="font-semibold text-gray-900">Horaires de prière</h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            Saisis les heures réelles affichées par la mosquée (format 24h, ex. 05:35).
-            Laisse vide pour ne pas afficher une prière.
+            L&apos;<strong>iqama</strong> est l&apos;heure affichée en grand (présence obligatoire).
+            L&apos;<strong>adhan</strong> est optionnel. Laisser vide pour ne pas afficher.
           </p>
         </div>
         <button
@@ -86,7 +89,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
           disabled={suggesting}
           className="shrink-0 text-sm border border-green-600 text-green-700 rounded-lg px-3 py-2 hover:bg-green-50 disabled:opacity-50"
         >
-          {suggesting ? "Calcul…" : "Pré-remplir (calcul MWL)"}
+          {suggesting ? "Calcul…" : "Pré-remplir adhan (MWL)"}
         </button>
       </div>
 
@@ -94,40 +97,65 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         <p className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2">{suggestMsg}</p>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
-        {FIELDS.map((f) => (
-          <div key={f.key}>
-            <label htmlFor={f.key} className="block text-sm font-medium text-gray-700 mb-1">
-              {f.label}
-            </label>
-            <input
-              id={f.key}
-              name={f.key}
-              type="time"
-              value={values[f.key]}
-              onChange={(e) => set(f.key, e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-            />
-            {err[f.key] && <p className="text-xs text-red-600 mt-1">{err[f.key]}</p>}
+      {/* En-têtes de colonnes */}
+      <div className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center text-xs font-medium text-gray-400 px-1">
+        <span></span>
+        <span>Adhan</span>
+        <span>Iqama</span>
+      </div>
+
+      <div className="space-y-3">
+        {ROWS.map((row) => (
+          <div key={row.label} className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center">
+            <label className="text-sm font-medium text-gray-700">{row.label}</label>
+            <div>
+              <input
+                name={row.adhan}
+                type="time"
+                value={values[row.adhan]}
+                onChange={(e) => set(row.adhan, e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
+              />
+              {err[row.adhan] && <p className="text-xs text-red-600 mt-1">{err[row.adhan]}</p>}
+            </div>
+            <div>
+              <input
+                name={row.iqama}
+                type="time"
+                value={values[row.iqama]}
+                onChange={(e) => set(row.iqama, e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
+              />
+              {err[row.iqama] && <p className="text-xs text-red-600 mt-1">{err[row.iqama]}</p>}
+            </div>
           </div>
         ))}
 
-        {/* Jumu'ah : séparé, affiché le vendredi EN PLUS de Dhuhr. */}
-        <div>
-          <label htmlFor="jumuaTime" className="block text-sm font-medium text-gray-700 mb-1">
-            Jumu&apos;ah (vendredi)
-          </label>
-          <input
-            id="jumuaTime"
-            name="jumuaTime"
-            type="time"
-            value={values.jumuaTime}
-            onChange={(e) => set("jumuaTime", e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-          />
-          {err.jumuaTime && <p className="text-xs text-red-600 mt-1">{err.jumuaTime}</p>}
-          <p className="text-xs text-gray-400 mt-1">Affichée uniquement le vendredi.</p>
+        {/* Jumu'ah : même structure. Iqama = début khutba ; adhan = 1er adhan. */}
+        <div className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center pt-2 border-t border-gray-100">
+          <label className="text-sm font-medium text-gray-700">Jumu&apos;ah</label>
+          <div>
+            <input
+              name="jumuaAdhan"
+              type="time"
+              value={values.jumuaAdhan}
+              onChange={(e) => set("jumuaAdhan", e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
+            />
+            {err.jumuaAdhan && <p className="text-xs text-red-600 mt-1">{err.jumuaAdhan}</p>}
+          </div>
+          <div>
+            <input
+              name="jumuaIqama"
+              type="time"
+              value={values.jumuaIqama}
+              onChange={(e) => set("jumuaIqama", e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
+            />
+            {err.jumuaIqama && <p className="text-xs text-red-600 mt-1">{err.jumuaIqama}</p>}
+          </div>
         </div>
+        <p className="text-xs text-gray-400">Jumu&apos;ah s&apos;affiche uniquement le vendredi.</p>
       </div>
 
       {state.message && (

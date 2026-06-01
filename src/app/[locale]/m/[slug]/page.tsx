@@ -40,21 +40,21 @@ export default async function MosquePublicPage({ params }: PageProps) {
     getUpcomingEvents(mosque.id),
   ])
 
-  // ── Horaires MANUELS (Approche A) ──
-  // On lit directement les colonnes de la mosquée. Plus aucun calcul ici.
-  // Les heures non renseignées (null) s'affichent "—" et sont ignorées du countdown.
+  // ── Horaires MANUELS, modèle adhan + iqama (Approche A) ──
+  // L'iqama est l'heure principale ; l'adhan est secondaire (optionnel).
   const { prayers, nextPrayer } = getDailyPrayerTimes({
-    fajrTime:    mosque.fajrTime,
-    dhuhrTime:   mosque.dhuhrTime,
-    asrTime:     mosque.asrTime,
-    maghribTime: mosque.maghribTime,
-    ishaTime:    mosque.ishaTime,
-    jumuaTime:   mosque.jumuaTime,
-    iqamaFajr:    mosque.iqamaFajr,
-    iqamaDhuhr:   mosque.iqamaDhuhr,
-    iqamaAsr:     mosque.iqamaAsr,
-    iqamaMaghrib: mosque.iqamaMaghrib,
-    iqamaIsha:    mosque.iqamaIsha,
+    fajrAdhan:    mosque.fajrAdhan,
+    fajrIqama:    mosque.fajrIqama,
+    dhuhrAdhan:   mosque.dhuhrAdhan,
+    dhuhrIqama:   mosque.dhuhrIqama,
+    asrAdhan:     mosque.asrAdhan,
+    asrIqama:     mosque.asrIqama,
+    maghribAdhan: mosque.maghribAdhan,
+    maghribIqama: mosque.maghribIqama,
+    ishaAdhan:    mosque.ishaAdhan,
+    ishaIqama:    mosque.ishaIqama,
+    jumuaAdhan:   mosque.jumuaAdhan,
+    jumuaIqama:   mosque.jumuaIqama,
     timezone:     mosque.timezone,
     latitude:     mosque.latitude,
     longitude:    mosque.longitude,
@@ -70,14 +70,11 @@ export default async function MosquePublicPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-
-      {/* Navbar verte */}
       <PublicNav mosqueName={mosque.name} />
 
       <main className="flex-1">
         <div className="max-w-lg mx-auto px-6 py-6 space-y-8">
 
-          {/* Ville + badge vérifiée */}
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-500">{mosque.city}, {mosque.country}</p>
             {mosque.isVerified && (
@@ -87,20 +84,15 @@ export default async function MosquePublicPage({ params }: PageProps) {
             )}
           </div>
 
-          {/* Date du jour */}
           <p className="text-sm text-gray-500 capitalize text-center">{today}</p>
 
-          {/* Horaires */}
           <section>
             <PrayerSchedule prayers={prayers} nextPrayer={nextPrayer} />
-            {/* Mention de source : horaires communiqués par la mosquée
-                (anti-ghich : on ne prétend pas calculer, c'est la mosquée qui fixe). */}
             <p className="text-center text-xs text-gray-400 mt-3">
               {t("manualSource")} · {mosque.timezone}
             </p>
           </section>
 
-          {/* Annonces */}
           {activeAnnouncements.length > 0 && (
             <section>
               <h2 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -117,7 +109,6 @@ export default async function MosquePublicPage({ params }: PageProps) {
             </section>
           )}
 
-          {/* Événements */}
           {upcomingEvents.length > 0 && (
             <section>
               <h2 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -134,7 +125,6 @@ export default async function MosquePublicPage({ params }: PageProps) {
             </section>
           )}
 
-          {/* Aucun contenu */}
           {activeAnnouncements.length === 0 && upcomingEvents.length === 0 && (
             <div className="text-center py-8 text-gray-400">
               <p>{tc("noContent")}</p>
@@ -144,7 +134,6 @@ export default async function MosquePublicPage({ params }: PageProps) {
         </div>
       </main>
 
-      {/* Footer pleine largeur, collé en bas */}
       <PublicFooter mosque={mosque} />
     </div>
   )

@@ -1,7 +1,5 @@
-// Types partagés pour les actions sur les horaires de prière.
-// Fichier SÉPARÉ de l'action : un fichier "use server" ne peut exporter
-// que des fonctions async. Les types vivent donc ici, importables côté
-// client comme serveur sans contrainte.
+// Types partagés pour les actions horaires. Fichier SÉPARÉ de l'action :
+// un fichier "use server" ne peut exporter que des fonctions async.
 
 export type PrayerTimesActionState = {
   ok: boolean
@@ -10,5 +8,15 @@ export type PrayerTimesActionState = {
 }
 
 export type SuggestActionResult =
-  | { ok: true; suggested: { fajrTime: string; dhuhrTime: string; asrTime: string; maghribTime: string; ishaTime: string } }
+  | {
+      ok: true
+      suggested: {
+        fajrAdhan: string
+        dhuhrAdhan: string
+        asrAdhan: string
+        maghribAdhan: string
+        ishaAdhan: string
+      }
+    }
   | { ok: false; message: string }
+  

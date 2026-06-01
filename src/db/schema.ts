@@ -47,12 +47,18 @@ export const mosques = pgTable("mosques", {
   // ── Horaires manuels (Approche A) ──
   // Format "HH:MM", null = non renseigné → la page publique affiche "—".
   // Source de vérité affichée. Le calcul MWL n'est plus qu'une suggestion admin.
-  fajrTime:    varchar("fajr_time",    { length: 5 }),
-  dhuhrTime:   varchar("dhuhr_time",   { length: 5 }),
-  asrTime:     varchar("asr_time",     { length: 5 }),
-  maghribTime: varchar("maghrib_time", { length: 5 }),
-  ishaTime:    varchar("isha_time",    { length: 5 }),
-  jumuaTime:   varchar("jumua_time",   { length: 5 }),  // vendredi, affiché EN PLUS de Dhuhr
+  fajrAdhan:    varchar("fajr_adhan",    { length: 5 }),
+  fajrIqama:    varchar("fajr_iqama",    { length: 5 }),
+  dhuhrAdhan:   varchar("dhuhr_adhan",   { length: 5 }),
+  dhuhrIqama:   varchar("dhuhr_iqama",   { length: 5 }),
+  asrAdhan:     varchar("asr_adhan",     { length: 5 }),
+  asrIqama:     varchar("asr_iqama",     { length: 5 }),
+  maghribAdhan: varchar("maghrib_adhan", { length: 5 }),
+  maghribIqama: varchar("maghrib_iqama", { length: 5 }),
+  ishaAdhan:    varchar("isha_adhan",    { length: 5 }),
+  ishaIqama:    varchar("isha_iqama",    { length: 5 }),
+  jumuaAdhan:   varchar("jumua_adhan",   { length: 5 }),
+  jumuaIqama:   varchar("jumua_iqama",   { length: 5 }),
 })
 
 // ── TABLE UTILISATEURS ── (gérée par Better-Auth ; role + mosqueId sont des champs métier)

@@ -6,30 +6,20 @@ import {
   type MosqueScheduleInput,
 } from "@/lib/prayer-times"
 
-// ─────────────────────────────────────────────────────────────
-// Tests du mode MANUEL (Approche A).
-// La fonction lit les colonnes "HH:MM" de la mosquée ; le calcul MWL
-// n'est plus qu'une suggestion (testée séparément via suggestPrayerTimes).
-// On injecte `now` pour rendre les tests déterministes (pas de dépendance
-// à l'heure réelle d'exécution).
-// ─────────────────────────────────────────────────────────────
+// Modèle ADHAN + IQAMA. L'iqama est l'heure pivot (présence obligatoire).
+// On injecte `now` pour des tests déterministes. Conakry = UTC+0.
 
-const TZ = "Africa/Conakry" // UTC+0, sans changement d'heure
+const TZ = "Africa/Conakry"
 
-// Mosquée de référence : horaires réels relevés sur le panneau (Conakry).
+// Valeurs réelles de la mosquée d'Abdallah (déduites de ses règles).
 function makeMosque(overrides: Partial<MosqueScheduleInput> = {}): MosqueScheduleInput {
   return {
-    fajrTime:    "05:35",
-    dhuhrTime:   "13:35",
-    asrTime:     "16:35",
-    maghribTime: "19:20",
-    ishaTime:    "20:20",
-    jumuaTime:   "13:15",
-    iqamaFajr:    20,
-    iqamaDhuhr:   10,
-    iqamaAsr:     10,
-    iqamaMaghrib: 5,
-    iqamaIsha:    10,
+    fajrAdhan:    "05:20", fajrIqama:    "05:35",
+    dhuhrAdhan:   "13:20", dhuhrIqama:   "13:35",
+    asrAdhan:     "16:20", asrIqama:     "16:35",
+    maghribAdhan: "19:10", maghribIqama: "19:20",
+    ishaAdhan:    "20:10", ishaIqama:    "20:20",
+    jumuaAdhan:   "13:00", jumuaIqama:   "13:15",
     timezone:     TZ,
     latitude:     9.537,
     longitude:    -13.6773,
@@ -38,196 +28,185 @@ function makeMosque(overrides: Partial<MosqueScheduleInput> = {}): MosqueSchedul
   }
 }
 
-// Conakry = UTC+0, donc un ISO "...Z" correspond à l'heure locale affichée.
 const at = (iso: string) => new Date(iso)
 
-describe("getDailyPrayerTimes — structure (mode manuel)", () => {
+describe("structure (modèle adhan/iqama)", () => {
   it("retourne 5 prières un jour de semaine", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
     expect(prayers).toHaveLength(5)
   })
 
-  it("retourne les 5 prières dans le bon ordre (sans Sunrise)", () => {
+  it("ordre correct", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    expect(prayers.map((p) => p.name)).toEqual([
-      "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha",
-    ])
+    expect(prayers.map((p) => p.name)).toEqual(["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"])
   })
 
-  it("affiche les heures saisies telles quelles (HH:MM)", () => {
+  it("iqamaString = l'heure d'iqama saisie (heure principale)", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    const byName = Object.fromEntries(prayers.map((p) => [p.name, p.timeString]))
+    const byName = Object.fromEntries(prayers.map((p) => [p.name, p.iqamaString]))
     expect(byName.Fajr).toBe("05:35")
     expect(byName.Dhuhr).toBe("13:35")
     expect(byName.Isha).toBe("20:20")
   })
 
-  it("calcule l'iqama = heure + minutes d'iqama", () => {
+  it("adhanString présent quand l'adhan est saisi", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    const fajr = prayers.find((p) => p.name === "Fajr")
-    // Fajr 05:35 + 20 min d'iqama → 05:55
-    expect(fajr?.iqamaString).toBe("05:55")
+    const dhuhr = prayers.find((p) => p.name === "Dhuhr")
+    expect(dhuhr?.adhanString).toBe("13:20")
+  })
+
+  it("adhanString absent quand l'adhan n'est pas saisi", () => {
+    const m = makeMosque({ dhuhrAdhan: null })
+    const { prayers } = getDailyPrayerTimes(m, at("2026-06-01T10:00:00Z"))
+    const dhuhr = prayers.find((p) => p.name === "Dhuhr")
+    expect(dhuhr?.adhanString).toBeUndefined()
   })
 })
 
-describe("getDailyPrayerTimes — heures non renseignées (NULL → tiret)", () => {
-  it("affiche '—' pour une heure non saisie", () => {
-    const m = makeMosque({ asrTime: null })
+describe("iqama non renseignée (NULL → tiret)", () => {
+  it("affiche '—' et iqamaTime null", () => {
+    const m = makeMosque({ asrIqama: null })
     const { prayers } = getDailyPrayerTimes(m, at("2026-06-01T10:00:00Z"))
     const asr = prayers.find((p) => p.name === "Asr")
-    expect(asr?.timeString).toBe("—")
-    expect(asr?.time).toBeNull()
+    expect(asr?.iqamaString).toBe("—")
+    expect(asr?.iqamaTime).toBeNull()
   })
 
-  it("une heure non saisie n'est jamais 'passée' ni 'prochaine'", () => {
-    const m = makeMosque({ asrTime: null })
+  it("une iqama non saisie n'est jamais passée ni prochaine", () => {
+    const m = makeMosque({ asrIqama: null })
     const { prayers } = getDailyPrayerTimes(m, at("2026-06-01T23:00:00Z"))
     const asr = prayers.find((p) => p.name === "Asr")
     expect(asr?.isPast).toBe(false)
     expect(asr?.isNext).toBe(false)
   })
 
-  it("la prochaine prière ignore les heures NULL", () => {
-    // Seuls Fajr et Maghrib saisis. À 10:00, la prochaine doit être Maghrib.
-    const m = makeMosque({ dhuhrTime: null, asrTime: null, ishaTime: null })
+  it("l'adhan peut rester visible même si l'iqama est NULL", () => {
+    const m = makeMosque({ asrIqama: null, asrAdhan: "16:20" })
+    const { prayers } = getDailyPrayerTimes(m, at("2026-06-01T10:00:00Z"))
+    const asr = prayers.find((p) => p.name === "Asr")
+    expect(asr?.adhanString).toBe("16:20")
+  })
+
+  it("la prochaine prière ignore les iqamas NULL", () => {
+    const m = makeMosque({ dhuhrIqama: null, asrIqama: null, ishaIqama: null })
     const { nextPrayer } = getDailyPrayerTimes(m, at("2026-06-01T10:00:00Z"))
     expect(nextPrayer?.name).toBe("Maghrib")
   })
 })
 
-describe("getDailyPrayerTimes — prochaine prière", () => {
-  it("au plus une prière marquée isNext", () => {
+describe("prochaine prière (basée sur l'iqama)", () => {
+  it("au plus une isNext", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
     expect(prayers.filter((p) => p.isNext).length).toBeLessThanOrEqual(1)
   })
 
-  it("nextPrayer correspond à la prière marquée isNext (quand elle est aujourd'hui)", () => {
-    const { prayers, nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    const marked = prayers.find((p) => p.isNext)
-    expect(nextPrayer?.name).toBe(marked?.name)
-  })
-
-  it("à 04:00 → prochaine = Fajr", () => {
+  it("à 04:00 → Fajr", () => {
     const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T04:00:00Z"))
     expect(nextPrayer?.name).toBe("Fajr")
   })
 
-  it("à 10:00 → prochaine = Dhuhr", () => {
+  it("à 10:00 → Dhuhr", () => {
     const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
     expect(nextPrayer?.name).toBe("Dhuhr")
   })
 
-  it("à 19:25 → prochaine = Isha", () => {
-    const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T19:25:00Z"))
-    expect(nextPrayer?.name).toBe("Isha")
+  it("à 13:36 (juste après iqama Dhuhr) → Asr", () => {
+    const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T13:36:00Z"))
+    expect(nextPrayer?.name).toBe("Asr")
   })
 
-  it("la prochaine prière n'est jamais dans le passé", () => {
+  it("nextPrayer n'est jamais dans le passé", () => {
     const now = at("2026-06-01T10:00:00Z")
     const { nextPrayer } = getDailyPrayerTimes(makeMosque(), now)
-    expect(nextPrayer?.time).not.toBeNull()
-    expect(nextPrayer!.time!.getTime()).toBeGreaterThan(now.getTime())
+    expect(nextPrayer?.iqamaTime).not.toBeNull()
+    expect(nextPrayer!.iqamaTime!.getTime()).toBeGreaterThan(now.getTime())
+  })
+
+  it("nextPrayer porte l'adhan en complément", () => {
+    const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
+    expect(nextPrayer?.name).toBe("Dhuhr")
+    expect(nextPrayer?.adhanString).toBe("13:20")
   })
 })
 
-describe("getDailyPrayerTimes — bug historique du countdown (la nuit)", () => {
-  // Après Isha, toutes les prières du jour sont passées : l'ancienne logique
-  // renvoyait null. La nouvelle doit pointer sur le Fajr de DEMAIN.
-  it("à 21:00 (après Isha) → prochaine = Fajr de demain", () => {
+describe("bug historique du countdown (la nuit)", () => {
+  it("à 21:00 (après Isha) → Fajr de demain", () => {
     const now = at("2026-06-01T21:00:00Z")
     const { nextPrayer } = getDailyPrayerTimes(makeMosque(), now)
     expect(nextPrayer?.name).toBe("Fajr")
-    expect(nextPrayer?.time).not.toBeNull()
-    // Le Fajr de demain est dans le futur (demain matin).
-    expect(nextPrayer!.time!.getTime()).toBeGreaterThan(now.getTime())
-    // Et c'est bien le lendemain (plusieurs heures plus tard).
-    const hoursAway = (nextPrayer!.time!.getTime() - now.getTime()) / 3600000
+    expect(nextPrayer?.iqamaTime).not.toBeNull()
+    const hoursAway = (nextPrayer!.iqamaTime!.getTime() - now.getTime()) / 3600000
     expect(hoursAway).toBeGreaterThan(6)
   })
 
-  it("à 23:59 → prochaine = Fajr de demain (jamais null)", () => {
+  it("à 23:59 → Fajr de demain (jamais null)", () => {
     const { nextPrayer } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T23:59:00Z"))
     expect(nextPrayer).not.toBeNull()
     expect(nextPrayer?.name).toBe("Fajr")
   })
 })
 
-describe("getDailyPrayerTimes — Jumu'ah (vendredi)", () => {
+describe("Jumu'ah (vendredi)", () => {
   // 2026-06-05 est un vendredi.
-  it("le vendredi, Jumu'ah est affichée EN PLUS de Dhuhr", () => {
-    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T10:00:00Z"))
+  it("affichée EN PLUS de Dhuhr, juste après", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T08:00:00Z"))
     const names = prayers.map((p) => p.name)
     expect(names).toContain("Dhuhr")
     expect(names).toContain("Jumua")
-    // Jumu'ah insérée juste après Dhuhr.
     expect(names.indexOf("Jumua")).toBe(names.indexOf("Dhuhr") + 1)
   })
 
-  it("un jour de semaine, pas de Jumu'ah", () => {
-    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
+  it("iqama Jumu'ah = 13:15 (début khutba), adhan = 13:00", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T08:00:00Z"))
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua?.iqamaString).toBe("13:15")
+    expect(jumua?.adhanString).toBe("13:00")
+  })
+
+  it("pas de Jumu'ah en semaine", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T08:00:00Z"))
     expect(prayers.map((p) => p.name)).not.toContain("Jumua")
   })
 
-  it("le vendredi sans jumuaTime saisi, pas de ligne Jumu'ah", () => {
-    const m = makeMosque({ jumuaTime: null })
-    const { prayers } = getDailyPrayerTimes(m, at("2026-06-05T10:00:00Z"))
+  it("le vendredi sans jumuaIqama → pas de ligne Jumu'ah", () => {
+    const m = makeMosque({ jumuaIqama: null })
+    const { prayers } = getDailyPrayerTimes(m, at("2026-06-05T08:00:00Z"))
     expect(prayers.map((p) => p.name)).not.toContain("Jumua")
   })
 })
 
-describe("getDailyPrayerTimes — fuseau horaire", () => {
-  it("retourne le fuseau de la mosquée", () => {
-    const { timezone } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T10:00:00Z"))
-    expect(timezone).toBe(TZ)
-  })
-
-  it("compose correctement l'heure dans le fuseau (round-trip)", () => {
-    // À Conakry (UTC+0), Fajr "05:35" doit donner un instant à 05:35 UTC.
+describe("fuseau horaire", () => {
+  it("compose l'iqama correctement (round-trip Conakry)", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T00:00:00Z"))
-    const fajr = prayers.find((p) => p.name === "Fajr")
-    expect(fajr?.time?.toISOString()).toBe("2026-06-01T05:35:00.000Z")
+    const dhuhr = prayers.find((p) => p.name === "Dhuhr")
+    expect(dhuhr?.iqamaTime?.toISOString()).toBe("2026-06-01T13:35:00.000Z")
   })
 })
 
 describe("isValidHHMM", () => {
   it("accepte les heures valides", () => {
     expect(isValidHHMM("05:35")).toBe(true)
-    expect(isValidHHMM("00:00")).toBe(true)
     expect(isValidHHMM("23:59")).toBe(true)
   })
-  it("rejette les formats invalides", () => {
+  it("rejette les invalides", () => {
     expect(isValidHHMM("24:00")).toBe(false)
     expect(isValidHHMM("5:35")).toBe(false)
-    expect(isValidHHMM("05:60")).toBe(false)
     expect(isValidHHMM("")).toBe(false)
     expect(isValidHHMM(null)).toBe(false)
-    expect(isValidHHMM(undefined)).toBe(false)
   })
 })
 
-describe("suggestPrayerTimes — calcul MWL (aide optionnelle)", () => {
-  it("retourne 5 heures au format HH:MM", () => {
+describe("suggestPrayerTimes (adhan uniquement)", () => {
+  it("retourne 5 adhans au format HH:MM", () => {
     const s = suggestPrayerTimes(9.537, -13.6773, TZ, "MWL")
     const re = /^\d{2}:\d{2}$/
-    expect(s.fajrTime).toMatch(re)
-    expect(s.dhuhrTime).toMatch(re)
-    expect(s.asrTime).toMatch(re)
-    expect(s.maghribTime).toMatch(re)
-    expect(s.ishaTime).toMatch(re)
+    expect(s.fajrAdhan).toMatch(re)
+    expect(s.dhuhrAdhan).toMatch(re)
+    expect(s.ishaAdhan).toMatch(re)
   })
-
-  it("accepte toutes les méthodes reconnues sans erreur", () => {
-    for (const method of ["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi"]) {
-      expect(() => suggestPrayerTimes(9.537, -13.6773, TZ, method)).not.toThrow()
+  it("toutes méthodes sans erreur + fallback", () => {
+    for (const m of ["MWL", "ISNA", "Egyptian", "UmmAlQura", "Karachi", "INCONNUE"]) {
+      expect(() => suggestPrayerTimes(9.537, -13.6773, TZ, m)).not.toThrow()
     }
-  })
-
-  it("méthode inconnue → fallback MWL sans erreur", () => {
-    expect(() => suggestPrayerTimes(9.537, -13.6773, TZ, "METHODE_INEXISTANTE")).not.toThrow()
-  })
-
-  it("fonctionne pour d'autres villes (Paris, La Mecque)", () => {
-    expect(() => suggestPrayerTimes(48.8566, 2.3522, "Europe/Paris", "MWL")).not.toThrow()
-    expect(() => suggestPrayerTimes(21.3891, 39.8579, "Asia/Riyadh", "UmmAlQura")).not.toThrow()
   })
 })

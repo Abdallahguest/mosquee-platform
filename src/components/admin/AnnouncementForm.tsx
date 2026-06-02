@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { useTranslations } from "next-intl"
 import {
   createAnnouncement,
   updateAnnouncement,
@@ -28,6 +29,8 @@ interface AnnouncementFormProps {
 }
 
 export default function AnnouncementForm({ announcement }: AnnouncementFormProps) {
+  const t = useTranslations("admin.announcementForm")
+  const tc = useTranslations("admin.common")
   const isEdit = announcement != null
   const router = useRouter()
   const [error, setError]     = useState("")
@@ -59,7 +62,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
       return
     }
 
-    setSuccess("Annonce créée avec succès !")
+    setSuccess(t("createdSuccess"))
     formRef.current?.reset()
     setLoading(false)
     setTimeout(() => setSuccess(""), 3000)
@@ -69,7 +72,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
     <Card>
       <CardHeader>
         <CardTitle className="text-base">
-          {isEdit ? "Modifier l'annonce" : "Nouvelle annonce"}
+          {isEdit ? t("editTitle") : t("newTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -89,21 +92,21 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
 
           <div className="space-y-1.5">
             <Label htmlFor="title">
-              Titre <span className="text-destructive">*</span>
+              {t("fieldTitle")} <span className="text-destructive" aria-label={tc("required")}>*</span>
             </Label>
             <Input
               id="title"
               name="title"
               required
               maxLength={100}
-              placeholder="Titre de l'annonce"
+              placeholder={t("titlePlaceholder")}
               defaultValue={announcement?.title}
             />
           </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="content">
-              Contenu <span className="text-destructive">*</span>
+              {t("fieldContent")} <span className="text-destructive" aria-label={tc("required")}>*</span>
             </Label>
             <Textarea
               id="content"
@@ -111,12 +114,12 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
               required
               maxLength={2000}
               rows={4}
-              placeholder="Contenu de l'annonce..."
+              placeholder={t("contentPlaceholder")}
               className="resize-none"
               defaultValue={announcement?.content}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Markdown supporté : **gras**, *italique*, [lien](url), listes avec -
+              {t("formattingHelp")}
             </p>
           </div>
 
@@ -130,7 +133,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
               className="w-4 h-4 accent-green-600"
             />
             <Label htmlFor="isPublished" className="font-normal cursor-pointer">
-              Publier immédiatement
+              {t("publishNow")}
             </Label>
           </div>
 
@@ -140,10 +143,10 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             className="bg-green-700 hover:bg-green-800"
           >
             {loading
-              ? "Enregistrement..."
+              ? t("saving")
               : isEdit
-                ? "Enregistrer"
-                : "Créer l'annonce"}
+                ? t("saveButton")
+                : t("createButton")}
           </Button>
 
         </form>

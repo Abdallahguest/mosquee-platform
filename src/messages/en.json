@@ -61,5 +61,75 @@
     "thirdPartyBody": "The database is hosted by Neon and emails are sent through Resend. These providers only access data to deliver their service.",
     "contactTitle": "Contact",
     "contactBody": "For any question about your data, contact the administrator of your mosque."
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "announcements": "Announcements",
+      "events": "Events",
+      "settings": "Settings",
+      "viewPage": "View my mosque page",
+      "menu": "Menu",
+      "logout": "Log out"
+    },
+    "dashboard": {
+      "greeting": "Assalamu alaykum",
+      "yourMosque": "Your mosque",
+      "viewPublicPage": "View my mosque page",
+      "statAnnouncements": "Announcements",
+      "statEvents": "Events",
+      "statMosque": "Mosque",
+      "announcementsDesc": "{count, plural, =0 {None published} one {# published} other {# published}}",
+      "eventsDesc": "{count, plural, =0 {None upcoming} one {# upcoming} other {# upcoming}}",
+      "settingsDesc": "Mosque information",
+      "totalCount": "{count} total",
+      "connectedSince": "You have been signed in since {date}"
+    },
+    "noMosque": {
+      "title": "No mosque linked to your account",
+      "body": "Your account is not linked to any mosque yet. Please contact the person who manages the platform to link you to your mosque."
+    },
+    "announcementForm": {
+      "newTitle": "New announcement",
+      "editTitle": "Edit announcement",
+      "fieldTitle": "Title",
+      "fieldContent": "Content",
+      "titlePlaceholder": "Announcement title",
+      "contentPlaceholder": "Write your announcement here...",
+      "formattingHelp": "You can make text bold or italic and add links.",
+      "publishNow": "Publish immediately",
+      "createButton": "Create announcement",
+      "saveButton": "Save",
+      "saving": "Saving...",
+      "createdSuccess": "Announcement created successfully."
+    },
+    "eventForm": {
+      "newTitle": "New event",
+      "editTitle": "Edit event",
+      "fieldTitle": "Title",
+      "fieldDescription": "Description",
+      "fieldLocation": "Location",
+      "fieldStart": "Start",
+      "fieldEnd": "End",
+      "titlePlaceholder": "Event title",
+      "descriptionPlaceholder": "Description (optional)...",
+      "defaultLocation": "At the mosque",
+      "publishNow": "Publish immediately",
+      "createButton": "Create event",
+      "saveButton": "Save",
+      "saving": "Saving...",
+      "createdSuccess": "Event created successfully."
+    },
+    "footer": {
+      "connectedAs": "Signed in as {name}",
+      "admin": "Administration"
+    },
+    "export": {
+      "button": "Export my data",
+      "loading": "Exporting..."
+    },
+    "common": {
+      "required": "required"
+    }
   }
 }

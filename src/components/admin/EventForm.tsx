@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { useTranslations } from "next-intl"
 import { createEvent, updateEvent } from "@/lib/actions/event.actions"
 import { useRouter } from "@/i18n/navigation"
 import { Button }   from "@/components/ui/button"
@@ -31,6 +32,8 @@ function toLocalInput(date: Date | null | undefined): string | undefined {
 }
 
 export default function EventForm({ event }: EventFormProps) {
+  const t = useTranslations("admin.eventForm")
+  const tc = useTranslations("admin.common")
   const isEdit = event != null
   const router = useRouter()
   const [error, setError]     = useState("")
@@ -62,7 +65,7 @@ export default function EventForm({ event }: EventFormProps) {
       return
     }
 
-    setSuccess("Événement créé !")
+    setSuccess(t("createdSuccess"))
     formRef.current?.reset()
     setLoading(false)
     setTimeout(() => setSuccess(""), 3000)
@@ -72,7 +75,7 @@ export default function EventForm({ event }: EventFormProps) {
     <Card>
       <CardHeader>
         <CardTitle className="text-base">
-          {isEdit ? "Modifier l'événement" : "Nouvel événement"}
+          {isEdit ? t("editTitle") : t("newTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -90,40 +93,40 @@ export default function EventForm({ event }: EventFormProps) {
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="title">Titre <span className="text-destructive">*</span></Label>
-            <Input id="title" name="title" required maxLength={100} placeholder="Titre de l'événement" defaultValue={event?.title} />
+            <Label htmlFor="title">{t("fieldTitle")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
+            <Input id="title" name="title" required maxLength={100} placeholder={t("titlePlaceholder")} defaultValue={event?.title} />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("fieldDescription")}</Label>
             <Textarea
               id="description"
               name="description"
               rows={2}
               maxLength={1000}
               className="resize-none"
-              placeholder="Description optionnelle..."
+              placeholder={t("descriptionPlaceholder")}
               defaultValue={event?.description ?? undefined}
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="location">Lieu <span className="text-destructive">*</span></Label>
+            <Label htmlFor="location">{t("fieldLocation")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input
               id="location"
               name="location"
               required
-              defaultValue={event?.location ?? "À la mosquée"}
+              defaultValue={event?.location ?? t("defaultLocation")}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="startAt">Début <span className="text-destructive">*</span></Label>
+              <Label htmlFor="startAt">{t("fieldStart")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input id="startAt" name="startAt" type="datetime-local" required defaultValue={toLocalInput(event?.startAt)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="endAt">Fin</Label>
+              <Label htmlFor="endAt">{t("fieldEnd")}</Label>
               <Input id="endAt" name="endAt" type="datetime-local" defaultValue={toLocalInput(event?.endAt)} />
             </div>
           </div>
@@ -138,7 +141,7 @@ export default function EventForm({ event }: EventFormProps) {
               className="w-4 h-4 accent-green-600"
             />
             <Label htmlFor="eventPublished" className="font-normal cursor-pointer">
-              Publier immédiatement
+              {t("publishNow")}
             </Label>
           </div>
 
@@ -148,10 +151,10 @@ export default function EventForm({ event }: EventFormProps) {
             className="bg-green-700 hover:bg-green-800"
           >
             {loading
-              ? "Enregistrement..."
+              ? t("saving")
               : isEdit
-                ? "Enregistrer"
-                : "Créer l'événement"}
+                ? t("saveButton")
+                : t("createButton")}
           </Button>
 
         </form>

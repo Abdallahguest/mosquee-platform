@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { usePathname, Link } from "@/i18n/navigation"
 import LogoutButton from "@/components/LogoutButton"
 
 interface AdminNavProps {
@@ -11,14 +11,15 @@ interface AdminNavProps {
 }
 
 export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
+  const t = useTranslations("admin.nav")
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
   const navLinks = [
-    { href: "/admin", label: "Tableau de bord" },
-    { href: "/admin/announcements", label: "Annonces" },
-    { href: "/admin/events", label: "Événements" },
-    { href: "/admin/settings", label: "Paramètres" },
+    { href: "/admin", label: t("dashboard") },
+    { href: "/admin/announcements", label: t("announcements") },
+    { href: "/admin/events", label: t("events") },
+    { href: "/admin/settings", label: t("settings") },
   ]
 
   // Section active : correspondance exacte pour /admin, sinon préfixe
@@ -29,10 +30,9 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
     <nav className="bg-green-800 text-white">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
-          {/* Logo / nom mosquée */}
           <Link href="/admin" className="flex items-center gap-2 font-semibold">
-            <span>🕌</span>
-            <span className="max-w-40 truncate">{mosqueName ?? "Administration"}</span>
+            <span aria-hidden="true">🕌</span>
+            <span className="max-w-40 truncate">{mosqueName ?? t("dashboard")}</span>
           </Link>
 
           {/* Liens desktop */}
@@ -41,6 +41,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
                 className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
                   isActive(link.href)
                     ? "bg-green-950 text-white"
@@ -60,7 +61,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
                 target="_blank"
                 className="text-xs text-green-100 hover:text-white"
               >
-                Voir le site ↗
+                {t("viewPage")} <span aria-hidden="true">↗</span>
               </Link>
             )}
             <LogoutButton />
@@ -70,9 +71,10 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden text-2xl leading-none"
-            aria-label="Menu"
+            aria-label={t("menu")}
+            aria-expanded={open}
           >
-            {open ? "✕" : "☰"}
+            <span aria-hidden="true">{open ? "✕" : "☰"}</span>
           </button>
         </div>
 
@@ -84,6 +86,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
+                aria-current={isActive(link.href) ? "page" : undefined}
                 className={`text-sm px-3 py-2 rounded-md ${
                   isActive(link.href)
                     ? "bg-green-950 text-white"
@@ -99,7 +102,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
                 target="_blank"
                 className="text-sm px-3 py-2 text-green-100"
               >
-                Voir le site ↗
+                {t("viewPage")} <span aria-hidden="true">↗</span>
               </Link>
             )}
             <div className="px-3 pt-2">

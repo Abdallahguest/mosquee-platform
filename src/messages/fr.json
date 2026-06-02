@@ -61,5 +61,75 @@
     "thirdPartyBody": "La base de données est hébergée par Neon et l'envoi des emails est assuré par Resend. Ces prestataires n'accèdent aux données que pour fournir leur service.",
     "contactTitle": "Contact",
     "contactBody": "Pour toute question relative à vos données, contactez l'administrateur de votre mosquée."
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "announcements": "Annonces",
+      "events": "Événements",
+      "settings": "Paramètres",
+      "viewPage": "Voir la page de ma mosquée",
+      "menu": "Menu",
+      "logout": "Se déconnecter"
+    },
+    "dashboard": {
+      "greeting": "Assalamu alaykum",
+      "yourMosque": "Votre mosquée",
+      "viewPublicPage": "Voir la page de ma mosquée",
+      "statAnnouncements": "Annonces",
+      "statEvents": "Événements",
+      "statMosque": "Mosquée",
+      "announcementsDesc": "{count, plural, =0 {Aucune publiée} one {# publiée} other {# publiées}}",
+      "eventsDesc": "{count, plural, =0 {Aucun à venir} one {# à venir} other {# à venir}}",
+      "settingsDesc": "Informations de la mosquée",
+      "totalCount": "{count} au total",
+      "connectedSince": "Vous êtes connecté depuis le {date}"
+    },
+    "noMosque": {
+      "title": "Aucune mosquée associée à votre compte",
+      "body": "Votre compte n'est rattaché à aucune mosquée pour le moment. Veuillez contacter la personne qui gère la plateforme pour qu'elle vous associe à votre mosquée."
+    },
+    "announcementForm": {
+      "newTitle": "Nouvelle annonce",
+      "editTitle": "Modifier l'annonce",
+      "fieldTitle": "Titre",
+      "fieldContent": "Contenu",
+      "titlePlaceholder": "Titre de l'annonce",
+      "contentPlaceholder": "Écrivez votre annonce ici...",
+      "formattingHelp": "Vous pouvez mettre du texte en gras ou en italique et ajouter des liens.",
+      "publishNow": "Publier immédiatement",
+      "createButton": "Créer l'annonce",
+      "saveButton": "Enregistrer",
+      "saving": "Enregistrement...",
+      "createdSuccess": "Annonce créée avec succès."
+    },
+    "eventForm": {
+      "newTitle": "Nouvel événement",
+      "editTitle": "Modifier l'événement",
+      "fieldTitle": "Titre",
+      "fieldDescription": "Description",
+      "fieldLocation": "Lieu",
+      "fieldStart": "Début",
+      "fieldEnd": "Fin",
+      "titlePlaceholder": "Titre de l'événement",
+      "descriptionPlaceholder": "Description (facultatif)...",
+      "defaultLocation": "À la mosquée",
+      "publishNow": "Publier immédiatement",
+      "createButton": "Créer l'événement",
+      "saveButton": "Enregistrer",
+      "saving": "Enregistrement...",
+      "createdSuccess": "Événement créé avec succès."
+    },
+    "footer": {
+      "connectedAs": "Connecté en tant que {name}",
+      "admin": "Administration"
+    },
+    "export": {
+      "button": "Exporter mes données",
+      "loading": "Export en cours..."
+    },
+    "common": {
+      "required": "obligatoire"
+    }
   }
 }

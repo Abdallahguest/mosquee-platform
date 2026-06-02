@@ -1,17 +1,24 @@
+import { getTranslations } from "next-intl/server"
+
 interface AdminFooterProps {
   userName?: string
   userEmail?: string
 }
 
-export default function AdminFooter({ userName, userEmail }: AdminFooterProps) {
+export default async function AdminFooter({ userName, userEmail }: AdminFooterProps) {
+  const t = await getTranslations("admin.footer")
+  const identity = userName || userEmail || ""
+
   return (
     <footer className="bg-green-950 text-green-100 mt-auto">
       <div className="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p className="text-xs">
-          Connecté : {userName ? `${userName} · ` : ""}{userEmail}
-        </p>
+        {identity && (
+          <p className="text-xs" dir="ltr">
+            {t("connectedAs", { name: identity })}
+          </p>
+        )}
         <p className="text-[11px] text-green-300">
-          Administration · Plateforme halal
+          {t("admin")}
         </p>
       </div>
     </footer>

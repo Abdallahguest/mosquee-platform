@@ -61,5 +61,75 @@
     "thirdPartyBody": "قاعدة البيانات مستضافة لدى Neon ويُرسَل البريد عبر Resend. لا يصل هؤلاء المزوّدون إلى البيانات إلا لتقديم خدمتهم.",
     "contactTitle": "التواصل",
     "contactBody": "لأي سؤال يتعلق ببياناتك، تواصل مع مسؤول مسجدك."
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "announcements": "الإعلانات",
+      "events": "الفعاليات",
+      "settings": "الإعدادات",
+      "viewPage": "عرض صفحة مسجدي",
+      "menu": "القائمة",
+      "logout": "تسجيل الخروج"
+    },
+    "dashboard": {
+      "greeting": "السلام عليكم",
+      "yourMosque": "مسجدك",
+      "viewPublicPage": "عرض صفحة مسجدي",
+      "statAnnouncements": "الإعلانات",
+      "statEvents": "الفعاليات",
+      "statMosque": "المسجد",
+      "announcementsDesc": "{count, plural, zero {لا شيء منشور} one {منشور واحد} two {منشوران} few {# منشورة} many {# منشورًا} other {# منشورة}}",
+      "eventsDesc": "{count, plural, zero {لا شيء قادم} one {فعالية قادمة} two {فعاليتان قادمتان} few {# فعاليات قادمة} many {# فعالية قادمة} other {# قادمة}}",
+      "settingsDesc": "معلومات المسجد",
+      "totalCount": "{count} الإجمالي",
+      "connectedSince": "أنت متصل منذ {date}"
+    },
+    "noMosque": {
+      "title": "لا يوجد مسجد مرتبط بحسابك",
+      "body": "حسابك غير مرتبط بأي مسجد حتى الآن. يُرجى التواصل مع الشخص الذي يدير المنصة لربط حسابك بمسجدك."
+    },
+    "announcementForm": {
+      "newTitle": "إعلان جديد",
+      "editTitle": "تعديل الإعلان",
+      "fieldTitle": "العنوان",
+      "fieldContent": "المحتوى",
+      "titlePlaceholder": "عنوان الإعلان",
+      "contentPlaceholder": "اكتب إعلانك هنا...",
+      "formattingHelp": "يمكنك جعل النص عريضًا أو مائلًا وإضافة روابط.",
+      "publishNow": "النشر فورًا",
+      "createButton": "إنشاء الإعلان",
+      "saveButton": "حفظ",
+      "saving": "جارٍ الحفظ...",
+      "createdSuccess": "تم إنشاء الإعلان بنجاح."
+    },
+    "eventForm": {
+      "newTitle": "فعالية جديدة",
+      "editTitle": "تعديل الفعالية",
+      "fieldTitle": "العنوان",
+      "fieldDescription": "الوصف",
+      "fieldLocation": "المكان",
+      "fieldStart": "البداية",
+      "fieldEnd": "النهاية",
+      "titlePlaceholder": "عنوان الفعالية",
+      "descriptionPlaceholder": "الوصف (اختياري)...",
+      "defaultLocation": "في المسجد",
+      "publishNow": "النشر فورًا",
+      "createButton": "إنشاء الفعالية",
+      "saveButton": "حفظ",
+      "saving": "جارٍ الحفظ...",
+      "createdSuccess": "تم إنشاء الفعالية بنجاح."
+    },
+    "footer": {
+      "connectedAs": "متصل باسم {name}",
+      "admin": "الإدارة"
+    },
+    "export": {
+      "button": "تصدير بياناتي",
+      "loading": "جارٍ التصدير..."
+    },
+    "common": {
+      "required": "مطلوب"
+    }
   }
 }

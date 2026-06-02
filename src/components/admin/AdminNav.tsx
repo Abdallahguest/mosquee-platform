@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { usePathname, Link } from "@/i18n/navigation"
 import LogoutButton from "@/components/LogoutButton"
+import LanguageSwitcher from "@/components/public/LanguageSwitcher"
 
 interface AdminNavProps {
   mosqueName?: string
@@ -64,18 +65,22 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
                 {t("viewPage")} <span aria-hidden="true">↗</span>
               </Link>
             )}
+            <LanguageSwitcher variant="onGreen" />
             <LogoutButton />
           </div>
 
-          {/* Bouton hamburger mobile */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden text-2xl leading-none"
-            aria-label={t("menu")}
-            aria-expanded={open}
-          >
-            <span aria-hidden="true">{open ? "✕" : "☰"}</span>
-          </button>
+          {/* Sélecteur de langue + hamburger, toujours visibles sur mobile */}
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher variant="onGreen" />
+            <button
+              onClick={() => setOpen(!open)}
+              className="text-2xl leading-none"
+              aria-label={t("menu")}
+              aria-expanded={open}
+            >
+              <span aria-hidden="true">{open ? "✕" : "☰"}</span>
+            </button>
+          </div>
         </div>
 
         {/* Menu mobile déroulant */}

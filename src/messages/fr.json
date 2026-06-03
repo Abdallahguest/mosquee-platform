@@ -130,6 +130,89 @@
     },
     "common": {
       "required": "obligatoire"
+    },
+    "announcementsPage": {
+      "title": "Gestion des annonces",
+      "subtitle": "Créez et gérez les annonces de votre mosquée",
+      "listTitle": "Annonces ({count})",
+      "newCardTitle": "Nouvelle annonce"
+    },
+    "eventsPage": {
+      "title": "Gestion des événements",
+      "subtitle": "Créez et gérez les événements de votre mosquée",
+      "listTitle": "Événements ({count})",
+      "newCardTitle": "Nouvel événement"
+    },
+    "list": {
+      "colTitle": "Titre",
+      "colDate": "Date",
+      "colStatus": "Statut",
+      "colActions": "Actions",
+      "statusPublished": "Publié",
+      "statusDraft": "Brouillon",
+      "edit": "Éditer",
+      "publish": "Publier",
+      "unpublish": "Dépublier",
+      "delete": "Supprimer",
+      "emptyAnnouncementsTitle": "Aucune annonce",
+      "emptyAnnouncementsBody": "Créez votre première annonce ci-dessus.",
+      "emptyEvents": "Aucun événement — créez-en un ci-dessus.",
+      "deleteAnnouncementTitle": "Supprimer l'annonce",
+      "deleteEventTitle": "Supprimer l'événement",
+      "deleteAnnouncementMessage": "Voulez-vous vraiment supprimer l'annonce « {title} » ? Cette action est définitive.",
+      "deleteEventMessage": "Voulez-vous vraiment supprimer l'événement « {title} » ? Cette action est définitive.",
+      "confirmDelete": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "edit": {
+      "backToAnnouncements": "Retour aux annonces",
+      "backToEvents": "Retour aux événements",
+      "editAnnouncementTitle": "Modifier l'annonce",
+      "editEventTitle": "Modifier l'événement"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Configuration de votre mosquée",
+      "prayerCardTitle": "Horaires de prière",
+      "prayerCardDesc": "Saisissez les heures réelles affichées dans votre mosquée. Ce sont elles qui apparaissent sur la page publique.",
+      "dataCardTitle": "Vos données",
+      "dataCardDesc": "Téléchargez l'ensemble de vos données à tout moment. Vos données vous appartiennent — aucune rétention forcée.",
+      "saved": "Paramètres sauvegardés.",
+      "saving": "Sauvegarde...",
+      "saveButton": "Sauvegarder les paramètres",
+      "identityTitle": "Identité",
+      "identityDesc": "Informations publiques de la mosquée",
+      "fieldName": "Nom",
+      "fieldCity": "Ville",
+      "fieldCountry": "Pays",
+      "geoTitle": "Localisation",
+      "geoDesc": "Position de la mosquée sur la carte.",
+      "geoFindCoords": "Trouver mes coordonnées",
+      "fieldLatitude": "Latitude",
+      "fieldLongitude": "Longitude",
+      "tzTitle": "Fuseau horaire et aide au calcul",
+      "tzDesc": "Les horaires affichés sont ceux que vous saisissez vous-même (carte « Horaires de prière »). La méthode ci-dessous sert uniquement de base au bouton « Proposer les horaires » et ne change rien à ce qui est affiché.",
+      "fieldTimezone": "Fuseau horaire",
+      "tzHelp": "Pour la Guinée : Africa/Conakry. Ailleurs : Europe/Paris, Asia/Riyadh…",
+      "methodLabel": "Méthode de calcul (pour la proposition seulement)",
+      "contactTitle": "Contact et don",
+      "contactDesc": "Informations affichées dans le pied de page public (toutes facultatives)",
+      "fieldContactEmail": "Email de contact public",
+      "fieldContactPhone": "Téléphone de contact",
+      "fieldDonationUrl": "Lien de don (adresse externe)",
+      "donationHelp": "Lien vers votre page de don. Il s'ouvrira dans un nouvel onglet. Le don est géré directement par la mosquée — la plateforme ne traite aucun paiement."
+    },
+    "prayerTimes": {
+      "title": "Horaires de prière",
+      "intro": "L'iqama est l'heure affichée en grand (présence obligatoire). L'adhan est facultatif. Laissez vide pour ne pas l'afficher.",
+      "suggestButton": "Pré-remplir l'adhan (MWL)",
+      "suggesting": "Calcul…",
+      "suggestDone": "Adhans calculés insérés. L'iqama reste à fixer selon votre mosquée.",
+      "colAdhan": "Adhan",
+      "colIqama": "Iqama",
+      "jumuaNote": "Jumu'ah s'affiche uniquement le vendredi.",
+      "saving": "Enregistrement…",
+      "saveButton": "Enregistrer les horaires"
     }
   }
 }

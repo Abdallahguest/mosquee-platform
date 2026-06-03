@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server"
 import { getSessionMosque } from "@/lib/auth-helpers"
 import MosqueSettingsForm from "@/components/admin/MosqueSettingsForm"
 import PrayerTimesForm from "@/components/admin/PrayerTimesForm"
@@ -9,23 +10,20 @@ export default async function AdminSettingsPage() {
   const { mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return <NoMosque />
 
+  const t = await getTranslations("admin.settings")
+
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Paramètres</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Configuration de votre mosquée
-        </p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t("subtitle")}</p>
       </div>
 
-      {/* Horaires de prière — en haut, le plus visible (Bug A : saisie possible) */}
+      {/* Horaires de prière — en haut, le plus visible */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">Horaires de prière</CardTitle>
-          <CardDescription>
-            Saisissez les heures réelles affichées dans votre mosquée.
-            Ce sont elles qui apparaissent sur la page publique.
-          </CardDescription>
+          <CardTitle className="text-base">{t("prayerCardTitle")}</CardTitle>
+          <CardDescription>{t("prayerCardDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <PrayerTimesForm
@@ -46,11 +44,8 @@ export default async function AdminSettingsPage() {
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="text-base">Vos données</CardTitle>
-          <CardDescription>
-            Téléchargez l&apos;ensemble de vos données à tout moment.
-            Vos données vous appartiennent — aucune rétention forcée.
-          </CardDescription>
+          <CardTitle className="text-base">{t("dataCardTitle")}</CardTitle>
+          <CardDescription>{t("dataCardDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <ExportButton mosqueId={mosque.id} mosqueSlug={mosque.slug} />

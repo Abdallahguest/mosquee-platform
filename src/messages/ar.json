@@ -130,6 +130,89 @@
     },
     "common": {
       "required": "مطلوب"
+    },
+    "announcementsPage": {
+      "title": "إدارة الإعلانات",
+      "subtitle": "أنشئ وأدِر إعلانات مسجدك",
+      "listTitle": "الإعلانات ({count})",
+      "newCardTitle": "إعلان جديد"
+    },
+    "eventsPage": {
+      "title": "إدارة الفعاليات",
+      "subtitle": "أنشئ وأدِر فعاليات مسجدك",
+      "listTitle": "الفعاليات ({count})",
+      "newCardTitle": "فعالية جديدة"
+    },
+    "list": {
+      "colTitle": "العنوان",
+      "colDate": "التاريخ",
+      "colStatus": "الحالة",
+      "colActions": "الإجراءات",
+      "statusPublished": "منشور",
+      "statusDraft": "مسودة",
+      "edit": "تعديل",
+      "publish": "نشر",
+      "unpublish": "إلغاء النشر",
+      "delete": "حذف",
+      "emptyAnnouncementsTitle": "لا توجد إعلانات",
+      "emptyAnnouncementsBody": "أنشئ أول إعلان لك بالأعلى.",
+      "emptyEvents": "لا توجد فعاليات — أنشئ واحدة بالأعلى.",
+      "deleteAnnouncementTitle": "حذف الإعلان",
+      "deleteEventTitle": "حذف الفعالية",
+      "deleteAnnouncementMessage": "هل تريد حقًا حذف الإعلان «{title}»؟ هذا الإجراء نهائي.",
+      "deleteEventMessage": "هل تريد حقًا حذف الفعالية «{title}»؟ هذا الإجراء نهائي.",
+      "confirmDelete": "حذف",
+      "cancel": "إلغاء"
+    },
+    "edit": {
+      "backToAnnouncements": "العودة إلى الإعلانات",
+      "backToEvents": "العودة إلى الفعاليات",
+      "editAnnouncementTitle": "تعديل الإعلان",
+      "editEventTitle": "تعديل الفعالية"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "subtitle": "إعدادات مسجدك",
+      "prayerCardTitle": "مواقيت الصلاة",
+      "prayerCardDesc": "أدخل الأوقات الفعلية المعروضة في مسجدك. هي التي تظهر في الصفحة العامة.",
+      "dataCardTitle": "بياناتك",
+      "dataCardDesc": "نزّل جميع بياناتك في أي وقت. بياناتك ملك لك — لا احتجاز إجباري.",
+      "saved": "تم حفظ الإعدادات.",
+      "saving": "جارٍ الحفظ...",
+      "saveButton": "حفظ الإعدادات",
+      "identityTitle": "الهوية",
+      "identityDesc": "المعلومات العامة للمسجد",
+      "fieldName": "الاسم",
+      "fieldCity": "المدينة",
+      "fieldCountry": "البلد",
+      "geoTitle": "الموقع",
+      "geoDesc": "موقع المسجد على الخريطة.",
+      "geoFindCoords": "البحث عن إحداثياتي",
+      "fieldLatitude": "خط العرض",
+      "fieldLongitude": "خط الطول",
+      "tzTitle": "المنطقة الزمنية والمساعدة في الحساب",
+      "tzDesc": "الأوقات المعروضة هي التي تدخلها بنفسك (بطاقة «مواقيت الصلاة»). الطريقة أدناه تُستخدم فقط كأساس لزر «اقتراح الأوقات» ولا تغيّر ما يُعرض.",
+      "fieldTimezone": "المنطقة الزمنية",
+      "tzHelp": "لغينيا: Africa/Conakry. وإلا: Europe/Paris، Asia/Riyadh…",
+      "methodLabel": "طريقة الحساب (للاقتراح فقط)",
+      "contactTitle": "التواصل والتبرع",
+      "contactDesc": "معلومات تُعرض في تذييل الصفحة العامة (كلها اختيارية)",
+      "fieldContactEmail": "بريد التواصل العام",
+      "fieldContactPhone": "هاتف التواصل",
+      "fieldDonationUrl": "رابط التبرع (عنوان خارجي)",
+      "donationHelp": "رابط إلى صفحة التبرع الخاصة بك. يُفتح في علامة تبويب جديدة. يُدار التبرع مباشرةً من قِبل المسجد — لا تعالج المنصة أي دفع."
+    },
+    "prayerTimes": {
+      "title": "مواقيت الصلاة",
+      "intro": "الإقامة هي الوقت المعروض بحجم كبير (الحضور واجب). الأذان اختياري. اتركه فارغًا لعدم عرضه.",
+      "suggestButton": "تعبئة الأذان تلقائيًا (MWL)",
+      "suggesting": "جارٍ الحساب…",
+      "suggestDone": "تم إدراج الأذان المحسوب. تبقى الإقامة لتحديدها حسب مسجدك.",
+      "colAdhan": "الأذان",
+      "colIqama": "الإقامة",
+      "jumuaNote": "تظهر الجمعة يوم الجمعة فقط.",
+      "saving": "جارٍ الحفظ…",
+      "saveButton": "حفظ المواقيت"
     }
   }
 }

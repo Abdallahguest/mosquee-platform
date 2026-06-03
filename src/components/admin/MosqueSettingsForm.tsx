@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { updateMosqueSettings } from "@/lib/actions/mosque.actions"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
@@ -31,6 +32,7 @@ interface Mosque {
   contactPhone: string | null
 }
 
+// Noms propres des méthodes de calcul — non traduits (ce sont des dénominations officielles).
 const METHODS = [
   { value: "MWL",       label: "Muslim World League" },
   { value: "ISNA",      label: "Islamic Society of North America" },
@@ -40,6 +42,8 @@ const METHODS = [
 ]
 
 export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
+  const t = useTranslations("admin.settings")
+  const tc = useTranslations("admin.common")
   const [error, setError]     = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -52,7 +56,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    formData.set("slug", mosque.slug)
+    // Note : on n'envoie plus "slug" (l'action ne le lit pas — champ retiré).
     formData.set("calculationMethod", method)
 
     const result = await updateMosqueSettings(mosque.id, formData)
@@ -60,7 +64,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
     if (!result.success) {
       setError(result.error)
     } else {
-      setSuccess("Paramètres sauvegardés !")
+      setSuccess(t("saved"))
       setTimeout(() => setSuccess(""), 3000)
     }
     setLoading(false)
@@ -83,57 +87,57 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
       {/* Identité */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Identité</CardTitle>
-          <CardDescription>Informations publiques de la mosquée</CardDescription>
+          <CardTitle className="text-base">{t("identityTitle")}</CardTitle>
+          <CardDescription>{t("identityDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="name">Nom <span className="text-destructive">*</span></Label>
+            <Label htmlFor="name">{t("fieldName")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input id="name" name="name" required defaultValue={mosque.name} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="city">Ville <span className="text-destructive">*</span></Label>
+              <Label htmlFor="city">{t("fieldCity")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input id="city" name="city" required defaultValue={mosque.city} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="country">Pays <span className="text-destructive">*</span></Label>
+              <Label htmlFor="country">{t("fieldCountry")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input id="country" name="country" required defaultValue={mosque.country} />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Géolocalisation */}
+      {/* Localisation */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Géolocalisation</CardTitle>
+          <CardTitle className="text-base">{t("geoTitle")}</CardTitle>
           <CardDescription>
-            Position de la mosquée sur la carte.{" "}
+            {t("geoDesc")}{" "}
             <a
               href="https://www.latlong.net"
               target="_blank"
               rel="noopener noreferrer"
               className="text-green-700 hover:underline"
             >
-              Trouver mes coordonnées →
+              {t("geoFindCoords")} <span aria-hidden="true">→</span>
             </a>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="latitude">Latitude <span className="text-destructive">*</span></Label>
+              <Label htmlFor="latitude">{t("fieldLatitude")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input
                 id="latitude" name="latitude" type="number" step="0.0001"
-                required defaultValue={mosque.latitude}
+                required defaultValue={mosque.latitude} dir="ltr"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="longitude">Longitude <span className="text-destructive">*</span></Label>
+              <Label htmlFor="longitude">{t("fieldLongitude")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input
                 id="longitude" name="longitude" type="number" step="0.0001"
-                required defaultValue={mosque.longitude}
+                required defaultValue={mosque.longitude} dir="ltr"
               />
             </div>
           </div>
@@ -143,29 +147,23 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
       {/* Fuseau + méthode de suggestion */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Fuseau horaire et aide au calcul</CardTitle>
-          <CardDescription>
-            Les horaires affichés sont ceux que vous saisissez vous-même (carte
-            « Horaires de prière »). La méthode ci-dessous sert uniquement de base
-            au bouton « Proposer les horaires » et ne change rien à ce qui est affiché.
-          </CardDescription>
+          <CardTitle className="text-base">{t("tzTitle")}</CardTitle>
+          <CardDescription>{t("tzDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="timezone">Fuseau horaire <span className="text-destructive">*</span></Label>
+            <Label htmlFor="timezone">{t("fieldTimezone")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input
               id="timezone" name="timezone" required
-              defaultValue={mosque.timezone} placeholder="Africa/Conakry"
+              defaultValue={mosque.timezone} placeholder="Africa/Conakry" dir="ltr"
             />
-            <p className="text-xs text-muted-foreground">
-              Pour la Guinée : Africa/Conakry. Ailleurs : Europe/Paris, Asia/Riyadh…
-            </p>
+            <p className="text-xs text-muted-foreground">{t("tzHelp")}</p>
           </div>
 
           <Separator />
 
           <div className="space-y-1.5">
-            <Label>Méthode de calcul (pour la proposition seulement)</Label>
+            <Label>{t("methodLabel")}</Label>
             <Select value={method} onValueChange={setMethod}>
               <SelectTrigger>
                 <SelectValue />
@@ -185,40 +183,35 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
       {/* Contact et don */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Contact et don</CardTitle>
-          <CardDescription>
-            Informations affichées dans le pied de page public (toutes optionnelles)
-          </CardDescription>
+          <CardTitle className="text-base">{t("contactTitle")}</CardTitle>
+          <CardDescription>{t("contactDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="contactEmail">Email de contact public</Label>
+            <Label htmlFor="contactEmail">{t("fieldContactEmail")}</Label>
             <Input
               id="contactEmail" name="contactEmail" type="email"
-              defaultValue={mosque.contactEmail ?? ""} placeholder="contact@mamosquee.com"
+              defaultValue={mosque.contactEmail ?? ""} placeholder="contact@mamosquee.com" dir="ltr"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="contactPhone">Téléphone de contact</Label>
+            <Label htmlFor="contactPhone">{t("fieldContactPhone")}</Label>
             <Input
               id="contactPhone" name="contactPhone"
-              defaultValue={mosque.contactPhone ?? ""} placeholder="+224 6XX XX XX XX"
+              defaultValue={mosque.contactPhone ?? ""} placeholder="+224 6XX XX XX XX" dir="ltr"
             />
           </div>
 
           <Separator />
 
           <div className="space-y-1.5">
-            <Label htmlFor="donationUrl">Lien de don (URL externe)</Label>
+            <Label htmlFor="donationUrl">{t("fieldDonationUrl")}</Label>
             <Input
               id="donationUrl" name="donationUrl" type="url"
-              defaultValue={mosque.donationUrl ?? ""} placeholder="https://..."
+              defaultValue={mosque.donationUrl ?? ""} placeholder="https://..." dir="ltr"
             />
-            <p className="text-xs text-muted-foreground">
-              Lien vers votre page de don. Il s&apos;ouvrira dans un nouvel onglet.
-              Le don est géré directement par la mosquée — la plateforme ne traite aucun paiement.
-            </p>
+            <p className="text-xs text-muted-foreground">{t("donationHelp")}</p>
           </div>
         </CardContent>
       </Card>
@@ -227,7 +220,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
         type="submit" disabled={loading}
         className="w-full bg-green-700 hover:bg-green-800" size="lg"
       >
-        {loading ? "Sauvegarde..." : "Sauvegarder les paramètres"}
+        {loading ? t("saving") : t("saveButton")}
       </Button>
 
     </form>

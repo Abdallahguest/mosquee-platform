@@ -130,6 +130,89 @@
     },
     "common": {
       "required": "required"
+    },
+    "announcementsPage": {
+      "title": "Manage announcements",
+      "subtitle": "Create and manage your mosque's announcements",
+      "listTitle": "Announcements ({count})",
+      "newCardTitle": "New announcement"
+    },
+    "eventsPage": {
+      "title": "Manage events",
+      "subtitle": "Create and manage your mosque's events",
+      "listTitle": "Events ({count})",
+      "newCardTitle": "New event"
+    },
+    "list": {
+      "colTitle": "Title",
+      "colDate": "Date",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusPublished": "Published",
+      "statusDraft": "Draft",
+      "edit": "Edit",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "delete": "Delete",
+      "emptyAnnouncementsTitle": "No announcements",
+      "emptyAnnouncementsBody": "Create your first announcement above.",
+      "emptyEvents": "No events — create one above.",
+      "deleteAnnouncementTitle": "Delete announcement",
+      "deleteEventTitle": "Delete event",
+      "deleteAnnouncementMessage": "Do you really want to delete the announcement “{title}”? This action is permanent.",
+      "deleteEventMessage": "Do you really want to delete the event “{title}”? This action is permanent.",
+      "confirmDelete": "Delete",
+      "cancel": "Cancel"
+    },
+    "edit": {
+      "backToAnnouncements": "Back to announcements",
+      "backToEvents": "Back to events",
+      "editAnnouncementTitle": "Edit announcement",
+      "editEventTitle": "Edit event"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Your mosque configuration",
+      "prayerCardTitle": "Prayer times",
+      "prayerCardDesc": "Enter the actual times displayed in your mosque. These are what appear on the public page.",
+      "dataCardTitle": "Your data",
+      "dataCardDesc": "Download all your data at any time. Your data belongs to you — no forced retention.",
+      "saved": "Settings saved.",
+      "saving": "Saving...",
+      "saveButton": "Save settings",
+      "identityTitle": "Identity",
+      "identityDesc": "Public mosque information",
+      "fieldName": "Name",
+      "fieldCity": "City",
+      "fieldCountry": "Country",
+      "geoTitle": "Location",
+      "geoDesc": "Mosque position on the map.",
+      "geoFindCoords": "Find my coordinates",
+      "fieldLatitude": "Latitude",
+      "fieldLongitude": "Longitude",
+      "tzTitle": "Time zone and calculation aid",
+      "tzDesc": "The displayed times are the ones you enter yourself (“Prayer times” card). The method below is only used as a basis for the “Suggest times” button and does not change what is displayed.",
+      "fieldTimezone": "Time zone",
+      "tzHelp": "For Guinea: Africa/Conakry. Elsewhere: Europe/Paris, Asia/Riyadh…",
+      "methodLabel": "Calculation method (for the suggestion only)",
+      "contactTitle": "Contact and donation",
+      "contactDesc": "Information shown in the public footer (all optional)",
+      "fieldContactEmail": "Public contact email",
+      "fieldContactPhone": "Contact phone",
+      "fieldDonationUrl": "Donation link (external address)",
+      "donationHelp": "Link to your donation page. It opens in a new tab. Donations are handled directly by the mosque — the platform processes no payment."
+    },
+    "prayerTimes": {
+      "title": "Prayer times",
+      "intro": "The iqama is the time shown large (required attendance). The adhan is optional. Leave empty to hide it.",
+      "suggestButton": "Pre-fill adhan (MWL)",
+      "suggesting": "Calculating…",
+      "suggestDone": "Calculated adhans inserted. The iqama is still yours to set for your mosque.",
+      "colAdhan": "Adhan",
+      "colIqama": "Iqama",
+      "jumuaNote": "Jumu'ah is shown only on Friday.",
+      "saving": "Saving…",
+      "saveButton": "Save times"
     }
   }
 }

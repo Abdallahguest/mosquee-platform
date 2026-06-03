@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import {
   createAnnouncement,
   updateAnnouncement,
@@ -31,6 +32,7 @@ interface AnnouncementFormProps {
 export default function AnnouncementForm({ announcement }: AnnouncementFormProps) {
   const t = useTranslations("admin.announcementForm")
   const tc = useTranslations("admin.common")
+  const { fromResult } = useErrorMessages()
   const isEdit = announcement != null
   const router = useRouter()
   const [error, setError]     = useState("")
@@ -51,7 +53,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
       : await createAnnouncement(formData)
 
     if (!result.success) {
-      setError(result.error)
+      setError(fromResult(result))
       setLoading(false)
       return
     }

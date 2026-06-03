@@ -6,24 +6,23 @@ import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { events } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
+import type { ActionResult } from "./action-result"
 
 const EventSchema = z.object({
-  title:       z.string().min(1, "Titre requis").max(100),
-  description: z.string().max(1000).optional(),
-  location:    z.string().min(1, "Lieu requis").max(200),
-  startAt:     z.string().min(1, "Date de début requise"),
+  title:       z.string().min(1, "TITLE_REQUIRED").max(100, "TITLE_TOO_LONG"),
+  description: z.string().max(1000, "DESCRIPTION_TOO_LONG").optional(),
+  location:    z.string().min(1, "LOCATION_REQUIRED").max(200, "LOCATION_TOO_LONG"),
+  startAt:     z.string().min(1, "START_REQUIRED"),
   endAt:       z.string().optional(),
   isPublished: z.boolean().default(false),
 }).refine(
   (data) => !data.endAt || new Date(data.endAt) >= new Date(data.startAt),
-  { message: "La date de fin ne peut pas être antérieure à la date de début.", path: ["endAt"] }
+  { message: "END_BEFORE_START", path: ["endAt"] }
 )
 
-export type ActionResult<T = void> =
-  | { success: true;  data: T;       error?: never }
-  | { success: false; error: string; data?: never  }
-
-const NO_MOSQUE = "Aucune mosquée n'est associée à votre compte."
+function collectCodes(error: z.ZodError): string[] {
+  return error.issues.map((i) => i.message)
+}
 
 function revalidateContent(slug: string) {
   revalidatePath("/admin/events")
@@ -35,7 +34,7 @@ export async function createEvent(
   formData: FormData
 ): Promise<ActionResult<{ id: number }>> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   const raw = {
     title:       formData.get("title"),
@@ -48,10 +47,7 @@ export async function createEvent(
 
   const parsed = EventSchema.safeParse(raw)
   if (!parsed.success) {
-    return {
-      success: false,
-      error: parsed.error.issues[0]?.message ?? "Données invalides",
-    }
+    return { success: false, error: "INVALID_DATA", codes: collectCodes(parsed.error) }
   }
 
   try {
@@ -69,10 +65,9 @@ export async function createEvent(
       .returning({ id: events.id })
 
     revalidateContent(mosque.slug)
-
     return { success: true, data: { id: event.id } }
   } catch {
-    return { success: false, error: "Erreur lors de la création." }
+    return { success: false, error: "CREATE_FAILED" }
   }
 }
 
@@ -81,7 +76,7 @@ export async function updateEvent(
   formData: FormData
 ): Promise<ActionResult> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   const raw = {
     title:       formData.get("title"),
@@ -94,10 +89,7 @@ export async function updateEvent(
 
   const parsed = EventSchema.safeParse(raw)
   if (!parsed.success) {
-    return {
-      success: false,
-      error: parsed.error.issues[0]?.message ?? "Données invalides",
-    }
+    return { success: false, error: "INVALID_DATA", codes: collectCodes(parsed.error) }
   }
 
   try {
@@ -107,7 +99,7 @@ export async function updateEvent(
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
       .limit(1)
 
-    if (!existing) return { success: false, error: "Événement introuvable." }
+    if (!existing) return { success: false, error: "EVENT_NOT_FOUND" }
 
     await db
       .update(events)
@@ -122,16 +114,15 @@ export async function updateEvent(
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
-
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la mise à jour." }
+    return { success: false, error: "UPDATE_FAILED" }
   }
 }
 
 export async function deleteEvent(id: number): Promise<ActionResult> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
     await db
@@ -141,7 +132,7 @@ export async function deleteEvent(id: number): Promise<ActionResult> {
     revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la suppression." }
+    return { success: false, error: "DELETE_FAILED" }
   }
 }
 
@@ -150,7 +141,7 @@ export async function toggleEventPublished(
   current: boolean
 ): Promise<ActionResult> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
     await db
@@ -161,6 +152,6 @@ export async function toggleEventPublished(
     revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la mise à jour." }
+    return { success: false, error: "UPDATE_FAILED" }
   }
 }

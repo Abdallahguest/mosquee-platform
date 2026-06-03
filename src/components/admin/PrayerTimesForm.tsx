@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react"
 import { useTranslations } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import { updatePrayerTimes, getSuggestedPrayerTimes } from "@/lib/actions/prayer-times"
 import type { PrayerTimesActionState } from "@/lib/actions/prayer-times-types"
 
@@ -35,6 +36,7 @@ const initialState: PrayerTimesActionState = { ok: false, message: "" }
 export default function PrayerTimesForm({ mosqueId, initial }: Props) {
   const t = useTranslations("admin.prayerTimes")
   const tp = useTranslations("prayer")
+  const { translate } = useErrorMessages()
   const [state, formAction, isPending] = useActionState(updatePrayerTimes, initialState)
   const [suggesting, startSuggest] = useTransition()
   const [suggestMsg, setSuggestMsg] = useState("")
@@ -117,7 +119,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
                 dir="ltr"
               />
-              {err[row.adhan] && <p className="text-xs text-red-600 mt-1">{err[row.adhan]}</p>}
+              {err[row.adhan] && <p className="text-xs text-red-600 mt-1">{translate(err[row.adhan]!)}</p>}
             </div>
             <div>
               <input
@@ -128,7 +130,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
                 dir="ltr"
               />
-              {err[row.iqama] && <p className="text-xs text-red-600 mt-1">{err[row.iqama]}</p>}
+              {err[row.iqama] && <p className="text-xs text-red-600 mt-1">{translate(err[row.iqama]!)}</p>}
             </div>
           </div>
         ))}
@@ -145,7 +147,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
               className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
               dir="ltr"
             />
-            {err.jumuaAdhan && <p className="text-xs text-red-600 mt-1">{err.jumuaAdhan}</p>}
+            {err.jumuaAdhan && <p className="text-xs text-red-600 mt-1">{translate(err.jumuaAdhan)}</p>}
           </div>
           <div>
             <input
@@ -156,7 +158,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
               className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
               dir="ltr"
             />
-            {err.jumuaIqama && <p className="text-xs text-red-600 mt-1">{err.jumuaIqama}</p>}
+            {err.jumuaIqama && <p className="text-xs text-red-600 mt-1">{translate(err.jumuaIqama)}</p>}
           </div>
         </div>
         <p className="text-xs text-gray-500">{t("jumuaNote")}</p>
@@ -164,7 +166,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
 
       {state.message && (
         <p className={`text-sm ${state.ok ? "text-green-700" : "text-red-600"}`}>
-          {state.message}
+          {translate(state.message)}
         </p>
       )}
 

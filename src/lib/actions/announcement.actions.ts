@@ -6,21 +6,21 @@ import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { announcements } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
+import type { ActionResult } from "./action-result"
 
+// Chaque règle porte un CODE (pas une phrase). Traduit côté composant.
 const AnnouncementSchema = z.object({
-  title:       z.string().min(1, "Titre requis").max(100),
-  content:     z.string().min(1, "Contenu requis").max(2000),
+  title:       z.string().min(1, "TITLE_REQUIRED").max(100, "TITLE_TOO_LONG"),
+  content:     z.string().min(1, "CONTENT_REQUIRED").max(2000, "CONTENT_TOO_LONG"),
   isPublished: z.boolean().default(false),
   expiresAt:   z.string().optional(),
 })
 
-export type ActionResult<T = void> =
-  | { success: true;  data: T;       error?: never }
-  | { success: false; error: string; data?: never  }
+// Collecte tous les codes de validation (affichage groupé).
+function collectCodes(error: z.ZodError): string[] {
+  return error.issues.map((i) => i.message)
+}
 
-const NO_MOSQUE = "Aucune mosquée n'est associée à votre compte."
-
-// Helper : revalide les pages affectées par un changement de contenu
 function revalidateContent(slug: string) {
   revalidatePath("/admin/announcements")
   revalidatePath("/admin")
@@ -32,7 +32,7 @@ export async function createAnnouncement(
 ): Promise<ActionResult<{ id: number }>> {
   try {
     const { session, mosque, mosqueId } = await getSessionMosque()
-    if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+    if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
     const raw = {
       title:       formData.get("title"),
@@ -43,10 +43,7 @@ export async function createAnnouncement(
 
     const parsed = AnnouncementSchema.safeParse(raw)
     if (!parsed.success) {
-      return {
-        success: false,
-        error: parsed.error.issues[0]?.message ?? "Données invalides",
-      }
+      return { success: false, error: "INVALID_DATA", codes: collectCodes(parsed.error) }
     }
 
     const [announcement] = await db
@@ -63,13 +60,10 @@ export async function createAnnouncement(
       .returning({ id: announcements.id })
 
     revalidateContent(mosque.slug)
-
     return { success: true, data: { id: announcement.id } }
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Erreur lors de la création.",
-    }
+  } catch {
+    // On ne divulgue plus error.message brut (fuite technique). Code générique.
+    return { success: false, error: "CREATE_FAILED" }
   }
 }
 
@@ -79,7 +73,7 @@ export async function updateAnnouncement(
 ): Promise<ActionResult> {
   try {
     const { mosque, mosqueId } = await getSessionMosque()
-    if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+    if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
     const raw = {
       title:       formData.get("title"),
@@ -90,10 +84,7 @@ export async function updateAnnouncement(
 
     const parsed = AnnouncementSchema.safeParse(raw)
     if (!parsed.success) {
-      return {
-        success: false,
-        error: parsed.error.issues[0]?.message ?? "Données invalides",
-      }
+      return { success: false, error: "INVALID_DATA", codes: collectCodes(parsed.error) }
     }
 
     const [existing] = await db
@@ -102,7 +93,7 @@ export async function updateAnnouncement(
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
       .limit(1)
 
-    if (!existing) return { success: false, error: "Annonce introuvable." }
+    if (!existing) return { success: false, error: "ANNOUNCEMENT_NOT_FOUND" }
 
     await db
       .update(announcements)
@@ -117,19 +108,15 @@ export async function updateAnnouncement(
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
-
     return { success: true, data: undefined }
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Erreur lors de la mise à jour.",
-    }
+  } catch {
+    return { success: false, error: "UPDATE_FAILED" }
   }
 }
 
 export async function deleteAnnouncement(id: number): Promise<ActionResult> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
     await db
@@ -139,7 +126,7 @@ export async function deleteAnnouncement(id: number): Promise<ActionResult> {
     revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la suppression." }
+    return { success: false, error: "DELETE_FAILED" }
   }
 }
 
@@ -148,7 +135,7 @@ export async function toggleAnnouncementPublished(
   current: boolean
 ): Promise<ActionResult> {
   const { mosque, mosqueId } = await getSessionMosque()
-  if (!mosque || mosqueId == null) return { success: false, error: NO_MOSQUE }
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
     await db
@@ -162,6 +149,6 @@ export async function toggleAnnouncementPublished(
     revalidateContent(mosque.slug)
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la mise à jour." }
+    return { success: false, error: "UPDATE_FAILED" }
   }
 }

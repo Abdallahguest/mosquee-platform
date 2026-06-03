@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import {
   deleteAnnouncement,
   toggleAnnouncementPublished,
@@ -38,6 +39,7 @@ export default function AnnouncementList({
 }: AnnouncementListProps) {
   const t = useTranslations("admin.list")
   const locale = useLocale()
+  const { fromResult } = useErrorMessages()
   const [loadingId, setLoadingId] = useState<number | null>(null)
   // Élément en attente de confirmation de suppression (anti-ghich : on montre le titre)
   const [toDelete, setToDelete] = useState<Announcement | null>(null)
@@ -48,14 +50,14 @@ export default function AnnouncementList({
     setToDelete(null)
     setLoadingId(id)
     const result = await deleteAnnouncement(id)
-    if (!result.success) alert(result.error)
+    if (!result.success) alert(fromResult(result))
     setLoadingId(null)
   }
 
   async function handleToggle(id: number, current: boolean) {
     setLoadingId(id)
     const result = await toggleAnnouncementPublished(id, current)
-    if (!result.success) alert(result.error)
+    if (!result.success) alert(fromResult(result))
     setLoadingId(null)
   }
 

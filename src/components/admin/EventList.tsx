@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import { deleteEvent, toggleEventPublished } from "@/lib/actions/event.actions"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,7 @@ interface EventListProps {
 export default function EventList({ events }: EventListProps) {
   const t = useTranslations("admin.list")
   const locale = useLocale()
+  const { fromResult } = useErrorMessages()
   const [loadingId, setLoadingId] = useState<number | null>(null)
   const [toDelete, setToDelete] = useState<Event | null>(null)
 
@@ -35,13 +37,15 @@ export default function EventList({ events }: EventListProps) {
     const id = toDelete.id
     setToDelete(null)
     setLoadingId(id)
-    await deleteEvent(id)
+    const result = await deleteEvent(id)
+    if (!result.success) alert(fromResult(result))
     setLoadingId(null)
   }
 
   async function handleToggle(id: number, current: boolean) {
     setLoadingId(id)
-    await toggleEventPublished(id, current)
+    const result = await toggleEventPublished(id, current)
+    if (!result.success) alert(fromResult(result))
     setLoadingId(null)
   }
 

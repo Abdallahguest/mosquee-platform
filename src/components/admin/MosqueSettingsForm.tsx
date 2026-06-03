@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import { updateMosqueSettings } from "@/lib/actions/mosque.actions"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
@@ -44,6 +45,7 @@ const METHODS = [
 export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
   const t = useTranslations("admin.settings")
   const tc = useTranslations("admin.common")
+  const { fromResult } = useErrorMessages()
   const [error, setError]     = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -62,7 +64,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
     const result = await updateMosqueSettings(mosque.id, formData)
 
     if (!result.success) {
-      setError(result.error)
+      setError(fromResult(result))
     } else {
       setSuccess(t("saved"))
       setTimeout(() => setSuccess(""), 3000)

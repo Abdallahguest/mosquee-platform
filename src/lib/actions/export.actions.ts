@@ -4,14 +4,14 @@ import { getSessionMosque } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { mosques, announcements, events } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import type { ActionResult } from "./action-result"
 
-export async function exportMosqueData(mosqueId: number): Promise <
-  | { success: true; data: string }
-  | { success: false; error: string }
-> {
+export async function exportMosqueData(
+  mosqueId: number
+): Promise<ActionResult<string>> {
   const { mosqueId: sessionMosqueId } = await getSessionMosque()
   if (sessionMosqueId == null || sessionMosqueId !== mosqueId) {
-    return { success: false, error: "Action non autorisée pour cette mosquée." }
+    return { success: false, error: "UNAUTHORIZED" }
   }
 
   try {
@@ -29,11 +29,8 @@ export async function exportMosqueData(mosqueId: number): Promise <
       events: allEvents,
     }
 
-    return {
-      success: true,
-      data: JSON.stringify(exportData, null, 2),
-    }
+    return { success: true, data: JSON.stringify(exportData, null, 2) }
   } catch {
-    return { success: false, error: "Erreur lors de l'export." }
+    return { success: false, error: "EXPORT_FAILED" }
   }
 }

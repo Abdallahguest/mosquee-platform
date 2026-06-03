@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { useErrorMessages } from "@/lib/use-error-messages"
 import { createEvent, updateEvent } from "@/lib/actions/event.actions"
 import { useRouter } from "@/i18n/navigation"
 import { Button }   from "@/components/ui/button"
@@ -34,6 +35,7 @@ function toLocalInput(date: Date | null | undefined): string | undefined {
 export default function EventForm({ event }: EventFormProps) {
   const t = useTranslations("admin.eventForm")
   const tc = useTranslations("admin.common")
+  const { fromResult } = useErrorMessages()
   const isEdit = event != null
   const router = useRouter()
   const [error, setError]     = useState("")
@@ -54,7 +56,7 @@ export default function EventForm({ event }: EventFormProps) {
       : await createEvent(formData)
 
     if (!result.success) {
-      setError(result.error)
+      setError(fromResult(result))
       setLoading(false)
       return
     }

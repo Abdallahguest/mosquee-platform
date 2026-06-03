@@ -73,7 +73,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
 
       {error && (
         <Alert variant="destructive">
@@ -95,16 +95,16 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="name">{t("fieldName")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
-            <Input id="name" name="name" required defaultValue={mosque.name} />
+            <Input id="name" name="name" aria-required="true" defaultValue={mosque.name} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="city">{t("fieldCity")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
-              <Input id="city" name="city" required defaultValue={mosque.city} />
+              <Input id="city" name="city" aria-required="true" defaultValue={mosque.city} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="country">{t("fieldCountry")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
-              <Input id="country" name="country" required defaultValue={mosque.country} />
+              <Input id="country" name="country" aria-required="true" defaultValue={mosque.country} />
             </div>
           </div>
         </CardContent>
@@ -132,14 +132,14 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
               <Label htmlFor="latitude">{t("fieldLatitude")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input
                 id="latitude" name="latitude" type="number" step="0.0001"
-                required defaultValue={mosque.latitude} dir="ltr"
+                aria-required="true" defaultValue={mosque.latitude} dir="ltr"
               />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="longitude">{t("fieldLongitude")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
               <Input
                 id="longitude" name="longitude" type="number" step="0.0001"
-                required defaultValue={mosque.longitude} dir="ltr"
+                aria-required="true" defaultValue={mosque.longitude} dir="ltr"
               />
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           <div className="space-y-1.5">
             <Label htmlFor="timezone">{t("fieldTimezone")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input
-              id="timezone" name="timezone" required
+              id="timezone" name="timezone" aria-required="true"
               defaultValue={mosque.timezone} placeholder="Africa/Conakry" dir="ltr"
             />
             <p className="text-xs text-muted-foreground">{t("tzHelp")}</p>

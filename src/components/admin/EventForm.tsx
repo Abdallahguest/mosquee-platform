@@ -81,7 +81,7 @@ export default function EventForm({ event }: EventFormProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
 
           {error && (
             <Alert variant="destructive">
@@ -96,7 +96,7 @@ export default function EventForm({ event }: EventFormProps) {
 
           <div className="space-y-1.5">
             <Label htmlFor="title">{t("fieldTitle")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
-            <Input id="title" name="title" required maxLength={100} placeholder={t("titlePlaceholder")} defaultValue={event?.title} />
+            <Input id="title" name="title" aria-required="true" maxLength={100} placeholder={t("titlePlaceholder")} defaultValue={event?.title} />
           </div>
 
           <div className="space-y-1.5">
@@ -117,7 +117,7 @@ export default function EventForm({ event }: EventFormProps) {
             <Input
               id="location"
               name="location"
-              required
+              aria-required="true"
               defaultValue={event?.location ?? t("defaultLocation")}
             />
           </div>
@@ -125,7 +125,7 @@ export default function EventForm({ event }: EventFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="startAt">{t("fieldStart")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
-              <Input id="startAt" name="startAt" type="datetime-local" required defaultValue={toLocalInput(event?.startAt)} />
+              <Input id="startAt" name="startAt" type="datetime-local" aria-required="true" defaultValue={toLocalInput(event?.startAt)} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="endAt">{t("fieldEnd")}</Label>

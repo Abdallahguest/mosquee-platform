@@ -78,7 +78,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
 
           {error && (
             <Alert variant="destructive">
@@ -99,7 +99,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             <Input
               id="title"
               name="title"
-              required
+              aria-required="true"
               maxLength={100}
               placeholder={t("titlePlaceholder")}
               defaultValue={announcement?.title}
@@ -113,7 +113,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             <Textarea
               id="content"
               name="content"
-              required
+              aria-required="true"
               maxLength={2000}
               rows={4}
               placeholder={t("contentPlaceholder")}

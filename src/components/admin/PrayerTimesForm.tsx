@@ -30,19 +30,16 @@ const ROWS: { nameKey: string; adhan: FieldKey; iqama: FieldKey }[] = [
 
 const initialState: PrayerTimesActionState = { ok: false, message: "" }
 
-const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"))
-// Toutes les minutes (00 à 59) : aucune contrainte sur l'horaire saisi.
-// On évite ainsi toute incertitude sur ce qu'une mosquée peut renseigner.
-const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"))
-
-// Découpe "HH:MM". Renvoie des parties vides si la valeur est vide/invalide.
-function splitTime(v: string): { h: string; m: string } {
-  const match = /^([0-2]\d):([0-5]\d)$/.exec(v)
-  if (!match) return { h: "", m: "" }
-  return { h: match[1], m: match[2] }
+// Transforme une saisie brute en "HH:MM" au fil de la frappe.
+// On ne garde que les chiffres (max 4) et on insère le ":" après 2 chiffres.
+// Ex : "0" -> "0", "05" -> "05", "053" -> "05:3", "0535" -> "05:35".
+function formatTimeInput(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 4)
+  if (digits.length <= 2) return digits
+  return `${digits.slice(0, 2)}:${digits.slice(2)}`
 }
 
-interface TimeSelectProps {
+interface TimeInputProps {
   name: string
   value: string
   onChange: (v: string) => void
@@ -50,52 +47,28 @@ interface TimeSelectProps {
   label: string
 }
 
-// Sélecteur d'heure maison : deux menus déroulants (heures / minutes).
-// Remplace <input type="time"> dont le popup natif s'affiche mal sur certains
-// téléphones. La valeur reste "HH:MM" (champ caché) : aucun changement côté
-// base / validation / page publique.
-function TimeSelect({ name, value, onChange, priority, label }: TimeSelectProps) {
-  const { h, m } = splitTime(value)
-
-  function update(nextH: string, nextM: string) {
-    // Champ facultatif : tant que les deux parties ne sont pas choisies,
-    // la valeur reste vide (vide = "ne pas afficher").
-    if (nextH === "" || nextM === "") return onChange("")
-    onChange(`${nextH}:${nextM}`)
-  }
-
-  const selectClass = priority
-    ? "rounded-lg border border-green-300 bg-green-50/60 px-2 py-2 text-sm font-medium text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500"
-    : "rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700 focus:border-gray-400 focus:ring-1 focus:ring-gray-300"
+// Champ texte unique : on tape les chiffres, le ":" s'insère tout seul.
+// La valeur stockée reste "HH:MM" : aucun changement côté base / validation /
+// page publique. Clavier numérique sur mobile (inputMode).
+function TimeInput({ name, value, onChange, priority, label }: TimeInputProps) {
+  const inputClass = priority
+    ? "w-full rounded-lg border border-green-300 bg-green-50/60 px-3 py-2 text-center font-mono text-sm font-medium text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500"
+    : "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-center font-mono text-sm text-gray-700 focus:border-gray-400 focus:ring-1 focus:ring-gray-300"
 
   return (
-    <div className="flex items-center gap-1.5" dir="ltr">
-      {/* Champ caché : c'est lui qui part au serveur, au format HH:MM. */}
-      <input type="hidden" name={name} value={value} />
-      <select
-        aria-label={`${label} \u2014 heures`}
-        value={h}
-        onChange={(e) => update(e.target.value, m)}
-        className={selectClass}
-      >
-        <option value="">--</option>
-        {HOURS.map((hh) => (
-          <option key={hh} value={hh}>{hh}</option>
-        ))}
-      </select>
-      <span className="text-gray-400" aria-hidden="true">:</span>
-      <select
-        aria-label={`${label} \u2014 minutes`}
-        value={m}
-        onChange={(e) => update(h, e.target.value)}
-        className={selectClass}
-      >
-        <option value="">--</option>
-        {MINUTES.map((mm) => (
-          <option key={mm} value={mm}>{mm}</option>
-        ))}
-      </select>
-    </div>
+    <input
+      name={name}
+      type="text"
+      inputMode="numeric"
+      autoComplete="off"
+      value={value}
+      onChange={(e) => onChange(formatTimeInput(e.target.value))}
+      placeholder="--:--"
+      maxLength={5}
+      aria-label={label}
+      className={inputClass}
+      dir="ltr"
+    />
   )
 }
 
@@ -147,7 +120,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
       <input type="hidden" name="mosqueId" value={mosqueId} />
 
       {/* Le titre de section vient de la carte parente (prayerCardTitle) :
-          on ne le répète plus ici (était dupliqué). */}
+          on ne le répète plus ici. */}
       <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-3">
         <p className="text-sm text-gray-500">{t("intro")}</p>
         <button
@@ -169,15 +142,15 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         {/* En-têtes : Adhan neutre, Iqama signalée prioritaire. */}
         <div className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-end text-xs font-medium px-1">
           <span></span>
-          <span className="text-gray-500">{t("colAdhan")}</span>
-          <span className="text-green-700 font-semibold">{t("colIqama")}</span>
+          <span className="text-gray-500 text-center">{t("colAdhan")}</span>
+          <span className="text-green-700 font-semibold text-center">{t("colIqama")}</span>
         </div>
 
         {ROWS.map((row) => (
           <div key={row.nameKey} className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-start">
             <label className="text-sm font-medium text-gray-700 pt-2">{tp(row.nameKey)}</label>
             <div>
-              <TimeSelect
+              <TimeInput
                 name={row.adhan}
                 value={values[row.adhan]}
                 onChange={(v) => set(row.adhan, v)}
@@ -186,7 +159,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
               {err[row.adhan] && <p className="text-xs text-red-600 mt-1">{translate(err[row.adhan]!)}</p>}
             </div>
             <div>
-              <TimeSelect
+              <TimeInput
                 name={row.iqama}
                 value={values[row.iqama]}
                 onChange={(v) => set(row.iqama, v)}
@@ -202,7 +175,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         <div className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-start pt-3 border-t border-gray-100">
           <label className="text-sm font-medium text-gray-700 pt-2">{tp("Jumua")}</label>
           <div>
-            <TimeSelect
+            <TimeInput
               name="jumuaAdhan"
               value={values.jumuaAdhan}
               onChange={(v) => set("jumuaAdhan", v)}
@@ -211,7 +184,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
             {err.jumuaAdhan && <p className="text-xs text-red-600 mt-1">{translate(err.jumuaAdhan)}</p>}
           </div>
           <div>
-            <TimeSelect
+            <TimeInput
               name="jumuaIqama"
               value={values.jumuaIqama}
               onChange={(v) => set("jumuaIqama", v)}

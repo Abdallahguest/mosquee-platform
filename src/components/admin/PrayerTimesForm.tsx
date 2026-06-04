@@ -20,9 +20,6 @@ interface Props {
 
 type FieldKey = keyof Props["initial"]
 
-// Lignes quotidiennes : chaque prière a un champ adhan + un champ iqama.
-// `nameKey` pointe vers les noms de prières partagés (namespace "prayer"),
-// pour rester cohérent avec la page publique.
 const ROWS: { nameKey: string; adhan: FieldKey; iqama: FieldKey }[] = [
   { nameKey: "Fajr",    adhan: "fajrAdhan",    iqama: "fajrIqama" },
   { nameKey: "Dhuhr",   adhan: "dhuhrAdhan",   iqama: "dhuhrIqama" },
@@ -32,6 +29,75 @@ const ROWS: { nameKey: string; adhan: FieldKey; iqama: FieldKey }[] = [
 ]
 
 const initialState: PrayerTimesActionState = { ok: false, message: "" }
+
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"))
+// Toutes les minutes (00 à 59) : aucune contrainte sur l'horaire saisi.
+// On évite ainsi toute incertitude sur ce qu'une mosquée peut renseigner.
+const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"))
+
+// Découpe "HH:MM". Renvoie des parties vides si la valeur est vide/invalide.
+function splitTime(v: string): { h: string; m: string } {
+  const match = /^([0-2]\d):([0-5]\d)$/.exec(v)
+  if (!match) return { h: "", m: "" }
+  return { h: match[1], m: match[2] }
+}
+
+interface TimeSelectProps {
+  name: string
+  value: string
+  onChange: (v: string) => void
+  priority?: boolean
+  label: string
+}
+
+// Sélecteur d'heure maison : deux menus déroulants (heures / minutes).
+// Remplace <input type="time"> dont le popup natif s'affiche mal sur certains
+// téléphones. La valeur reste "HH:MM" (champ caché) : aucun changement côté
+// base / validation / page publique.
+function TimeSelect({ name, value, onChange, priority, label }: TimeSelectProps) {
+  const { h, m } = splitTime(value)
+
+  function update(nextH: string, nextM: string) {
+    // Champ facultatif : tant que les deux parties ne sont pas choisies,
+    // la valeur reste vide (vide = "ne pas afficher").
+    if (nextH === "" || nextM === "") return onChange("")
+    onChange(`${nextH}:${nextM}`)
+  }
+
+  const selectClass = priority
+    ? "rounded-lg border border-green-300 bg-green-50/60 px-2 py-2 text-sm font-medium text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500"
+    : "rounded-lg border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700 focus:border-gray-400 focus:ring-1 focus:ring-gray-300"
+
+  return (
+    <div className="flex items-center gap-1.5" dir="ltr">
+      {/* Champ caché : c'est lui qui part au serveur, au format HH:MM. */}
+      <input type="hidden" name={name} value={value} />
+      <select
+        aria-label={`${label} \u2014 heures`}
+        value={h}
+        onChange={(e) => update(e.target.value, m)}
+        className={selectClass}
+      >
+        <option value="">--</option>
+        {HOURS.map((hh) => (
+          <option key={hh} value={hh}>{hh}</option>
+        ))}
+      </select>
+      <span className="text-gray-400" aria-hidden="true">:</span>
+      <select
+        aria-label={`${label} \u2014 minutes`}
+        value={m}
+        onChange={(e) => update(h, e.target.value)}
+        className={selectClass}
+      >
+        <option value="">--</option>
+        {MINUTES.map((mm) => (
+          <option key={mm} value={mm}>{mm}</option>
+        ))}
+      </select>
+    </div>
+  )
+}
 
 export default function PrayerTimesForm({ mosqueId, initial }: Props) {
   const t = useTranslations("admin.prayerTimes")
@@ -80,11 +146,10 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="mosqueId" value={mosqueId} />
 
+      {/* Le titre de section vient de la carte parente (prayerCardTitle) :
+          on ne le répète plus ici (était dupliqué). */}
       <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-3">
-        <div>
-          <h2 className="font-semibold text-gray-900">{t("title")}</h2>
-          <p className="text-sm text-gray-500 mt-0.5">{t("intro")}</p>
-        </div>
+        <p className="text-sm text-gray-500">{t("intro")}</p>
         <button
           type="button"
           onClick={handleSuggest}
@@ -99,36 +164,34 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         <p className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2">{suggestMsg}</p>
       )}
 
-      {/* En-têtes de colonnes */}
-      <div className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center text-xs font-medium text-gray-500 px-1">
-        <span></span>
-        <span>{t("colAdhan")}</span>
-        <span>{t("colIqama")}</span>
-      </div>
+      {/* Conteneur avec padding : les horaires ne collent plus au bord. */}
+      <div className="rounded-xl border border-gray-100 p-3 sm:p-4 space-y-3">
+        {/* En-têtes : Adhan neutre, Iqama signalée prioritaire. */}
+        <div className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-end text-xs font-medium px-1">
+          <span></span>
+          <span className="text-gray-500">{t("colAdhan")}</span>
+          <span className="text-green-700 font-semibold">{t("colIqama")}</span>
+        </div>
 
-      <div className="space-y-3">
         {ROWS.map((row) => (
-          <div key={row.nameKey} className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center">
-            <label className="text-sm font-medium text-gray-700">{tp(row.nameKey)}</label>
+          <div key={row.nameKey} className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-start">
+            <label className="text-sm font-medium text-gray-700 pt-2">{tp(row.nameKey)}</label>
             <div>
-              <input
+              <TimeSelect
                 name={row.adhan}
-                type="time"
                 value={values[row.adhan]}
-                onChange={(e) => set(row.adhan, e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-                dir="ltr"
+                onChange={(v) => set(row.adhan, v)}
+                label={`${tp(row.nameKey)} ${t("colAdhan")}`}
               />
               {err[row.adhan] && <p className="text-xs text-red-600 mt-1">{translate(err[row.adhan]!)}</p>}
             </div>
             <div>
-              <input
+              <TimeSelect
                 name={row.iqama}
-                type="time"
                 value={values[row.iqama]}
-                onChange={(e) => set(row.iqama, e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-                dir="ltr"
+                onChange={(v) => set(row.iqama, v)}
+                priority
+                label={`${tp(row.nameKey)} ${t("colIqama")}`}
               />
               {err[row.iqama] && <p className="text-xs text-red-600 mt-1">{translate(err[row.iqama]!)}</p>}
             </div>
@@ -136,32 +199,29 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
         ))}
 
         {/* Jumu'ah : même structure. */}
-        <div className="grid grid-cols-[5rem_1fr_1fr] gap-3 items-center pt-2 border-t border-gray-100">
-          <label className="text-sm font-medium text-gray-700">{tp("Jumua")}</label>
+        <div className="grid grid-cols-[4.5rem_1fr_1fr] gap-2 sm:gap-3 items-start pt-3 border-t border-gray-100">
+          <label className="text-sm font-medium text-gray-700 pt-2">{tp("Jumua")}</label>
           <div>
-            <input
+            <TimeSelect
               name="jumuaAdhan"
-              type="time"
               value={values.jumuaAdhan}
-              onChange={(e) => set("jumuaAdhan", e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-              dir="ltr"
+              onChange={(v) => set("jumuaAdhan", v)}
+              label={`${tp("Jumua")} ${t("colAdhan")}`}
             />
             {err.jumuaAdhan && <p className="text-xs text-red-600 mt-1">{translate(err.jumuaAdhan)}</p>}
           </div>
           <div>
-            <input
+            <TimeSelect
               name="jumuaIqama"
-              type="time"
               value={values.jumuaIqama}
-              onChange={(e) => set("jumuaIqama", e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 font-mono"
-              dir="ltr"
+              onChange={(v) => set("jumuaIqama", v)}
+              priority
+              label={`${tp("Jumua")} ${t("colIqama")}`}
             />
             {err.jumuaIqama && <p className="text-xs text-red-600 mt-1">{translate(err.jumuaIqama)}</p>}
           </div>
         </div>
-        <p className="text-xs text-gray-500">{t("jumuaNote")}</p>
+        <p className="text-xs text-gray-500 px-1">{t("jumuaNote")}</p>
       </div>
 
       {state.message && (
@@ -173,7 +233,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
       <button
         type="submit"
         disabled={isPending}
-        className="bg-green-700 text-white rounded-lg px-5 py-2.5 font-medium hover:bg-green-800 disabled:opacity-50"
+        className="w-full sm:w-auto bg-green-700 text-white rounded-lg px-5 py-2.5 font-medium hover:bg-green-800 disabled:opacity-50"
       >
         {isPending ? t("saving") : t("saveButton")}
       </button>

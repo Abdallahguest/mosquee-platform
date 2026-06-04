@@ -80,7 +80,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="mosqueId" value={mosqueId} />
 
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-3">
         <div>
           <h2 className="font-semibold text-gray-900">{t("title")}</h2>
           <p className="text-sm text-gray-500 mt-0.5">{t("intro")}</p>
@@ -89,7 +89,7 @@ export default function PrayerTimesForm({ mosqueId, initial }: Props) {
           type="button"
           onClick={handleSuggest}
           disabled={suggesting}
-          className="shrink-0 text-sm border border-green-600 text-green-700 rounded-lg px-3 py-2 hover:bg-green-50 disabled:opacity-50"
+          className="shrink-0 w-full sm:w-auto text-sm border border-green-600 text-green-700 rounded-lg px-3 py-2 hover:bg-green-50 disabled:opacity-50"
         >
           {suggesting ? t("suggesting") : t("suggestButton")}
         </button>

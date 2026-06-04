@@ -49,6 +49,9 @@ export default function EventList({ events }: EventListProps) {
     setLoadingId(null)
   }
 
+  const fmtDate = (d: Date) =>
+    new Date(d).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })
+
   if (events.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -58,76 +61,116 @@ export default function EventList({ events }: EventListProps) {
   }
 
   return (
-    <div className="rounded-xl border bg-white overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t("colTitle")}</TableHead>
-            <TableHead className="hidden sm:table-cell">{t("colDate")}</TableHead>
-            <TableHead>{t("colStatus")}</TableHead>
-            <TableHead className="text-end">{t("colActions")}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {events.map((event) => (
-            <TableRow
-              key={event.id}
-              className={loadingId === event.id ? "opacity-50" : ""}
+    <>
+      {/* ───────── Version MOBILE : cartes empilées ───────── */}
+      <div className="sm:hidden space-y-3">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className={`rounded-xl border bg-white p-4 ${loadingId === event.id ? "opacity-50" : ""}`}
+          >
+            <div className="flex items-start justify-between gap-3 mb-1">
+              <p className="font-medium text-sm leading-snug">{event.title}</p>
+              <Badge
+                variant={event.isPublished ? "default" : "secondary"}
+                className={event.isPublished ? "bg-green-100 text-green-700 hover:bg-green-100 shrink-0" : "shrink-0"}
+              >
+                {event.isPublished ? t("statusPublished") : t("statusDraft")}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground mb-1">
+              <span aria-hidden="true">📍</span> {event.location}
+            </p>
+            <p className="text-xs text-muted-foreground mb-3" dir="ltr">{fmtDate(event.startAt)}</p>
+
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm" className="flex-1">
+                <Link href={`/admin/events/${event.id}/edit`}>{t("edit")}</Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => handleToggle(event.id, event.isPublished)}
+                disabled={loadingId === event.id}
+              >
+                {event.isPublished ? t("unpublish") : t("publish")}
+              </Button>
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="w-full mt-2"
+              onClick={() => setToDelete(event)}
+              disabled={loadingId === event.id}
             >
-              <TableCell>
-                <div>
-                  <p className="font-medium text-sm truncate max-w-45">{event.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    <span aria-hidden="true">📍</span> {event.location}
-                  </p>
-                </div>
-              </TableCell>
+              {t("delete")}
+            </Button>
+          </div>
+        ))}
+      </div>
 
-              <TableCell className="hidden sm:table-cell text-sm text-muted-foreground" dir="ltr">
-                {new Date(event.startAt).toLocaleDateString(locale, {
-                  day: "numeric", month: "short", year: "numeric",
-                })}
-              </TableCell>
-
-              <TableCell>
-                <Badge
-                  variant={event.isPublished ? "default" : "secondary"}
-                  className={event.isPublished
-                    ? "bg-green-100 text-green-700 hover:bg-green-100"
-                    : ""
-                  }
-                >
-                  {event.isPublished ? t("statusPublished") : t("statusDraft")}
-                </Badge>
-              </TableCell>
-
-              <TableCell className="text-end">
-                <div className="flex justify-end gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/admin/events/${event.id}/edit`}>{t("edit")}</Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleToggle(event.id, event.isPublished)}
-                    disabled={loadingId === event.id}
-                  >
-                    {event.isPublished ? t("unpublish") : t("publish")}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setToDelete(event)}
-                    disabled={loadingId === event.id}
-                  >
-                    {t("delete")}
-                  </Button>
-                </div>
-              </TableCell>
+      {/* ───────── Version DESKTOP : tableau ───────── */}
+      <div className="hidden sm:block rounded-xl border bg-white overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("colTitle")}</TableHead>
+              <TableHead>{t("colDate")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
+              <TableHead className="text-end">{t("colActions")}</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {events.map((event) => (
+              <TableRow key={event.id} className={loadingId === event.id ? "opacity-50" : ""}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium text-sm truncate max-w-45">{event.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      <span aria-hidden="true">📍</span> {event.location}
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground" dir="ltr">
+                  {fmtDate(event.startAt)}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={event.isPublished ? "default" : "secondary"}
+                    className={event.isPublished ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
+                  >
+                    {event.isPublished ? t("statusPublished") : t("statusDraft")}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-end">
+                  <div className="flex justify-end gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/admin/events/${event.id}/edit`}>{t("edit")}</Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleToggle(event.id, event.isPublished)}
+                      disabled={loadingId === event.id}
+                    >
+                      {event.isPublished ? t("unpublish") : t("publish")}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setToDelete(event)}
+                      disabled={loadingId === event.id}
+                    >
+                      {t("delete")}
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <ConfirmDialog
         open={toDelete !== null}
@@ -139,6 +182,6 @@ export default function EventList({ events }: EventListProps) {
         onConfirm={confirmDelete}
         onCancel={() => setToDelete(null)}
       />
-    </div>
+    </>
   )
 }

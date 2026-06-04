@@ -2,9 +2,9 @@ import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { getSessionMosque } from "@/lib/auth-helpers"
 import { getAnnouncementById } from "@/db/queries"
-import { Link } from "@/i18n/navigation"
 import AnnouncementForm from "@/components/admin/AnnouncementForm"
 import NoMosque from "@/components/admin/NoMosque"
+import BackLink from "@/components/BackLink"
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -22,12 +22,7 @@ export default async function EditAnnouncementPage({ params }: PageProps) {
   return (
     <main className="max-w-2xl mx-auto px-6 py-8">
       <div className="mb-6">
-        <Link
-          href="/admin/announcements"
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <span aria-hidden="true" className="rtl:hidden">← </span>{t("backToAnnouncements")}<span aria-hidden="true" className="hidden rtl:inline"> →</span>
-        </Link>
+        <BackLink href="/admin/announcements" label={t("backToAnnouncements")} />
       </div>
 
       <h1 className="text-2xl font-bold text-gray-900 mb-6">{t("editAnnouncementTitle")}</h1>

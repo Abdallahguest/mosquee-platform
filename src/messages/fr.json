@@ -7,7 +7,8 @@
     "backToHome": "Retour à l'accueil",
     "allMosques": "Toutes les mosquées",
     "noContent": "Aucune annonce ni événement pour le moment.",
-    "contentInLang": "Contenu en {lang}"
+    "contentInLang": "Contenu en {lang}",
+    "readMore": "Lire la suite"
   },
   "home": {
     "title": "Plateforme Mosquée",
@@ -33,11 +34,17 @@
   },
   "announcements": {
     "title": "Annonces",
-    "empty": "Aucune annonce pour le moment."
+    "empty": "Aucune annonce pour le moment.",
+    "backToList": "Retour à l'accueil",
+    "readMore": "Lire la suite",
+    "backToMosque": "Retour à la mosquée"
   },
   "events": {
     "title": "Événements à venir",
-    "empty": "Aucun événement à venir."
+    "empty": "Aucun événement à venir.",
+    "backToList": "Retour à l'accueil",
+    "readMore": "Voir les détails",
+    "backToMosque": "Retour à la mosquée"
   },
   "footer": {
     "tagline": "Plateforme respectueuse · sans intérêt ni tromperie · rien de caché"

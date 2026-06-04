@@ -39,8 +39,6 @@ export default async function MosquePublicPage({ params }: PageProps) {
     getUpcomingEvents(mosque.id),
   ])
 
-  // On passe les heures BRUTES + le fuseau : le composant client recompose et
-  // s'auto-actualise (la prochaine prière bascule sans rechargement).
   const schedule = {
     fajrAdhan:    mosque.fajrAdhan,    fajrIqama:    mosque.fajrIqama,
     dhuhrAdhan:   mosque.dhuhrAdhan,   dhuhrIqama:   mosque.dhuhrIqama,
@@ -87,7 +85,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
               </h2>
               <div className="flex flex-col gap-3">
                 {activeAnnouncements.map((a) => (
-                  <AnnouncementCard key={a.id} announcement={a} />
+                  <AnnouncementCard key={a.id} announcement={a} slug={slug} />
                 ))}
               </div>
             </section>
@@ -103,7 +101,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
               </h2>
               <div className="flex flex-col gap-3">
                 {upcomingEvents.map((ev) => (
-                  <EventCard key={ev.id} event={ev} />
+                  <EventCard key={ev.id} event={ev} slug={slug} />
                 ))}
               </div>
             </section>

@@ -256,3 +256,39 @@ export async function getUsersNotAdminOfMosque(mosqueId: number) {
     return []
   }
 }
+
+// ── REQUÊTES PUBLIQUES (détail) ──
+// Distinctes des getXById admin : elles EXIGENT isPublished = true (anti-jahàla :
+// jamais exposer un brouillon via une URL devinée). Annonce expirée → null (notFound).
+ 
+export async function getPublicAnnouncement(id: number, mosqueId: number) {
+  const now = new Date()
+  const result = await db
+    .select()
+    .from(announcements)
+    .where(
+      and(
+        eq(announcements.id, id),
+        eq(announcements.mosqueId, mosqueId),
+        eq(announcements.isPublished, true),
+        or(isNull(announcements.expiresAt), gt(announcements.expiresAt, now))
+      )
+    )
+    .limit(1)
+  return result[0] ?? null
+}
+ 
+export async function getPublicEvent(id: number, mosqueId: number) {
+  const result = await db
+    .select()
+    .from(events)
+    .where(
+      and(
+        eq(events.id, id),
+        eq(events.mosqueId, mosqueId),
+        eq(events.isPublished, true)
+      )
+    )
+    .limit(1)
+  return result[0] ?? null
+}

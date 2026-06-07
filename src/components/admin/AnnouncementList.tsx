@@ -6,6 +6,7 @@ import { useErrorMessages } from "@/lib/use-error-messages"
 import {
   deleteAnnouncement,
   toggleAnnouncementPublished,
+  toggleAnnouncementPinned,
 } from "@/lib/actions/announcement.actions"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
@@ -25,6 +26,7 @@ interface Announcement {
   title: string
   content: string
   isPublished: boolean
+  isPinned: boolean
   publishedAt: Date | null
   expiresAt: Date | null
   createdAt: Date
@@ -60,6 +62,13 @@ export default function AnnouncementList({
     setLoadingId(null)
   }
 
+  async function handlePin(id: number, current: boolean) {
+    setLoadingId(id)
+    const result = await toggleAnnouncementPinned(id, current)
+    if (!result.success) alert(fromResult(result))
+    setLoadingId(null)
+  }
+
   const fmtDate = (d: Date | null) =>
     d ? new Date(d).toLocaleDateString(locale, { day: "numeric", month: "short" }) : "—"
 
@@ -74,15 +83,18 @@ export default function AnnouncementList({
 
   return (
     <>
-      {/* ───────── Version MOBILE : cartes empilées (pas de scroll horizontal) ───────── */}
+      {/* ───────── Version MOBILE : cartes empilées ───────── */}
       <div className="sm:hidden space-y-3">
         {announcements.map((a) => (
           <div
             key={a.id}
-            className={`rounded-xl border bg-white p-4 ${loadingId === a.id ? "opacity-50" : ""}`}
+            className={`rounded-xl border bg-white p-4 ${a.isPinned ? "border-green-300 bg-green-50/40" : ""} ${loadingId === a.id ? "opacity-50" : ""}`}
           >
             <div className="flex items-start justify-between gap-3 mb-1">
-              <p className="font-medium text-sm leading-snug">{a.title}</p>
+              <p className="font-medium text-sm leading-snug">
+                {a.isPinned && <span aria-hidden="true" className="me-1">📌</span>}
+                {a.title}
+              </p>
               <Badge
                 variant={a.isPublished ? "default" : "secondary"}
                 className={a.isPublished ? "bg-green-100 text-green-700 hover:bg-green-100 shrink-0" : "shrink-0"}
@@ -93,7 +105,6 @@ export default function AnnouncementList({
             <p className="text-xs text-muted-foreground line-clamp-1 mb-2">{a.content}</p>
             <p className="text-xs text-muted-foreground mb-3" dir="ltr">{fmtDate(a.publishedAt)}</p>
 
-            {/* Éditer + Dépublier en ligne */}
             <div className="flex gap-2">
               <Button asChild variant="outline" size="sm" className="flex-1">
                 <Link href={`/admin/announcements/${a.id}/edit`}>{t("edit")}</Link>
@@ -108,7 +119,18 @@ export default function AnnouncementList({
                 {a.isPublished ? t("unpublish") : t("publish")}
               </Button>
             </div>
-            {/* Supprimer séparé en dessous (anti-ghich : action irréversible isolée) */}
+            <div className="flex gap-2 mt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => handlePin(a.id, a.isPinned)}
+                disabled={loadingId === a.id}
+              >
+                {a.isPinned ? t("unpin") : t("pin")}
+              </Button>
+            </div>
+            {/* Supprimer séparé en dessous (anti-ghich) */}
             <Button
               variant="destructive"
               size="sm"
@@ -135,10 +157,16 @@ export default function AnnouncementList({
           </TableHeader>
           <TableBody>
             {announcements.map((a) => (
-              <TableRow key={a.id} className={loadingId === a.id ? "opacity-50" : ""}>
+              <TableRow
+                key={a.id}
+                className={`${a.isPinned ? "bg-green-50/40" : ""} ${loadingId === a.id ? "opacity-50" : ""}`}
+              >
                 <TableCell>
                   <div>
-                    <p className="font-medium text-sm truncate max-w-50">{a.title}</p>
+                    <p className="font-medium text-sm truncate max-w-50">
+                      {a.isPinned && <span aria-hidden="true" className="me-1">📌</span>}
+                      {a.title}
+                    </p>
                     <p className="text-xs text-muted-foreground line-clamp-1 max-w-50">{a.content}</p>
                   </div>
                 </TableCell>
@@ -157,6 +185,14 @@ export default function AnnouncementList({
                   <div className="flex justify-end gap-2">
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/admin/announcements/${a.id}/edit`}>{t("edit")}</Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePin(a.id, a.isPinned)}
+                      disabled={loadingId === a.id}
+                    >
+                      {a.isPinned ? t("unpin") : t("pin")}
                     </Button>
                     <Button
                       variant="outline"

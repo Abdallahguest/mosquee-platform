@@ -61,7 +61,11 @@ export default async function MosquePublicPage({ params }: PageProps) {
         <div className="max-w-lg mx-auto px-6 py-6 space-y-8">
 
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">{mosque.city}, {mosque.country}</p>
+            <p className="text-sm text-gray-500">
+              {[mosque.city, mosque.commune, mosque.quartier, mosque.secteur].filter(Boolean).join(", ")}
+              {[mosque.city, mosque.commune, mosque.quartier, mosque.secteur].filter(Boolean).length > 0 ? ", " : ""}
+              {mosque.country}
+            </p>
             {mosque.isVerified && (
               <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
                 ✓ {tc("verified")}
@@ -70,6 +74,12 @@ export default async function MosquePublicPage({ params }: PageProps) {
           </div>
 
           <p className="text-sm text-gray-500 capitalize text-center">{today}</p>
+
+          {mosque.welcomeMessage && (
+            <p className="text-sm text-gray-700 text-center bg-green-50 border border-green-100 rounded-xl px-4 py-3 whitespace-pre-line">
+              {mosque.welcomeMessage}
+            </p>
+          )}
 
           <section>
             <PrayerSchedule schedule={schedule} />

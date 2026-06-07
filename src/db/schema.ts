@@ -19,6 +19,12 @@ export const mosques = pgTable("mosques", {
   name:              varchar("name", { length: 200 }).notNull(),
   city:              varchar("city", { length: 100 }).notNull(),
   country:           varchar("country", { length: 100 }).notNull(),
+
+  // ── Coordonnées précises (optionnelles, champs libres) ──
+  commune:  varchar("commune",  { length: 100 }),
+  quartier: varchar("quartier", { length: 100 }),
+  secteur:  varchar("secteur",  { length: 100 }),
+
   latitude:          doublePrecision("latitude").notNull(),
   longitude:         doublePrecision("longitude").notNull(),
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
@@ -29,6 +35,10 @@ export const mosques = pgTable("mosques", {
   donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel
   contactEmail: varchar("contact_email", { length: 255 }),  // optionnel
   contactPhone: varchar("contact_phone", { length: 50 }),   // optionnel
+
+  // ── Textes personnalisés (optionnels) ──
+  welcomeMessage: text("welcome_message"),  // affiché en haut de la page publique
+  footerText:     text("footer_text"),      // affiché dans le pied de page public
 
   // Ajustements iqama en minutes (décalage après l'adhan)
   iqamaFajr:    integer("iqama_fajr").notNull().default(20),
@@ -74,14 +84,12 @@ export const users = pgTable("users", {
 })
 
 // ── TABLE DE LIAISON MOSQUÉE ↔ ADMINS ──
-// Un admin peut gérer plusieurs mosquées ; une mosquée peut avoir plusieurs admins.
 export const mosqueAdmins = pgTable("mosque_admins", {
   id:        serial("id").primaryKey(),
   mosqueId:  integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
   userId:    varchar("user_id", { length: 255 }).notNull().references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 }, (table) => ({
-  // Empêche de lier deux fois le même user à la même mosquée
   uniqueLink: unique("mosque_admins_mosque_user_unique").on(table.mosqueId, table.userId),
 }))
 
@@ -95,6 +103,7 @@ export const announcements = pgTable("announcements", {
   publishedAt: timestamp("published_at"),
   expiresAt:   timestamp("expires_at"),
   isPublished: boolean("is_published").notNull().default(false),
+  isPinned:    boolean("is_pinned").notNull().default(false),  // épinglée en tête de liste
   createdAt:   timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -110,7 +119,7 @@ export const events = pgTable("events", {
   isPublished: boolean("is_published").notNull().default(false),
 })
 
-// ── TYPES INFÉRÉS ── (TypeScript gratuit depuis le schéma)
+// ── TYPES INFÉRÉS ──
 export type Mosque       = typeof mosques.$inferSelect
 export type NewMosque    = typeof mosques.$inferInsert
 export type Announcement = typeof announcements.$inferSelect
@@ -121,7 +130,6 @@ export type User         = typeof users.$inferSelect
 export type NewUser      = typeof users.$inferInsert
 export type MosqueAdmin    = typeof mosqueAdmins.$inferSelect
 export type NewMosqueAdmin = typeof mosqueAdmins.$inferInsert
-
 
 // ── TABLES BETTER-AUTH ──
 export const session = pgTable("session", {
@@ -158,7 +166,6 @@ export const verification = pgTable("verification", {
   updatedAt:  timestamp("updated_at").notNull().defaultNow(),
 })
 
-// ── TABLE RATE-LIMIT ── (compteurs persistés par Better-Auth, storage="database")
 export const rateLimit = pgTable("rate_limit", {
   id:          varchar("id", { length: 255 }).primaryKey(),
   key:         varchar("key", { length: 255 }),

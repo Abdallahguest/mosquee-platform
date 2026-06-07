@@ -1,10 +1,11 @@
 import { db } from "./index"
 import { mosques, announcements, events, users, mosqueAdmins } from "./schema"
 import { eq, and, gt, desc, isNull, or, asc, count } from "drizzle-orm"
+import type { Mosque } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)
-export async function getMosquesByUserId(userId: string) {
+export async function getMosquesByUserId(userId: string): Promise<Mosque[]> {
   try {
     const rows = await db
       .select({ mosque: mosques })
@@ -12,7 +13,7 @@ export async function getMosquesByUserId(userId: string) {
       .innerJoin(mosques, eq(mosqueAdmins.mosqueId, mosques.id))
       .where(eq(mosqueAdmins.userId, userId))
       .orderBy(mosques.name)
-    return rows.map((r) => r.mosque)
+    return rows.map((r: { mosque: Mosque }) => r.mosque)
   } catch (error) {
     console.error("Erreur récupération mosquées par user:", error)
     return []
@@ -141,6 +142,7 @@ export async function getMosqueById(id: number) {
 
 // ── ANNONCES ──
 
+// Épinglées d'abord (desc isPinned : true avant false), puis par date de publication.
 export async function getActiveAnnouncements(mosqueId: number) {
   const now = new Date()
   return db
@@ -156,7 +158,7 @@ export async function getActiveAnnouncements(mosqueId: number) {
         )
       )
     )
-    .orderBy(desc(announcements.publishedAt))
+    .orderBy(desc(announcements.isPinned), desc(announcements.publishedAt))
     .limit(5)
 }
 
@@ -165,7 +167,7 @@ export async function getAllAnnouncements(mosqueId: number) {
     .select()
     .from(announcements)
     .where(eq(announcements.mosqueId, mosqueId))
-    .orderBy(desc(announcements.publishedAt))
+    .orderBy(desc(announcements.isPinned), desc(announcements.publishedAt))
 }
 
 export async function getAnnouncementById(id: number, mosqueId: number) {
@@ -242,7 +244,7 @@ export async function getUsersNotAdminOfMosque(mosqueId: number) {
       .from(mosqueAdmins)
       .where(eq(mosqueAdmins.mosqueId, mosqueId))
 
-    const linkedIds = linked.map((l) => l.userId)
+    const linkedIds = linked.map((l: { userId: string }) => l.userId)
 
     const allUsers = await db
       .select({ id: users.id, name: users.name, email: users.email, role: users.role })
@@ -250,7 +252,7 @@ export async function getUsersNotAdminOfMosque(mosqueId: number) {
       .orderBy(users.name)
 
     // Exclure ceux déjà liés
-    return allUsers.filter((u) => !linkedIds.includes(u.id))
+    return allUsers.filter((u: { id: string }) => !linkedIds.includes(u.id))
   } catch (error) {
     console.error("Erreur récupération comptes assignables:", error)
     return []
@@ -260,7 +262,7 @@ export async function getUsersNotAdminOfMosque(mosqueId: number) {
 // ── REQUÊTES PUBLIQUES (détail) ──
 // Distinctes des getXById admin : elles EXIGENT isPublished = true (anti-jahàla :
 // jamais exposer un brouillon via une URL devinée). Annonce expirée → null (notFound).
- 
+
 export async function getPublicAnnouncement(id: number, mosqueId: number) {
   const now = new Date()
   const result = await db
@@ -277,7 +279,7 @@ export async function getPublicAnnouncement(id: number, mosqueId: number) {
     .limit(1)
   return result[0] ?? null
 }
- 
+
 export async function getPublicEvent(id: number, mosqueId: number) {
   const result = await db
     .select()

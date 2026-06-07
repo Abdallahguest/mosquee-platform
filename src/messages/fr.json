@@ -169,7 +169,9 @@
       "deleteAnnouncementMessage": "Voulez-vous vraiment supprimer l'annonce « {title} » ? Cette action est définitive.",
       "deleteEventMessage": "Voulez-vous vraiment supprimer l'événement « {title} » ? Cette action est définitive.",
       "confirmDelete": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "pin": "Épingler",
+      "unpin": "Désépingler"
     },
     "edit": {
       "backToAnnouncements": "Retour aux annonces",
@@ -207,7 +209,20 @@
       "fieldContactEmail": "Email de contact public",
       "fieldContactPhone": "Téléphone de contact",
       "fieldDonationUrl": "Lien de don (adresse externe)",
-      "donationHelp": "Lien vers votre page de don. Il s'ouvrira dans un nouvel onglet. Le don est géré directement par la mosquée — la plateforme ne traite aucun paiement."
+      "donationHelp": "Lien vers votre page de don. Il s'ouvrira dans un nouvel onglet. Le don est géré directement par la mosquée — la plateforme ne traite aucun paiement.",
+      "preciseLocationTitle": "Localisation précise (facultatif)",
+      "preciseLocationDesc": "Commune, quartier, secteur — pour aider les fidèles à situer la mosquée.",
+      "fieldCommune": "Commune",
+      "fieldQuartier": "Quartier",
+      "fieldSecteur": "Secteur",
+      "customTitle": "Personnalisation",
+      "customDesc": "Textes affichés sur votre page publique.",
+      "fieldWelcome": "Message d'accueil",
+      "welcomePlaceholder": "Bienvenue à la mosquée…",
+      "welcomeHelp": "Affiché en haut de votre page publique.",
+      "fieldFooter": "Texte de pied de page",
+      "footerPlaceholder": "Horaires du bureau, informations…",
+      "footerHelp": "Affiché en bas de votre page publique."
     },
     "prayerTimes": {
       "title": "Horaires de prière",
@@ -257,7 +272,12 @@
       "CONTACT_EMAIL_INVALID": "L'email de contact est invalide.",
       "PHONE_TOO_LONG": "Le téléphone est trop long.",
       "TIMES_SAVED": "Horaires enregistrés.",
-      "UNKNOWN_ERROR": "Une erreur est survenue. Réessayez."
+      "UNKNOWN_ERROR": "Une erreur est survenue. Réessayez.",
+      "COMMUNE_TOO_LONG": "La commune est trop longue.",
+      "QUARTIER_TOO_LONG": "Le quartier est trop long.",
+      "SECTEUR_TOO_LONG": "Le secteur est trop long.",
+      "WELCOME_TOO_LONG": "Le message d'accueil est trop long.",
+      "FOOTER_TOO_LONG": "Le texte de pied de page est trop long."
     }
   }
 }

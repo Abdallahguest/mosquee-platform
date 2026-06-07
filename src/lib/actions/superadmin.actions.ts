@@ -9,6 +9,10 @@ import { auth } from "@/lib/auth"
 import { mosques, users, mosqueAdmins } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 
+export type ActionResult<T = void> =
+  | { success: true;  data: T;       error?: never }
+  | { success: false; error: string; data?: never  }
+
 export async function assignAdminToMosque(mosqueId: number, userId: string): Promise<ActionResult> {
   await requireSuperAdmin()
 
@@ -115,15 +119,15 @@ export async function setUserVerified(userId: string, verified: boolean): Promis
   }
 }
 
-export type ActionResult<T = void> =
-  | { success: true;  data: T;       error?: never }
-  | { success: false; error: string; data?: never  }
-
 const MosqueSchema = z.object({
   slug:              z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug : minuscules, chiffres et tirets uniquement"),
   name:              z.string().min(1).max(200),
   city:              z.string().min(1).max(100),
   country:           z.string().min(1).max(100),
+  // Coordonnées précises (optionnelles, champs libres)
+  commune:  z.string().max(100).optional(),
+  quartier: z.string().max(100).optional(),
+  secteur:  z.string().max(100).optional(),
   latitude:          z.number().min(-90).max(90),
   longitude:         z.number().min(-180).max(180),
   timezone:          z.string().min(1),
@@ -140,6 +144,9 @@ function parseForm(formData: FormData) {
     name:              formData.get("name"),
     city:              formData.get("city"),
     country:           formData.get("country"),
+    commune:  formData.get("commune")  ?? "",
+    quartier: formData.get("quartier") ?? "",
+    secteur:  formData.get("secteur")  ?? "",
     latitude:          Number(formData.get("latitude")),
     longitude:         Number(formData.get("longitude")),
     timezone:          formData.get("timezone"),
@@ -166,6 +173,9 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
       .insert(mosques)
       .values({
         ...parsed.data,
+        commune:      parsed.data.commune      || null,
+        quartier:     parsed.data.quartier     || null,
+        secteur:      parsed.data.secteur      || null,
         donationUrl:  parsed.data.donationUrl  || null,
         contactEmail: parsed.data.contactEmail || null,
         contactPhone: parsed.data.contactPhone || null,
@@ -199,6 +209,9 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
     await db.update(mosques)
     .set({
       ...parsed.data,
+      commune:      parsed.data.commune      || null,
+      quartier:     parsed.data.quartier     || null,
+      secteur:      parsed.data.secteur      || null,
       donationUrl:  parsed.data.donationUrl  || null,
       contactEmail: parsed.data.contactEmail || null,
       contactPhone: parsed.data.contactPhone || null,

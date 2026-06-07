@@ -11,6 +11,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 interface MosqueAdminFormProps {
   mosque?: {
     id: number; slug: string; name: string; city: string; country: string
+    commune?: string | null
+    quartier?: string | null
+    secteur?: string | null
     latitude: number; longitude: number; timezone: string
     calculationMethod: string; isVerified: boolean
     donationUrl?: string | null
@@ -68,6 +71,22 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
         </div>
       </div>
 
+      {/* Coordonnées précises (optionnelles, champs libres) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="commune">Commune (optionnel)</Label>
+          <Input id="commune" name="commune" defaultValue={mosque?.commune ?? ""} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="quartier">Quartier (optionnel)</Label>
+          <Input id="quartier" name="quartier" defaultValue={mosque?.quartier ?? ""} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="secteur">Secteur (optionnel)</Label>
+          <Input id="secteur" name="secteur" defaultValue={mosque?.secteur ?? ""} />
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="latitude">Latitude</Label>
@@ -100,7 +119,6 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
           <option value="Karachi">Karachi</option>
         </select>
       </div>
-      
 
       <div className="flex items-center gap-2">
         <input

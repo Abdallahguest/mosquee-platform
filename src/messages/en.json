@@ -169,7 +169,9 @@
       "deleteAnnouncementMessage": "Do you really want to delete the announcement “{title}”? This action is permanent.",
       "deleteEventMessage": "Do you really want to delete the event “{title}”? This action is permanent.",
       "confirmDelete": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "pin": "Pin",
+      "unpin": "Unpin"
     },
     "edit": {
       "backToAnnouncements": "Back to announcements",
@@ -207,7 +209,20 @@
       "fieldContactEmail": "Public contact email",
       "fieldContactPhone": "Contact phone",
       "fieldDonationUrl": "Donation link (external address)",
-      "donationHelp": "Link to your donation page. It opens in a new tab. Donations are handled directly by the mosque — the platform processes no payment."
+      "donationHelp": "Link to your donation page. It opens in a new tab. Donations are handled directly by the mosque — the platform processes no payment.",
+      "preciseLocationTitle": "Precise location (optional)",
+      "preciseLocationDesc": "Commune, district, sector — to help worshippers locate the mosque.",
+      "fieldCommune": "Commune",
+      "fieldQuartier": "District",
+      "fieldSecteur": "Sector",
+      "customTitle": "Customization",
+      "customDesc": "Texts shown on your public page.",
+      "fieldWelcome": "Welcome message",
+      "welcomePlaceholder": "Welcome to the mosque…",
+      "welcomeHelp": "Shown at the top of your public page.",
+      "fieldFooter": "Footer text",
+      "footerPlaceholder": "Office hours, information…",
+      "footerHelp": "Shown at the bottom of your public page."
     },
     "prayerTimes": {
       "title": "Prayer times",
@@ -257,7 +272,12 @@
       "CONTACT_EMAIL_INVALID": "The contact email is invalid.",
       "PHONE_TOO_LONG": "Phone number is too long.",
       "TIMES_SAVED": "Times saved.",
-      "UNKNOWN_ERROR": "An error occurred. Please try again."
+      "UNKNOWN_ERROR": "An error occurred. Please try again.",
+      "COMMUNE_TOO_LONG": "Commune is too long.",
+      "QUARTIER_TOO_LONG": "District is too long.",
+      "SECTEUR_TOO_LONG": "Sector is too long.",
+      "WELCOME_TOO_LONG": "Welcome message is too long.",
+      "FOOTER_TOO_LONG": "Footer text is too long."
     }
   }
 }

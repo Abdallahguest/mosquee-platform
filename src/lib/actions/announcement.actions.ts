@@ -8,7 +8,6 @@ import { announcements } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import type { ActionResult } from "./action-result"
 
-// Chaque règle porte un CODE (pas une phrase). Traduit côté composant.
 const AnnouncementSchema = z.object({
   title:       z.string().min(1, "TITLE_REQUIRED").max(100, "TITLE_TOO_LONG"),
   content:     z.string().min(1, "CONTENT_REQUIRED").max(2000, "CONTENT_TOO_LONG"),
@@ -16,7 +15,6 @@ const AnnouncementSchema = z.object({
   expiresAt:   z.string().optional(),
 })
 
-// Collecte tous les codes de validation (affichage groupé).
 function collectCodes(error: z.ZodError): string[] {
   return error.issues.map((i) => i.message)
 }
@@ -62,7 +60,6 @@ export async function createAnnouncement(
     revalidateContent(mosque.slug)
     return { success: true, data: { id: announcement.id } }
   } catch {
-    // On ne divulgue plus error.message brut (fuite technique). Code générique.
     return { success: false, error: "CREATE_FAILED" }
   }
 }
@@ -144,6 +141,28 @@ export async function toggleAnnouncementPublished(
         isPublished: !current,
         publishedAt: !current ? new Date() : undefined,
       })
+      .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
+
+    revalidateContent(mosque.slug)
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "UPDATE_FAILED" }
+  }
+}
+
+// Épingle / désépingle une annonce. Les épinglées remontent en tête de liste
+// (tri géré dans les requêtes). Sécurité : restreint à la mosquée de session.
+export async function toggleAnnouncementPinned(
+  id: number,
+  current: boolean
+): Promise<ActionResult> {
+  const { mosque, mosqueId } = await getSessionMosque()
+  if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
+
+  try {
+    await db
+      .update(announcements)
+      .set({ isPinned: !current })
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)

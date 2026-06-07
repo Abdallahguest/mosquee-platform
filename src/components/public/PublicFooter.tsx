@@ -3,20 +3,34 @@ interface PublicFooterProps {
     name: string
     city: string
     country: string
+    commune?: string | null
+    quartier?: string | null
+    secteur?: string | null
     contactEmail?: string | null
     contactPhone?: string | null
     donationUrl?: string | null
+    footerText?: string | null
   }
 }
 
 export default function PublicFooter({ mosque }: PublicFooterProps) {
+  // Adresse complète : du plus large au plus précis, on ne montre que ce qui est rempli.
+  const addressParts = [mosque.city, mosque.commune, mosque.quartier, mosque.secteur].filter(Boolean)
+
   return (
     <footer className="bg-green-950 text-green-100 mt-8">
       <div className="max-w-lg mx-auto px-6 py-6 space-y-3">
         <div className="text-sm">
           <p className="font-medium text-white">{mosque.name}</p>
-          <p className="text-green-200">{mosque.city}, {mosque.country}</p>
+          <p className="text-green-200">
+            {addressParts.join(", ")}{addressParts.length > 0 ? ", " : ""}{mosque.country}
+          </p>
         </div>
+
+        {/* Texte personnalisé de pied de page (optionnel) */}
+        {mosque.footerText && (
+          <p className="text-xs text-green-200 whitespace-pre-line">{mosque.footerText}</p>
+        )}
 
         {(mosque.contactEmail || mosque.contactPhone) && (
           <div className="text-xs text-green-200 space-y-0.5">

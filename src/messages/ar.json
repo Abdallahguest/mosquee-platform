@@ -169,7 +169,9 @@
       "deleteAnnouncementMessage": "هل تريد حقًا حذف الإعلان «{title}»؟ هذا الإجراء نهائي.",
       "deleteEventMessage": "هل تريد حقًا حذف الفعالية «{title}»؟ هذا الإجراء نهائي.",
       "confirmDelete": "حذف",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "pin": "تثبيت",
+      "unpin": "إلغاء التثبيت"
     },
     "edit": {
       "backToAnnouncements": "العودة إلى الإعلانات",
@@ -207,7 +209,20 @@
       "fieldContactEmail": "بريد التواصل العام",
       "fieldContactPhone": "هاتف التواصل",
       "fieldDonationUrl": "رابط التبرع (عنوان خارجي)",
-      "donationHelp": "رابط إلى صفحة التبرع الخاصة بك. يُفتح في علامة تبويب جديدة. يُدار التبرع مباشرةً من قِبل المسجد — لا تعالج المنصة أي دفع."
+      "donationHelp": "رابط إلى صفحة التبرع الخاصة بك. يُفتح في علامة تبويب جديدة. يُدار التبرع مباشرةً من قِبل المسجد — لا تعالج المنصة أي دفع.",
+      "preciseLocationTitle": "الموقع الدقيق (اختياري)",
+      "preciseLocationDesc": "البلدية، الحي، القطاع — لمساعدة المصلين على تحديد موقع المسجد.",
+      "fieldCommune": "البلدية",
+      "fieldQuartier": "الحي",
+      "fieldSecteur": "القطاع",
+      "customTitle": "التخصيص",
+      "customDesc": "النصوص المعروضة في صفحتك العامة.",
+      "fieldWelcome": "رسالة ترحيب",
+      "welcomePlaceholder": "مرحبًا بكم في المسجد…",
+      "welcomeHelp": "تظهر في أعلى صفحتك العامة.",
+      "fieldFooter": "نص التذييل",
+      "footerPlaceholder": "أوقات المكتب، معلومات…",
+      "footerHelp": "يظهر في أسفل صفحتك العامة."
     },
     "prayerTimes": {
       "title": "مواقيت الصلاة",
@@ -257,7 +272,12 @@
       "CONTACT_EMAIL_INVALID": "بريد التواصل غير صحيح.",
       "PHONE_TOO_LONG": "رقم الهاتف طويل جدًا.",
       "TIMES_SAVED": "تم حفظ المواقيت.",
-      "UNKNOWN_ERROR": "حدث خطأ. حاول مرة أخرى."
+      "UNKNOWN_ERROR": "حدث خطأ. حاول مرة أخرى.",
+      "COMMUNE_TOO_LONG": "اسم البلدية طويل جدًا.",
+      "QUARTIER_TOO_LONG": "اسم الحي طويل جدًا.",
+      "SECTEUR_TOO_LONG": "اسم القطاع طويل جدًا.",
+      "WELCOME_TOO_LONG": "رسالة الترحيب طويلة جدًا.",
+      "FOOTER_TOO_LONG": "نص التذييل طويل جدًا."
     }
   }
 }

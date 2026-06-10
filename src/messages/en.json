@@ -37,14 +37,20 @@
     "empty": "No announcements yet.",
     "backToList": "Back to home",
     "readMore": "Read more",
-    "backToMosque": "Back to mosque"
+    "backToMosque": "Back to mosque",
+    "listenAudio": "Listen to the message",
+    "openAudio": "Open audio",
+    "hasAudio": "Audio message available"
   },
   "events": {
     "title": "Upcoming events",
     "empty": "No upcoming events.",
     "backToList": "Back to home",
     "readMore": "View details",
-    "backToMosque": "Back to mosque"
+    "backToMosque": "Back to mosque",
+    "listenAudio": "Listen to the message",
+    "openAudio": "Open audio",
+    "hasAudio": "Audio message available"
   },
   "footer": {
     "tagline": "Respectful platform · no interest, no deception · nothing hidden"
@@ -109,7 +115,9 @@
       "createButton": "Create announcement",
       "saveButton": "Save",
       "saving": "Saving...",
-      "createdSuccess": "Announcement created successfully."
+      "createdSuccess": "Announcement created successfully.",
+      "fieldAudioUrl": "Audio link (optional)",
+      "audioUrlHelp": "Paste a link to a voice recording (WhatsApp, .mp3 file, etc.). The text stays visible."
     },
     "eventForm": {
       "newTitle": "New event",
@@ -126,7 +134,9 @@
       "createButton": "Create event",
       "saveButton": "Save",
       "saving": "Saving...",
-      "createdSuccess": "Event created successfully."
+      "createdSuccess": "Event created successfully.",
+      "fieldAudioUrl": "Audio link (optional)",
+      "audioUrlHelp": "Paste a link to a voice recording (WhatsApp, .mp3 file, etc.). The text stays visible."
     },
     "footer": {
       "connectedAs": "Signed in as {name}",
@@ -288,7 +298,8 @@
       "MEMBER_NAME_TOO_LONG": "Name is too long.",
       "MEMBER_CATEGORY_INVALID": "Invalid category.",
       "MEMBER_ROLE_TOO_LONG": "Role is too long.",
-      "MEMBER_NOT_FOUND": "Member not found."
+      "MEMBER_NOT_FOUND": "Member not found.",
+      "AUDIO_URL_INVALID": "The audio link is not a valid address."
     },
     "members": {
       "pageTitle": "Members",

@@ -5,6 +5,7 @@ import { contentLanguageName, shouldShowContentLangNote } from "@/lib/content-la
 import PublicNav from "@/components/public/PublicNav"
 import PublicFooter from "@/components/public/PublicFooter"
 import BackLink from "@/components/BackLink"
+import AudioPlayer from "@/components/public/AudioPlayer"
 import { getMosqueName } from "@/lib/mosque-name"
 
 interface PageProps {
@@ -92,6 +93,13 @@ export default async function EventDetailPage({ params }: PageProps) {
               <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line border-t border-gray-100 pt-4">
                 {event.description}
               </div>
+            )}
+            {event.audioUrl && (
+              <AudioPlayer
+                url={event.audioUrl}
+                listenLabel={te("listenAudio")}
+                openLabel={te("openAudio")}
+              />
             )}
           </article>
 

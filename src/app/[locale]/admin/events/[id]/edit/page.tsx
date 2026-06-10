@@ -36,6 +36,7 @@ export default async function EditEventPage({ params }: PageProps) {
           startAt: event.startAt,
           endAt: event.endAt,
           isPublished: event.isPublished,
+          audioUrl: event.audioUrl,
         }}
       />
     </main>

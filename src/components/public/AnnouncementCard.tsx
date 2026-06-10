@@ -8,6 +8,7 @@ interface Announcement {
   title: string
   content: string
   publishedAt: Date | null
+  audioUrl: string | null
 }
 
 interface AnnouncementCardProps {
@@ -40,9 +41,10 @@ export default async function AnnouncementCard({ announcement, slug }: Announcem
             {announcement.title}
           </Link>
         </h3>
-        {dateString && (
-          <span className="shrink-0 text-xs text-gray-500 mt-0.5" dir="ltr">{dateString}</span>
-        )}
+        <span className="shrink-0 flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
+          {announcement.audioUrl && <span aria-label={ta("hasAudio")} title={ta("hasAudio")}>🔊</span>}
+          {dateString && <span dir="ltr">{dateString}</span>}
+        </span>
       </div>
       {showLangNote && (
         <p className="text-[11px] text-gray-400 mb-2">

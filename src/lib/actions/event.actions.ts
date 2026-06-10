@@ -15,6 +15,7 @@ const EventSchema = z.object({
   startAt:     z.string().min(1, "START_REQUIRED"),
   endAt:       z.string().optional(),
   isPublished: z.boolean().default(false),
+  audioUrl:    z.string().url("AUDIO_URL_INVALID").or(z.literal("")).optional(),
 }).refine(
   (data) => !data.endAt || new Date(data.endAt) >= new Date(data.startAt),
   { message: "END_BEFORE_START", path: ["endAt"] }
@@ -43,6 +44,7 @@ export async function createEvent(
     startAt:     formData.get("startAt"),
     endAt:       formData.get("endAt") || undefined,
     isPublished: formData.get("isPublished") === "true",
+    audioUrl:    formData.get("audioUrl") || "",
   }
 
   const parsed = EventSchema.safeParse(raw)
@@ -61,6 +63,7 @@ export async function createEvent(
         startAt:     new Date(parsed.data.startAt),
         endAt:       parsed.data.endAt ? new Date(parsed.data.endAt) : null,
         isPublished: parsed.data.isPublished,
+        audioUrl:    parsed.data.audioUrl || null,
       })
       .returning({ id: events.id })
 
@@ -85,6 +88,7 @@ export async function updateEvent(
     startAt:     formData.get("startAt"),
     endAt:       formData.get("endAt") || undefined,
     isPublished: formData.get("isPublished") === "true",
+    audioUrl:    formData.get("audioUrl") || "",
   }
 
   const parsed = EventSchema.safeParse(raw)
@@ -110,6 +114,7 @@ export async function updateEvent(
         startAt:     new Date(parsed.data.startAt),
         endAt:       parsed.data.endAt ? new Date(parsed.data.endAt) : null,
         isPublished: parsed.data.isPublished,
+        audioUrl:    parsed.data.audioUrl || null,
       })
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 

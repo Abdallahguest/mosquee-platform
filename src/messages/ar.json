@@ -37,14 +37,20 @@
     "empty": "لا توجد إعلانات حالياً.",
     "backToList": "العودة إلى الصفحة الرئيسية",
     "readMore": "اقرأ المزيد",
-    "backToMosque": "العودة إلى المسجد"
+    "backToMosque": "العودة إلى المسجد",
+    "listenAudio": "الاستماع إلى الرسالة",
+    "openAudio": "فتح الصوت",
+    "hasAudio": "رسالة صوتية متاحة"
   },
   "events": {
     "title": "الفعاليات القادمة",
     "empty": "لا توجد فعاليات قادمة.",
     "backToList": "العودة إلى الصفحة الرئيسية",
     "readMore": "عرض التفاصيل",
-    "backToMosque": "العودة إلى المسجد"
+    "backToMosque": "العودة إلى المسجد",
+    "listenAudio": "الاستماع إلى الرسالة",
+    "openAudio": "فتح الصوت",
+    "hasAudio": "رسالة صوتية متاحة"
   },
   "footer": {
     "tagline": "منصة محترمة · بلا فائدة ربوية ولا خداع · لا شيء مخفي"
@@ -109,7 +115,9 @@
       "createButton": "إنشاء الإعلان",
       "saveButton": "حفظ",
       "saving": "جارٍ الحفظ...",
-      "createdSuccess": "تم إنشاء الإعلان بنجاح."
+      "createdSuccess": "تم إنشاء الإعلان بنجاح.",
+      "fieldAudioUrl": "رابط صوتي (اختياري)",
+      "audioUrlHelp": "الصق رابطًا لتسجيل صوتي (واتساب، ملف mp3، إلخ). يبقى النص ظاهرًا."
     },
     "eventForm": {
       "newTitle": "فعالية جديدة",
@@ -126,7 +134,9 @@
       "createButton": "إنشاء الفعالية",
       "saveButton": "حفظ",
       "saving": "جارٍ الحفظ...",
-      "createdSuccess": "تم إنشاء الفعالية بنجاح."
+      "createdSuccess": "تم إنشاء الفعالية بنجاح.",
+      "fieldAudioUrl": "رابط صوتي (اختياري)",
+      "audioUrlHelp": "الصق رابطًا لتسجيل صوتي (واتساب، ملف mp3، إلخ). يبقى النص ظاهرًا."
     },
     "footer": {
       "connectedAs": "متصل باسم {name}",
@@ -288,7 +298,8 @@
       "MEMBER_NAME_TOO_LONG": "الاسم طويل جدًا.",
       "MEMBER_CATEGORY_INVALID": "فئة غير صالحة.",
       "MEMBER_ROLE_TOO_LONG": "الوظيفة طويلة جدًا.",
-      "MEMBER_NOT_FOUND": "العضو غير موجود."
+      "MEMBER_NOT_FOUND": "العضو غير موجود.",
+      "AUDIO_URL_INVALID": "رابط الصوت ليس عنوانًا صالحًا."
     },
     "members": {
       "pageTitle": "الأعضاء",

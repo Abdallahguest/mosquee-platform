@@ -33,6 +33,7 @@ export default async function EditAnnouncementPage({ params }: PageProps) {
           title: announcement.title,
           content: announcement.content,
           isPublished: announcement.isPublished,
+          audioUrl: announcement.audioUrl,
         }}
       />
     </main>

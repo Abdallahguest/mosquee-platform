@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import type { FormEvent } from "react"
 import { useTranslations } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import {
@@ -26,6 +27,7 @@ interface AnnouncementFormProps {
     title: string
     content: string
     isPublished: boolean
+    audioUrl: string | null
   }
 }
 
@@ -40,7 +42,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
   const [loading, setLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
     setSuccess("")
@@ -123,6 +125,20 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             <p className="text-xs text-muted-foreground mt-1">
               {t("formattingHelp")}
             </p>
+          </div>
+
+          {/* Lien audio externe (facultatif). Aucun fichier stocké. */}
+          <div className="space-y-1.5">
+            <Label htmlFor="audioUrl">{t("fieldAudioUrl")}</Label>
+            <Input
+              id="audioUrl"
+              name="audioUrl"
+              type="url"
+              dir="ltr"
+              placeholder="https://..."
+              defaultValue={announcement?.audioUrl ?? ""}
+            />
+            <p className="text-xs text-muted-foreground">{t("audioUrlHelp")}</p>
           </div>
 
           <div className="flex items-center gap-2">

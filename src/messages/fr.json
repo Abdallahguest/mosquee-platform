@@ -37,14 +37,20 @@
     "empty": "Aucune annonce pour le moment.",
     "backToList": "Retour à l'accueil",
     "readMore": "Lire la suite",
-    "backToMosque": "Retour à la mosquée"
+    "backToMosque": "Retour à la mosquée",
+    "listenAudio": "Écouter le message",
+    "openAudio": "Ouvrir l'audio",
+    "hasAudio": "Message audio disponible"
   },
   "events": {
     "title": "Événements à venir",
     "empty": "Aucun événement à venir.",
     "backToList": "Retour à l'accueil",
     "readMore": "Voir les détails",
-    "backToMosque": "Retour à la mosquée"
+    "backToMosque": "Retour à la mosquée",
+    "listenAudio": "Écouter le message",
+    "openAudio": "Ouvrir l'audio",
+    "hasAudio": "Message audio disponible"
   },
   "footer": {
     "tagline": "Plateforme respectueuse · sans intérêt ni tromperie · rien de caché"
@@ -109,7 +115,9 @@
       "createButton": "Créer l'annonce",
       "saveButton": "Enregistrer",
       "saving": "Enregistrement...",
-      "createdSuccess": "Annonce créée avec succès."
+      "createdSuccess": "Annonce créée avec succès.",
+      "fieldAudioUrl": "Lien audio (facultatif)",
+      "audioUrlHelp": "Collez un lien vers un enregistrement vocal (WhatsApp, fichier .mp3, etc.). Le texte reste affiché."
     },
     "eventForm": {
       "newTitle": "Nouvel événement",
@@ -126,7 +134,9 @@
       "createButton": "Créer l'événement",
       "saveButton": "Enregistrer",
       "saving": "Enregistrement...",
-      "createdSuccess": "Événement créé avec succès."
+      "createdSuccess": "Événement créé avec succès.",
+      "fieldAudioUrl": "Lien audio (facultatif)",
+      "audioUrlHelp": "Collez un lien vers un enregistrement vocal (WhatsApp, fichier .mp3, etc.). Le texte reste affiché."
     },
     "footer": {
       "connectedAs": "Connecté en tant que {name}",
@@ -288,7 +298,8 @@
       "MEMBER_NAME_TOO_LONG": "Le nom est trop long.",
       "MEMBER_CATEGORY_INVALID": "Catégorie invalide.",
       "MEMBER_ROLE_TOO_LONG": "La fonction est trop longue.",
-      "MEMBER_NOT_FOUND": "Membre introuvable."
+      "MEMBER_NOT_FOUND": "Membre introuvable.",
+      "AUDIO_URL_INVALID": "Le lien audio n'est pas une adresse valide."
     },
     "members": {
       "pageTitle": "Membres",

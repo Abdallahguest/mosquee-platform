@@ -6,6 +6,7 @@ import PublicNav from "@/components/public/PublicNav"
 import PublicFooter from "@/components/public/PublicFooter"
 import MarkdownContent from "@/components/public/MarkdownContent"
 import BackLink from "@/components/BackLink"
+import AudioPlayer from "@/components/public/AudioPlayer"
 import { getMosqueName } from "@/lib/mosque-name"
 
 interface PageProps {
@@ -72,6 +73,13 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
             <div className="text-sm text-gray-700 leading-relaxed">
               <MarkdownContent content={announcement.content} />
             </div>
+            {announcement.audioUrl && (
+              <AudioPlayer
+                url={announcement.audioUrl}
+                listenLabel={ta("listenAudio")}
+                openLabel={ta("openAudio")}
+              />
+            )}
           </article>
 
         </div>

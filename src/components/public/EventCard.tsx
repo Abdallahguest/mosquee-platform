@@ -9,6 +9,7 @@ interface Event {
   location: string
   startAt: Date
   endAt: Date | null
+  audioUrl: string | null
 }
 
 interface EventCardProps {
@@ -75,6 +76,11 @@ export default async function EventCard({ event, slug }: EventCardProps) {
             <span aria-hidden="true">📍</span>
             <span>{event.location}</span>
           </span>
+          {event.audioUrl && (
+            <span className="inline-flex items-center gap-1" aria-label={te("hasAudio")} title={te("hasAudio")}>
+              <span aria-hidden="true">🔊</span>
+            </span>
+          )}
         </div>
         <Link
           href={href}

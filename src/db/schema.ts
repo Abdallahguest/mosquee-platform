@@ -110,6 +110,7 @@ export const announcements = pgTable("announcements", {
   expiresAt:   timestamp("expires_at"),
   isPublished: boolean("is_published").notNull().default(false),
   isPinned:    boolean("is_pinned").notNull().default(false),  // épinglée en tête de liste
+  audioUrl:    varchar("audio_url", { length: 500 }),  // lien audio externe optionnel (aucun fichier stocké)
   createdAt:   timestamp("created_at").notNull().defaultNow(),
 })
 
@@ -123,6 +124,7 @@ export const events = pgTable("events", {
   startAt:     timestamp("start_at").notNull(),
   endAt:       timestamp("end_at"),
   isPublished: boolean("is_published").notNull().default(false),
+  audioUrl:    varchar("audio_url", { length: 500 }),  // lien audio externe optionnel (aucun fichier stocké)
 })
 
 // ── TABLE MEMBRES (privée : admin + super-admin) ──

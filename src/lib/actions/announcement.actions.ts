@@ -13,6 +13,7 @@ const AnnouncementSchema = z.object({
   content:     z.string().min(1, "CONTENT_REQUIRED").max(2000, "CONTENT_TOO_LONG"),
   isPublished: z.boolean().default(false),
   expiresAt:   z.string().optional(),
+  audioUrl:    z.string().url("AUDIO_URL_INVALID").or(z.literal("")).optional(),
 })
 
 function collectCodes(error: z.ZodError): string[] {
@@ -37,6 +38,7 @@ export async function createAnnouncement(
       content:     formData.get("content"),
       isPublished: formData.get("isPublished") === "true",
       expiresAt:   formData.get("expiresAt") || undefined,
+      audioUrl:    formData.get("audioUrl") || "",
     }
 
     const parsed = AnnouncementSchema.safeParse(raw)
@@ -54,6 +56,7 @@ export async function createAnnouncement(
         isPublished: parsed.data.isPublished,
         publishedAt: parsed.data.isPublished ? new Date() : undefined,
         expiresAt:   parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : undefined,
+        audioUrl:    parsed.data.audioUrl || null,
       })
       .returning({ id: announcements.id })
 
@@ -77,6 +80,7 @@ export async function updateAnnouncement(
       content:     formData.get("content"),
       isPublished: formData.get("isPublished") === "true",
       expiresAt:   formData.get("expiresAt") || undefined,
+      audioUrl:    formData.get("audioUrl") || "",
     }
 
     const parsed = AnnouncementSchema.safeParse(raw)
@@ -101,6 +105,7 @@ export async function updateAnnouncement(
         publishedAt: parsed.data.isPublished
           ? existing.publishedAt ?? new Date()
           : existing.publishedAt,
+        audioUrl:    parsed.data.audioUrl || null,
       })
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 

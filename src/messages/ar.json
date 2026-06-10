@@ -77,7 +77,8 @@
       "settings": "الإعدادات",
       "viewPage": "عرض صفحة مسجدي",
       "menu": "القائمة",
-      "logout": "تسجيل الخروج"
+      "logout": "تسجيل الخروج",
+      "members": "الأعضاء"
     },
     "dashboard": {
       "greeting": "السلام عليكم",
@@ -222,7 +223,12 @@
       "welcomeHelp": "تظهر في أعلى صفحتك العامة.",
       "fieldFooter": "نص التذييل",
       "footerPlaceholder": "أوقات المكتب، معلومات…",
-      "footerHelp": "يظهر في أسفل صفحتك العامة."
+      "footerHelp": "يظهر في أسفل صفحتك العامة.",
+      "multilingualNamesTitle": "الأسماء بلغات أخرى (اختياري)",
+      "multilingualNamesDesc": "إذا كان لمسجدكم اسم رسمي بالفرنسية أو الإنجليزية أو العربية. اتركه فارغًا لاستخدام الاسم أعلاه.",
+      "fieldNameFr": "الاسم بالفرنسية",
+      "fieldNameEn": "الاسم بالإنجليزية",
+      "fieldNameAr": "الاسم بالعربية"
     },
     "prayerTimes": {
       "title": "مواقيت الصلاة",
@@ -277,7 +283,42 @@
       "QUARTIER_TOO_LONG": "اسم الحي طويل جدًا.",
       "SECTEUR_TOO_LONG": "اسم القطاع طويل جدًا.",
       "WELCOME_TOO_LONG": "رسالة الترحيب طويلة جدًا.",
-      "FOOTER_TOO_LONG": "نص التذييل طويل جدًا."
+      "FOOTER_TOO_LONG": "نص التذييل طويل جدًا.",
+      "MEMBER_NAME_REQUIRED": "اسم العضو مطلوب.",
+      "MEMBER_NAME_TOO_LONG": "الاسم طويل جدًا.",
+      "MEMBER_CATEGORY_INVALID": "فئة غير صالحة.",
+      "MEMBER_ROLE_TOO_LONG": "الوظيفة طويلة جدًا.",
+      "MEMBER_NOT_FOUND": "العضو غير موجود."
+    },
+    "members": {
+      "pageTitle": "الأعضاء",
+      "pageSubtitle": "الأئمة والحكماء والمستشارون وفريق المسجد.",
+      "privacyNote": "هذه القائمة غير عامة. لن تكون مرئية للمصلين إلا بعد موافقة الأشخاص المعنيين.",
+      "newCardTitle": "إضافة عضو",
+      "editCardTitle": "تعديل العضو",
+      "listTitle": "القائمة ({count})",
+      "emptyTitle": "لا يوجد أعضاء بعد",
+      "emptyBody": "أضف الأئمة والحكماء والمستشارين والفريق.",
+      "fieldName": "الاسم",
+      "fieldCategory": "الفئة",
+      "fieldRole": "الوظيفة المحددة (اختياري)",
+      "rolePlaceholder": "مثال: الإمام الرئيسي",
+      "roleHelp": "نص حر، إذا لزم الأمر.",
+      "createButton": "إضافة",
+      "updateButton": "تحديث",
+      "saving": "جارٍ الحفظ…",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "deleteTitle": "حذف هذا العضو؟",
+      "deleteMessage": "هل تريد حقًا حذف {name}؟ هذا الإجراء نهائي.",
+      "confirmDelete": "حذف",
+      "category": {
+        "imam": "إمام",
+        "sage": "حكيم",
+        "conseiller": "مستشار",
+        "equipe": "فريق"
+      }
     }
   }
 }

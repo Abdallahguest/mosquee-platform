@@ -122,6 +122,9 @@ export async function setUserVerified(userId: string, verified: boolean): Promis
 const MosqueSchema = z.object({
   slug:              z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug : minuscules, chiffres et tirets uniquement"),
   name:              z.string().min(1).max(200),
+  nameFr:            z.string().max(200).optional(),
+  nameEn:            z.string().max(200).optional(),
+  nameAr:            z.string().max(200).optional(),
   city:              z.string().min(1).max(100),
   country:           z.string().min(1).max(100),
   // Coordonnées précises (optionnelles, champs libres)
@@ -142,6 +145,9 @@ function parseForm(formData: FormData) {
   return {
     slug:              String(formData.get("slug") ?? "").trim().toLowerCase(),
     name:              formData.get("name"),
+    nameFr:            formData.get("nameFr") ?? "",
+    nameEn:            formData.get("nameEn") ?? "",
+    nameAr:            formData.get("nameAr") ?? "",
     city:              formData.get("city"),
     country:           formData.get("country"),
     commune:  formData.get("commune")  ?? "",
@@ -173,6 +179,9 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
       .insert(mosques)
       .values({
         ...parsed.data,
+        nameFr:       parsed.data.nameFr       || null,
+        nameEn:       parsed.data.nameEn       || null,
+        nameAr:       parsed.data.nameAr       || null,
         commune:      parsed.data.commune      || null,
         quartier:     parsed.data.quartier     || null,
         secteur:      parsed.data.secteur      || null,
@@ -209,6 +218,9 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
     await db.update(mosques)
     .set({
       ...parsed.data,
+      nameFr:       parsed.data.nameFr       || null,
+      nameEn:       parsed.data.nameEn       || null,
+      nameAr:       parsed.data.nameAr       || null,
       commune:      parsed.data.commune      || null,
       quartier:     parsed.data.quartier     || null,
       secteur:      parsed.data.secteur      || null,

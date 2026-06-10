@@ -6,6 +6,7 @@ import PublicNav from "@/components/public/PublicNav"
 import PublicFooter from "@/components/public/PublicFooter"
 import MarkdownContent from "@/components/public/MarkdownContent"
 import BackLink from "@/components/BackLink"
+import { getMosqueName } from "@/lib/mosque-name"
 
 interface PageProps {
   params: Promise<{ slug: string; id: string }>
@@ -36,6 +37,7 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
   if (!announcement) notFound()
 
   const locale = await getLocale()
+  const displayName = getMosqueName(mosque, locale)
   const ta = await getTranslations("announcements")
   const tc = await getTranslations("common")
   const showLangNote = shouldShowContentLangNote(locale)
@@ -48,7 +50,7 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <PublicNav mosqueName={mosque.name} />
+      <PublicNav mosqueName={displayName} />
 
       <main className="flex-1">
         <div className="max-w-lg mx-auto px-6 py-6 space-y-6">
@@ -75,7 +77,7 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
         </div>
       </main>
 
-      <PublicFooter mosque={mosque} />
+      <PublicFooter mosque={mosque} displayName={displayName} />
     </div>
   )
 }

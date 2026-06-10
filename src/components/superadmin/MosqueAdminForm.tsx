@@ -11,6 +11,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 interface MosqueAdminFormProps {
   mosque?: {
     id: number; slug: string; name: string; city: string; country: string
+    nameFr?: string | null
+    nameEn?: string | null
+    nameAr?: string | null
     commune?: string | null
     quartier?: string | null
     secteur?: string | null
@@ -53,6 +56,22 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
       <div className="space-y-1.5">
         <Label htmlFor="name">Nom de la mosquée</Label>
         <Input id="name" name="name" required defaultValue={mosque?.name} />
+      </div>
+
+      {/* Noms officiels multilingues (optionnels). Vide = nom par défaut ci-dessus. */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="nameFr">Nom en français (optionnel)</Label>
+          <Input id="nameFr" name="nameFr" defaultValue={mosque?.nameFr ?? ""} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="nameEn">Nom en anglais (optionnel)</Label>
+          <Input id="nameEn" name="nameEn" defaultValue={mosque?.nameEn ?? ""} dir="ltr" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="nameAr">Nom en arabe (optionnel)</Label>
+          <Input id="nameAr" name="nameAr" defaultValue={mosque?.nameAr ?? ""} dir="rtl" />
+        </div>
       </div>
 
       <div className="space-y-1.5">

@@ -23,6 +23,9 @@ interface Mosque {
   id: number
   slug: string
   name: string
+  nameFr: string | null
+  nameEn: string | null
+  nameAr: string | null
   city: string
   country: string
   commune: string | null
@@ -100,6 +103,24 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           <div className="space-y-1.5">
             <Label htmlFor="name">{t("fieldName")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input id="name" name="name" aria-required="true" defaultValue={mosque.name} />
+          </div>
+
+          {/* Noms officiels multilingues (optionnels). Vide = nom par défaut ci-dessus. */}
+          <p className="text-sm font-medium text-gray-700">{t("multilingualNamesTitle")}</p>
+          <p className="text-xs text-muted-foreground -mt-2">{t("multilingualNamesDesc")}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="nameFr">{t("fieldNameFr")}</Label>
+              <Input id="nameFr" name="nameFr" defaultValue={mosque.nameFr ?? ""} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="nameEn">{t("fieldNameEn")}</Label>
+              <Input id="nameEn" name="nameEn" defaultValue={mosque.nameEn ?? ""} dir="ltr" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="nameAr">{t("fieldNameAr")}</Label>
+              <Input id="nameAr" name="nameAr" defaultValue={mosque.nameAr ?? ""} dir="rtl" />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">

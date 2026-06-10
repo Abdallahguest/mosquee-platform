@@ -77,7 +77,8 @@
       "settings": "Settings",
       "viewPage": "View my mosque page",
       "menu": "Menu",
-      "logout": "Log out"
+      "logout": "Log out",
+      "members": "Members"
     },
     "dashboard": {
       "greeting": "Assalamu alaykum",
@@ -222,7 +223,12 @@
       "welcomeHelp": "Shown at the top of your public page.",
       "fieldFooter": "Footer text",
       "footerPlaceholder": "Office hours, information…",
-      "footerHelp": "Shown at the bottom of your public page."
+      "footerHelp": "Shown at the bottom of your public page.",
+      "multilingualNamesTitle": "Names in other languages (optional)",
+      "multilingualNamesDesc": "If your mosque has an official name in French, English or Arabic. Leave empty to use the name above.",
+      "fieldNameFr": "Name in French",
+      "fieldNameEn": "Name in English",
+      "fieldNameAr": "Name in Arabic"
     },
     "prayerTimes": {
       "title": "Prayer times",
@@ -277,7 +283,42 @@
       "QUARTIER_TOO_LONG": "District is too long.",
       "SECTEUR_TOO_LONG": "Sector is too long.",
       "WELCOME_TOO_LONG": "Welcome message is too long.",
-      "FOOTER_TOO_LONG": "Footer text is too long."
+      "FOOTER_TOO_LONG": "Footer text is too long.",
+      "MEMBER_NAME_REQUIRED": "Member name is required.",
+      "MEMBER_NAME_TOO_LONG": "Name is too long.",
+      "MEMBER_CATEGORY_INVALID": "Invalid category.",
+      "MEMBER_ROLE_TOO_LONG": "Role is too long.",
+      "MEMBER_NOT_FOUND": "Member not found."
+    },
+    "members": {
+      "pageTitle": "Members",
+      "pageSubtitle": "Imams, elders, advisors and the mosque team.",
+      "privacyNote": "This list is not public. It will only be visible to worshippers after the people concerned have agreed.",
+      "newCardTitle": "Add a member",
+      "editCardTitle": "Edit member",
+      "listTitle": "List ({count})",
+      "emptyTitle": "No members yet",
+      "emptyBody": "Add imams, elders, advisors and the team.",
+      "fieldName": "Name",
+      "fieldCategory": "Category",
+      "fieldRole": "Specific role (optional)",
+      "rolePlaceholder": "E.g. Head Imam",
+      "roleHelp": "Free text, if needed.",
+      "createButton": "Add",
+      "updateButton": "Update",
+      "saving": "Saving…",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "deleteTitle": "Delete this member?",
+      "deleteMessage": "Do you really want to delete {name}? This action is permanent.",
+      "confirmDelete": "Delete",
+      "category": {
+        "imam": "Imam",
+        "sage": "Elder",
+        "conseiller": "Advisor",
+        "equipe": "Team"
+      }
     }
   }
 }

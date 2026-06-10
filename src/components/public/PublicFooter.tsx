@@ -1,4 +1,6 @@
 interface PublicFooterProps {
+  /** Nom déjà résolu selon la langue (via getMosqueName). Si absent, on prend mosque.name. */
+  displayName?: string
   mosque: {
     name: string
     city: string
@@ -13,7 +15,7 @@ interface PublicFooterProps {
   }
 }
 
-export default function PublicFooter({ mosque }: PublicFooterProps) {
+export default function PublicFooter({ mosque, displayName }: PublicFooterProps) {
   // Adresse complète : du plus large au plus précis, on ne montre que ce qui est rempli.
   const addressParts = [mosque.city, mosque.commune, mosque.quartier, mosque.secteur].filter(Boolean)
 
@@ -21,7 +23,7 @@ export default function PublicFooter({ mosque }: PublicFooterProps) {
     <footer className="bg-green-950 text-green-100 mt-8">
       <div className="max-w-lg mx-auto px-6 py-6 space-y-3">
         <div className="text-sm">
-          <p className="font-medium text-white">{mosque.name}</p>
+          <p className="font-medium text-white">{displayName ?? mosque.name}</p>
           <p className="text-green-200">
             {addressParts.join(", ")}{addressParts.length > 0 ? ", " : ""}{mosque.country}
           </p>

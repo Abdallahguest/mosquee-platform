@@ -1,7 +1,7 @@
 import { db } from "./index"
-import { mosques, announcements, events, users, mosqueAdmins } from "./schema"
+import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers } from "./schema"
 import { eq, and, gt, desc, isNull, or, asc, count } from "drizzle-orm"
-import type { Mosque } from "./schema"
+import type { Mosque, Announcement, Event, MosqueMember } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)
@@ -143,7 +143,7 @@ export async function getMosqueById(id: number) {
 // ── ANNONCES ──
 
 // Épinglées d'abord (desc isPinned : true avant false), puis par date de publication.
-export async function getActiveAnnouncements(mosqueId: number) {
+export async function getActiveAnnouncements(mosqueId: number): Promise<Announcement[]> {
   const now = new Date()
   return db
     .select()
@@ -181,7 +181,7 @@ export async function getAnnouncementById(id: number, mosqueId: number) {
 
 // ── ÉVÉNEMENTS ──
 
-export async function getUpcomingEvents(mosqueId: number) {
+export async function getUpcomingEvents(mosqueId: number): Promise<Event[]> {
   const now = new Date()
   return db
     .select()
@@ -291,6 +291,32 @@ export async function getPublicEvent(id: number, mosqueId: number) {
         eq(events.isPublished, true)
       )
     )
+    .limit(1)
+  return result[0] ?? null
+}
+
+
+// ── MEMBRES (privé : admin + super-admin uniquement) ──
+// Triés par catégorie puis ordre manuel. Pas de requête publique : la liste
+// n'est jamais exposée publiquement (consentement des membres requis d'abord).
+export async function getMosqueMembers(mosqueId: number): Promise<MosqueMember[]> {
+  try {
+    return await db
+      .select()
+      .from(mosqueMembers)
+      .where(eq(mosqueMembers.mosqueId, mosqueId))
+      .orderBy(asc(mosqueMembers.sortOrder), asc(mosqueMembers.id))
+  } catch (error) {
+    console.error("Erreur récupération membres:", error)
+    return []
+  }
+}
+
+export async function getMemberById(id: number, mosqueId: number): Promise<MosqueMember | null> {
+  const result = await db
+    .select()
+    .from(mosqueMembers)
+    .where(and(eq(mosqueMembers.id, id), eq(mosqueMembers.mosqueId, mosqueId)))
     .limit(1)
   return result[0] ?? null
 }

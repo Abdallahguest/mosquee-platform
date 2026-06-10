@@ -77,7 +77,8 @@
       "settings": "Paramètres",
       "viewPage": "Voir la page de ma mosquée",
       "menu": "Menu",
-      "logout": "Se déconnecter"
+      "logout": "Se déconnecter",
+      "members": "Membres"
     },
     "dashboard": {
       "greeting": "Assalamu alaykum",
@@ -222,7 +223,12 @@
       "welcomeHelp": "Affiché en haut de votre page publique.",
       "fieldFooter": "Texte de pied de page",
       "footerPlaceholder": "Horaires du bureau, informations…",
-      "footerHelp": "Affiché en bas de votre page publique."
+      "footerHelp": "Affiché en bas de votre page publique.",
+      "multilingualNamesTitle": "Noms dans d'autres langues (facultatif)",
+      "multilingualNamesDesc": "Si votre mosquée a un nom officiel en français, anglais ou arabe. Laissez vide pour utiliser le nom ci-dessus.",
+      "fieldNameFr": "Nom en français",
+      "fieldNameEn": "Nom en anglais",
+      "fieldNameAr": "Nom en arabe"
     },
     "prayerTimes": {
       "title": "Horaires de prière",
@@ -277,7 +283,42 @@
       "QUARTIER_TOO_LONG": "Le quartier est trop long.",
       "SECTEUR_TOO_LONG": "Le secteur est trop long.",
       "WELCOME_TOO_LONG": "Le message d'accueil est trop long.",
-      "FOOTER_TOO_LONG": "Le texte de pied de page est trop long."
+      "FOOTER_TOO_LONG": "Le texte de pied de page est trop long.",
+      "MEMBER_NAME_REQUIRED": "Le nom du membre est requis.",
+      "MEMBER_NAME_TOO_LONG": "Le nom est trop long.",
+      "MEMBER_CATEGORY_INVALID": "Catégorie invalide.",
+      "MEMBER_ROLE_TOO_LONG": "La fonction est trop longue.",
+      "MEMBER_NOT_FOUND": "Membre introuvable."
+    },
+    "members": {
+      "pageTitle": "Membres",
+      "pageSubtitle": "Imams, sages, conseillers et équipe de la mosquée.",
+      "privacyNote": "Cette liste n'est pas publique. Elle ne sera visible par les fidèles qu'après accord des personnes concernées.",
+      "newCardTitle": "Ajouter un membre",
+      "editCardTitle": "Modifier le membre",
+      "listTitle": "Liste ({count})",
+      "emptyTitle": "Aucun membre pour l'instant",
+      "emptyBody": "Ajoutez les imams, sages, conseillers et l'équipe.",
+      "fieldName": "Nom",
+      "fieldCategory": "Catégorie",
+      "fieldRole": "Fonction précise (facultatif)",
+      "rolePlaceholder": "Ex : Imam principal",
+      "roleHelp": "Précision libre, si besoin.",
+      "createButton": "Ajouter",
+      "updateButton": "Mettre à jour",
+      "saving": "Enregistrement…",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "deleteTitle": "Supprimer ce membre ?",
+      "deleteMessage": "Voulez-vous vraiment supprimer {name} ? Cette action est définitive.",
+      "confirmDelete": "Supprimer",
+      "category": {
+        "imam": "Imam",
+        "sage": "Sage",
+        "conseiller": "Conseiller",
+        "equipe": "Équipe"
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { getMosqueBySlug } from "@/db/queries"
+import { getMosqueName } from "@/lib/mosque-name"
 import { getActiveAnnouncements } from "@/db/queries"
 import { getUpcomingEvents } from "@/db/queries"
 import PublicNav from "@/components/public/PublicNav"
@@ -10,16 +11,17 @@ import EventCard from "@/components/public/EventCard"
 import PublicFooter from "@/components/public/PublicFooter"
 
 interface PageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: string; slug: string }>
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params
+  const { locale, slug } = await params
   const mosque = await getMosqueBySlug(slug)
   if (!mosque) return { title: "Mosquée introuvable" }
+  const displayName = getMosqueName(mosque, locale)
   return {
-    title: `${mosque.name} — Horaires de prière`,
-    description: `Horaires de prière, annonces et événements de ${mosque.name} à ${mosque.city}.`,
+    title: `${displayName} — Horaires de prière`,
+    description: `Horaires de prière, annonces et événements de ${displayName} à ${mosque.city}.`,
   }
 }
 
@@ -33,6 +35,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
   const te = await getTranslations("events")
   const tc = await getTranslations("common")
   const locale = await getLocale()
+  const displayName = getMosqueName(mosque, locale)
 
   const [activeAnnouncements, upcomingEvents] = await Promise.all([
     getActiveAnnouncements(mosque.id),
@@ -55,7 +58,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <PublicNav mosqueName={mosque.name} />
+      <PublicNav mosqueName={displayName} />
 
       <main className="flex-1">
         <div className="max-w-lg mx-auto px-6 py-6 space-y-8">
@@ -126,7 +129,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
         </div>
       </main>
 
-      <PublicFooter mosque={mosque} />
+      <PublicFooter mosque={mosque} displayName={displayName} />
     </div>
   )
 }

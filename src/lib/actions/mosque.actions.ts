@@ -10,9 +10,12 @@ import type { ActionResult } from "./action-result"
 
 const MosqueSettingsSchema = z.object({
   name:              z.string().min(1, "NAME_REQUIRED").max(200, "NAME_TOO_LONG"),
+  // Noms officiels multilingues (optionnels)
+  nameFr: z.string().max(200, "NAME_TOO_LONG").optional(),
+  nameEn: z.string().max(200, "NAME_TOO_LONG").optional(),
+  nameAr: z.string().max(200, "NAME_TOO_LONG").optional(),
   city:              z.string().min(1, "CITY_REQUIRED").max(100, "CITY_TOO_LONG"),
   country:           z.string().min(1, "COUNTRY_REQUIRED").max(100, "COUNTRY_TOO_LONG"),
-  // Coordonnées précises (optionnelles, champs libres)
   commune:  z.string().max(100, "COMMUNE_TOO_LONG").optional(),
   quartier: z.string().max(100, "QUARTIER_TOO_LONG").optional(),
   secteur:  z.string().max(100, "SECTEUR_TOO_LONG").optional(),
@@ -23,7 +26,6 @@ const MosqueSettingsSchema = z.object({
   donationUrl:  z.string().url("DONATION_URL_INVALID").or(z.literal("")).optional(),
   contactEmail: z.string().email("CONTACT_EMAIL_INVALID").or(z.literal("")).optional(),
   contactPhone: z.string().max(50, "PHONE_TOO_LONG").optional(),
-  // Textes personnalisés (optionnels)
   welcomeMessage: z.string().max(500, "WELCOME_TOO_LONG").optional(),
   footerText:     z.string().max(500, "FOOTER_TOO_LONG").optional(),
 })
@@ -43,6 +45,9 @@ export async function updateMosqueSettings(
 
   const raw = {
     name:              formData.get("name"),
+    nameFr: formData.get("nameFr") || "",
+    nameEn: formData.get("nameEn") || "",
+    nameAr: formData.get("nameAr") || "",
     city:              formData.get("city"),
     country:           formData.get("country"),
     commune:  formData.get("commune")  || "",
@@ -69,7 +74,9 @@ export async function updateMosqueSettings(
       .update(mosques)
       .set({
         ...parsed.data,
-        // Champs optionnels : chaîne vide → null (cohérent, pas de "" en base)
+        nameFr:         parsed.data.nameFr         || null,
+        nameEn:         parsed.data.nameEn         || null,
+        nameAr:         parsed.data.nameAr         || null,
         commune:        parsed.data.commune        || null,
         quartier:       parsed.data.quartier       || null,
         secteur:        parsed.data.secteur        || null,

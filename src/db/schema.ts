@@ -25,6 +25,12 @@ export const mosques = pgTable("mosques", {
   quartier: varchar("quartier", { length: 100 }),
   secteur:  varchar("secteur",  { length: 100 }),
 
+  // ── Noms officiels multilingues (optionnels) ──
+  // Vide = on retombe sur "name". Aucune traduction automatique.
+  nameFr: varchar("name_fr", { length: 200 }),
+  nameEn: varchar("name_en", { length: 200 }),
+  nameAr: varchar("name_ar", { length: 200 }),
+
   latitude:          doublePrecision("latitude").notNull(),
   longitude:         doublePrecision("longitude").notNull(),
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
@@ -119,6 +125,19 @@ export const events = pgTable("events", {
   isPublished: boolean("is_published").notNull().default(false),
 })
 
+// ── TABLE MEMBRES (privée : admin + super-admin) ──
+// Catégorie fixe (contrôlée applicativement) + précision de rôle optionnelle.
+// AUCUNE photo (principe : pas d'image dans l'application).
+export const mosqueMembers = pgTable("mosque_members", {
+  id:        serial("id").primaryKey(),
+  mosqueId:  integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
+  name:      varchar("name", { length: 200 }).notNull(),
+  category:  varchar("category", { length: 20 }).notNull(),  // 'imam' | 'sage' | 'conseiller' | 'equipe'
+  role:      varchar("role", { length: 200 }),               // précision libre optionnelle
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+})
+
 // ── TYPES INFÉRÉS ──
 export type Mosque       = typeof mosques.$inferSelect
 export type NewMosque    = typeof mosques.$inferInsert
@@ -130,6 +149,8 @@ export type User         = typeof users.$inferSelect
 export type NewUser      = typeof users.$inferInsert
 export type MosqueAdmin    = typeof mosqueAdmins.$inferSelect
 export type NewMosqueAdmin = typeof mosqueAdmins.$inferInsert
+export type MosqueMember    = typeof mosqueMembers.$inferSelect
+export type NewMosqueMember = typeof mosqueMembers.$inferInsert
 
 // ── TABLES BETTER-AUTH ──
 export const session = pgTable("session", {

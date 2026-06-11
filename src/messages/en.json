@@ -39,7 +39,6 @@
     "readMore": "Read more",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
-    "openAudio": "Open audio",
     "hasAudio": "Audio message available"
   },
   "events": {
@@ -49,7 +48,6 @@
     "readMore": "View details",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
-    "openAudio": "Open audio",
     "hasAudio": "Audio message available"
   },
   "footer": {
@@ -116,8 +114,8 @@
       "saveButton": "Save",
       "saving": "Saving...",
       "createdSuccess": "Announcement created successfully.",
-      "fieldAudioUrl": "Audio link (optional)",
-      "audioUrlHelp": "Paste a link to a voice recording (WhatsApp, .mp3 file, etc.). The text stays visible."
+      "fieldAudioUrl": "Listening link (optional)",
+      "audioUrlHelp": "Paste the full link to your recording here (Google Drive, etc.). It must start with https://. The text stays visible; the audio is a complement."
     },
     "eventForm": {
       "newTitle": "New event",
@@ -135,8 +133,8 @@
       "saveButton": "Save",
       "saving": "Saving...",
       "createdSuccess": "Event created successfully.",
-      "fieldAudioUrl": "Audio link (optional)",
-      "audioUrlHelp": "Paste a link to a voice recording (WhatsApp, .mp3 file, etc.). The text stays visible."
+      "fieldAudioUrl": "Listening link (optional)",
+      "audioUrlHelp": "Paste the full link to your recording here (Google Drive, etc.). It must start with https://. The text stays visible; the audio is a complement."
     },
     "footer": {
       "connectedAs": "Signed in as {name}",
@@ -299,7 +297,7 @@
       "MEMBER_CATEGORY_INVALID": "Invalid category.",
       "MEMBER_ROLE_TOO_LONG": "Role is too long.",
       "MEMBER_NOT_FOUND": "Member not found.",
-      "AUDIO_URL_INVALID": "The audio link is not a valid address."
+      "AUDIO_URL_INVALID": "The listening link must be a full address starting with https://"
     },
     "members": {
       "pageTitle": "Members",

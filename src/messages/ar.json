@@ -39,7 +39,6 @@
     "readMore": "اقرأ المزيد",
     "backToMosque": "العودة إلى المسجد",
     "listenAudio": "الاستماع إلى الرسالة",
-    "openAudio": "فتح الصوت",
     "hasAudio": "رسالة صوتية متاحة"
   },
   "events": {
@@ -49,7 +48,6 @@
     "readMore": "عرض التفاصيل",
     "backToMosque": "العودة إلى المسجد",
     "listenAudio": "الاستماع إلى الرسالة",
-    "openAudio": "فتح الصوت",
     "hasAudio": "رسالة صوتية متاحة"
   },
   "footer": {
@@ -116,8 +114,8 @@
       "saveButton": "حفظ",
       "saving": "جارٍ الحفظ...",
       "createdSuccess": "تم إنشاء الإعلان بنجاح.",
-      "fieldAudioUrl": "رابط صوتي (اختياري)",
-      "audioUrlHelp": "الصق رابطًا لتسجيل صوتي (واتساب، ملف mp3، إلخ). يبقى النص ظاهرًا."
+      "fieldAudioUrl": "رابط الاستماع (اختياري)",
+      "audioUrlHelp": "الصق هنا الرابط الكامل لتسجيلك (Google Drive، إلخ). يجب أن يبدأ بـ https://. يبقى نص الإعلان ظاهرًا؛ الصوت إضافة مكمّلة."
     },
     "eventForm": {
       "newTitle": "فعالية جديدة",
@@ -135,8 +133,8 @@
       "saveButton": "حفظ",
       "saving": "جارٍ الحفظ...",
       "createdSuccess": "تم إنشاء الفعالية بنجاح.",
-      "fieldAudioUrl": "رابط صوتي (اختياري)",
-      "audioUrlHelp": "الصق رابطًا لتسجيل صوتي (واتساب، ملف mp3، إلخ). يبقى النص ظاهرًا."
+      "fieldAudioUrl": "رابط الاستماع (اختياري)",
+      "audioUrlHelp": "الصق هنا الرابط الكامل لتسجيلك (Google Drive، إلخ). يجب أن يبدأ بـ https://. يبقى نص الإعلان ظاهرًا؛ الصوت إضافة مكمّلة."
     },
     "footer": {
       "connectedAs": "متصل باسم {name}",
@@ -299,7 +297,7 @@
       "MEMBER_CATEGORY_INVALID": "فئة غير صالحة.",
       "MEMBER_ROLE_TOO_LONG": "الوظيفة طويلة جدًا.",
       "MEMBER_NOT_FOUND": "العضو غير موجود.",
-      "AUDIO_URL_INVALID": "رابط الصوت ليس عنوانًا صالحًا."
+      "AUDIO_URL_INVALID": "يجب أن يكون رابط الاستماع عنوانًا كاملًا يبدأ بـ https://"
     },
     "members": {
       "pageTitle": "الأعضاء",

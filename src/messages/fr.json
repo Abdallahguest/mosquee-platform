@@ -39,7 +39,6 @@
     "readMore": "Lire la suite",
     "backToMosque": "Retour à la mosquée",
     "listenAudio": "Écouter le message",
-    "openAudio": "Ouvrir l'audio",
     "hasAudio": "Message audio disponible"
   },
   "events": {
@@ -49,7 +48,6 @@
     "readMore": "Voir les détails",
     "backToMosque": "Retour à la mosquée",
     "listenAudio": "Écouter le message",
-    "openAudio": "Ouvrir l'audio",
     "hasAudio": "Message audio disponible"
   },
   "footer": {
@@ -116,8 +114,8 @@
       "saveButton": "Enregistrer",
       "saving": "Enregistrement...",
       "createdSuccess": "Annonce créée avec succès.",
-      "fieldAudioUrl": "Lien audio (facultatif)",
-      "audioUrlHelp": "Collez un lien vers un enregistrement vocal (WhatsApp, fichier .mp3, etc.). Le texte reste affiché."
+      "fieldAudioUrl": "Lien d'écoute (facultatif)",
+      "audioUrlHelp": "Collez ici le lien complet de votre enregistrement (Google Drive, etc.). Il doit commencer par https://. Le texte de l'annonce reste affiché ; l'audio est un complément."
     },
     "eventForm": {
       "newTitle": "Nouvel événement",
@@ -135,8 +133,8 @@
       "saveButton": "Enregistrer",
       "saving": "Enregistrement...",
       "createdSuccess": "Événement créé avec succès.",
-      "fieldAudioUrl": "Lien audio (facultatif)",
-      "audioUrlHelp": "Collez un lien vers un enregistrement vocal (WhatsApp, fichier .mp3, etc.). Le texte reste affiché."
+      "fieldAudioUrl": "Lien d'écoute (facultatif)",
+      "audioUrlHelp": "Collez ici le lien complet de votre enregistrement (Google Drive, etc.). Il doit commencer par https://. Le texte de l'annonce reste affiché ; l'audio est un complément."
     },
     "footer": {
       "connectedAs": "Connecté en tant que {name}",
@@ -299,7 +297,7 @@
       "MEMBER_CATEGORY_INVALID": "Catégorie invalide.",
       "MEMBER_ROLE_TOO_LONG": "La fonction est trop longue.",
       "MEMBER_NOT_FOUND": "Membre introuvable.",
-      "AUDIO_URL_INVALID": "Le lien audio n'est pas une adresse valide."
+      "AUDIO_URL_INVALID": "Le lien d'écoute doit être une adresse complète commençant par https://"
     },
     "members": {
       "pageTitle": "Membres",

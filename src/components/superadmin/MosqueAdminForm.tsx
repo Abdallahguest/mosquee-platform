@@ -18,7 +18,7 @@ interface MosqueAdminFormProps {
     quartier?: string | null
     secteur?: string | null
     latitude: number; longitude: number; timezone: string
-    calculationMethod: string; isVerified: boolean
+    isVerified: boolean
     donationUrl?: string | null
     contactEmail?: string | null
     contactPhone?: string | null
@@ -120,23 +120,6 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
       <div className="space-y-1.5">
         <Label htmlFor="timezone">Fuseau horaire</Label>
         <Input id="timezone" name="timezone" required defaultValue={mosque?.timezone ?? "Africa/Conakry"} />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="calculationMethod">Méthode de calcul</Label>
-        <select
-          id="calculationMethod"
-          name="calculationMethod"
-          required
-          defaultValue={mosque?.calculationMethod ?? "MWL"}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-        >
-          <option value="MWL">Muslim World League</option>
-          <option value="ISNA">ISNA (Amérique du Nord)</option>
-          <option value="Egyptian">Egyptian</option>
-          <option value="UmmAlQura">Umm Al-Qura</option>
-          <option value="Karachi">Karachi</option>
-        </select>
       </div>
 
       <div className="flex items-center gap-2">

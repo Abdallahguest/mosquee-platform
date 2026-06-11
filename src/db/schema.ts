@@ -34,7 +34,6 @@ export const mosques = pgTable("mosques", {
   latitude:          doublePrecision("latitude").notNull(),
   longitude:         doublePrecision("longitude").notNull(),
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
-  calculationMethod: varchar("calculation_method", { length: 50 }).notNull().default("MWL"),
   adminEmail:        varchar("admin_email", { length: 255 }),
   isVerified:        boolean("is_verified").notNull().default(false),
   createdAt:         timestamp("created_at").notNull().defaultNow(),
@@ -45,20 +44,6 @@ export const mosques = pgTable("mosques", {
   // ── Textes personnalisés (optionnels) ──
   welcomeMessage: text("welcome_message"),  // affiché en haut de la page publique
   footerText:     text("footer_text"),      // affiché dans le pied de page public
-
-  // Ajustements iqama en minutes (décalage après l'adhan)
-  iqamaFajr:    integer("iqama_fajr").notNull().default(20),
-  iqamaDhuhr:   integer("iqama_dhuhr").notNull().default(10),
-  iqamaAsr:     integer("iqama_asr").notNull().default(10),
-  iqamaMaghrib: integer("iqama_maghrib").notNull().default(5),
-  iqamaIsha:    integer("iqama_isha").notNull().default(10),
-
-  // Ajustements manuels du calcul (correction astronomique en minutes, peut être négatif)
-  adjustFajr:    integer("adjust_fajr").notNull().default(0),
-  adjustDhuhr:   integer("adjust_dhuhr").notNull().default(0),
-  adjustAsr:     integer("adjust_asr").notNull().default(0),
-  adjustMaghrib: integer("adjust_maghrib").notNull().default(0),
-  adjustIsha:    integer("adjust_isha").notNull().default(0),
 
   // ── Horaires manuels (Approche A) ──
   // Format "HH:MM", null = non renseigné → la page publique affiche "—".

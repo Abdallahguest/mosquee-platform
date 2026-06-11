@@ -69,7 +69,6 @@ async function seed() {
           latitude: 9.537,
           longitude: -13.6773,
           timezone: "Africa/Conakry",
-          calculationMethod: "MWL",
           adminEmail: "admin@masdjid-taqwa.com",
           isVerified: true,
         },
@@ -81,7 +80,6 @@ async function seed() {
           latitude: 11.3181,
           longitude: -12.2895,
           timezone: "Africa/Conakry",
-          calculationMethod: "MWL",
           adminEmail: "admin@mosquee-labe.com",
           isVerified: true,
         },
@@ -211,3 +209,4 @@ seed()
     console.error("💥 Échec du seeding:", error)
     process.exit(1)
   })
+  

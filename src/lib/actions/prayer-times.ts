@@ -11,7 +11,6 @@ import { getMosquesByUserId } from "@/db/queries"
 import { suggestPrayerTimes } from "@/lib/prayer-times"
 import type { PrayerTimesActionState, SuggestActionResult } from "./prayer-times-types"
 
-// "HH:MM" ou chaîne vide (= effacer → null). Le message est un CODE.
 const hhmmOrEmpty = z
   .string()
   .trim()
@@ -63,7 +62,6 @@ export async function updatePrayerTimes(
   const parsed = prayerTimesSchema.safeParse(raw)
 
   if (!parsed.success) {
-    // fieldErrors porte désormais des CODES (TIME_FORMAT_INVALID), traduits côté form.
     const fieldErrors: Record<string, string> = {}
     for (const issue of parsed.error.issues) {
       const key = String(issue.path[0] ?? "form")
@@ -102,7 +100,6 @@ export async function updatePrayerTimes(
   revalidatePath("/(public)", "layout")
   revalidatePath("/admin")
 
-  // message = CODE de succès, traduit côté form.
   return { ok: true, message: "TIMES_SAVED" }
 }
 
@@ -116,8 +113,9 @@ export async function getSuggestedPrayerTimes(mosqueId: number): Promise<Suggest
   const [mosque] = await db.select().from(mosques).where(eq(mosques.id, mosqueId))
   if (!mosque) return { ok: false, message: "MOSQUE_NOT_FOUND" }
 
+  // Méthode de calcul retirée : suggestPrayerTimes utilise MWL par défaut.
   const suggested = suggestPrayerTimes(
-    mosque.latitude, mosque.longitude, mosque.timezone, mosque.calculationMethod
+    mosque.latitude, mosque.longitude, mosque.timezone
   )
   return { ok: true, suggested }
 }

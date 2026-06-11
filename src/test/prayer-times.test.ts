@@ -6,12 +6,8 @@ import {
   type MosqueScheduleInput,
 } from "@/lib/prayer-times"
 
-// Modèle ADHAN + IQAMA. L'iqama est l'heure pivot (présence obligatoire).
-// On injecte `now` pour des tests déterministes. Conakry = UTC+0.
-
 const TZ = "Africa/Conakry"
 
-// Valeurs réelles de la mosquée d'Abdallah (déduites de ses règles).
 function makeMosque(overrides: Partial<MosqueScheduleInput> = {}): MosqueScheduleInput {
   return {
     fajrAdhan:    "05:20", fajrIqama:    "05:35",
@@ -23,7 +19,6 @@ function makeMosque(overrides: Partial<MosqueScheduleInput> = {}): MosqueSchedul
     timezone:     TZ,
     latitude:     9.537,
     longitude:    -13.6773,
-    calculationMethod: "MWL",
     ...overrides,
   }
 }
@@ -36,7 +31,7 @@ describe("structure (modèle adhan/iqama)", () => {
     expect(prayers).toHaveLength(6)
     const jumua = prayers.find((p) => p.name === "Jumua")
     expect(jumua?.isInactive).toBe(true)
-    expect(prayers[prayers.length - 1].name).toBe("Jumua") // en dernier
+    expect(prayers[prayers.length - 1].name).toBe("Jumua")
   })
 
   it("ordre correct en semaine (Jumu'ah en dernier, inactive)", () => {
@@ -150,7 +145,6 @@ describe("bug historique du countdown (la nuit)", () => {
 })
 
 describe("Jumu'ah (vendredi)", () => {
-  // 2026-06-05 est un vendredi.
   it("affichée EN PLUS de Dhuhr, juste après", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T08:00:00Z"))
     const names = prayers.map((p) => p.name)

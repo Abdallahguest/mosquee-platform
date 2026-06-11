@@ -11,13 +11,6 @@ import { Label }    from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 interface Mosque {
   id: number
@@ -34,21 +27,12 @@ interface Mosque {
   latitude: number
   longitude: number
   timezone: string
-  calculationMethod: string
   donationUrl: string | null
   contactEmail: string | null
   contactPhone: string | null
   welcomeMessage: string | null
   footerText: string | null
 }
-
-const METHODS = [
-  { value: "MWL",       label: "Muslim World League" },
-  { value: "ISNA",      label: "Islamic Society of North America" },
-  { value: "Egyptian",  label: "Egyptian General Authority" },
-  { value: "UmmAlQura", label: "Umm Al-Qura (Mecque)" },
-  { value: "Karachi",   label: "University of Islamic Sciences, Karachi" },
-]
 
 export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
   const t = useTranslations("admin.settings")
@@ -57,7 +41,6 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
   const [error, setError]     = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
-  const [method, setMethod]   = useState(mosque.calculationMethod)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -66,7 +49,6 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    formData.set("calculationMethod", method)
 
     const result = await updateMosqueSettings(mosque.id, formData)
 
@@ -190,18 +172,6 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
             <Label htmlFor="timezone">{t("fieldTimezone")} <span className="text-destructive" aria-label={tc("required")}>*</span></Label>
             <Input id="timezone" name="timezone" aria-required="true" defaultValue={mosque.timezone} placeholder="Africa/Conakry" dir="ltr" />
             <p className="text-xs text-muted-foreground">{t("tzHelp")}</p>
-          </div>
-          <Separator />
-          <div className="space-y-1.5">
-            <Label>{t("methodLabel")}</Label>
-            <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {METHODS.map((m) => (
-                  <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>

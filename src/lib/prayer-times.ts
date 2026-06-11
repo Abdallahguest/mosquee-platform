@@ -33,11 +33,13 @@ export {
 } from "./prayer-schedule-core"
 export type { PrayerTime, PrayerName, ScheduleSlotName, ScheduleInput, DailySchedule }
 
-// Entrée enrichie (coordonnées + méthode) pour le rendu serveur + la suggestion.
+// Entrée enrichie (coordonnées) pour le rendu serveur + la suggestion.
+// NB : la méthode de calcul N'EST PLUS un champ du type. Elle n'était utilisée
+// que par suggestPrayerTimes, qui la reçoit en paramètre (défaut MWL). Les
+// horaires affichés proviennent de la saisie manuelle (champs adhan/iqama).
 export interface MosqueScheduleInput extends ScheduleInput {
   latitude: number
   longitude: number
-  calculationMethod: string
 }
 
 export interface DailyPrayerTimes {
@@ -63,6 +65,9 @@ function formatHHMM(date: Date, timezone: string): string {
 }
 
 // ── SUGGESTION d'ADHAN (aide optionnelle admin, serveur uniquement) ──
+// La méthode de calcul reste un paramètre interne ici (défaut MWL), car la
+// suggestion astronomique a besoin d'une méthode pour calculer. Ce n'est plus
+// un réglage stocké/exposé : c'est une simple aide à la saisie.
 const CALCULATION_METHODS: Record<string, () => CalculationParameters> = {
   MWL:       () => CalculationMethod.MuslimWorldLeague(),
   ISNA:      () => CalculationMethod.NorthAmerica(),

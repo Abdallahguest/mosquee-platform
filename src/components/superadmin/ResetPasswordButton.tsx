@@ -37,20 +37,22 @@ export default function ResetPasswordButton({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
       <Input
         type="text"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Nouveau mot de passe"
-        className="w-44 h-8 text-sm"
+        className="w-full sm:w-44 h-8 text-sm"
       />
-      <Button size="sm" onClick={handleReset} disabled={loading || password.length < 8} className="bg-green-700 hover:bg-green-800">
-        {done ? "✓" : loading ? "..." : "OK"}
-      </Button>
-      <Button variant="ghost" size="sm" onClick={() => { setOpen(false); setPassword("") }}>
-        Annuler
-      </Button>
+      <div className="flex gap-2">
+        <Button size="sm" onClick={handleReset} disabled={loading || password.length < 8} className="flex-1 sm:flex-none bg-green-700 hover:bg-green-800">
+          {done ? "✓" : loading ? "..." : "OK"}
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => { setOpen(false); setPassword("") }} className="flex-1 sm:flex-none">
+          Annuler
+        </Button>
+      </div>
     </div>
   )
 }

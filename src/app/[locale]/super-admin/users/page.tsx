@@ -13,10 +13,13 @@ export default async function UsersPage() {
   const users = await getAllUsers()
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      {/* En-tête : empilé sur mobile, en ligne sur desktop */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Comptes ({users.length})</h1>
-        <Link href="/super-admin"><Button variant="outline">← Mosquées</Button></Link>
+        <Link href="/super-admin" className="w-full sm:w-auto">
+          <Button variant="outline" className="w-full sm:w-auto">← Mosquées</Button>
+        </Link>
       </div>
 
       {/* Création de compte */}
@@ -33,12 +36,14 @@ export default async function UsersPage() {
       <div className="space-y-2">
         {users.map((u) => (
           <Card key={u.id}>
-            <CardContent className="py-3 flex items-center justify-between">
-              <div>
+            {/* Infos au-dessus, actions en dessous sur mobile ; côte à côte sur desktop */}
+            <CardContent className="py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="min-w-0">
                 <span className="font-medium">{u.name}</span>
-                <p className="text-sm text-gray-500">{u.email}</p>
+                <p className="text-sm text-gray-500 wrap-break-word">{u.email}</p>
               </div>
-              <div className="flex items-center gap-2">
+              {/* Badges + actions : passent à la ligne au lieu de déborder */}
+              <div className="flex flex-wrap items-center gap-2">
                 {u.role === "super_admin" && <Badge className="bg-purple-600">super-admin</Badge>}
                 {u.emailVerified
                   ? <Badge variant="secondary">✓ vérifié</Badge>

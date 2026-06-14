@@ -15,17 +15,18 @@ export default async function SuperAdminDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <div className="flex items-center justify-between mb-8">
+      {/* En-tête : empilé sur mobile, en ligne sur écran large */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
           <p className="text-gray-500 text-sm mt-1">Vue d&apos;ensemble de la plateforme</p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/super-admin/mosques">
-            <Button variant="outline">Gérer les mosquées</Button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Link href="/super-admin/mosques" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">Gérer les mosquées</Button>
           </Link>
-          <Link href="/super-admin/users">
-            <Button variant="outline">Gérer les comptes</Button>
+          <Link href="/super-admin/users" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto">Gérer les comptes</Button>
           </Link>
         </div>
       </div>

@@ -27,11 +27,11 @@ export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: nu
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+        className="w-full sm:flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
       >
         <option value="">— Choisir un compte —</option>
         {candidates.map((c) => (
@@ -40,7 +40,11 @@ export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: nu
           </option>
         ))}
       </select>
-      <Button onClick={handleAssign} disabled={loading || !selected} className="bg-green-700 hover:bg-green-800">
+      <Button
+        onClick={handleAssign}
+        disabled={loading || !selected}
+        className="w-full sm:w-auto bg-green-700 hover:bg-green-800"
+      >
         {loading ? "..." : "Assigner"}
       </Button>
     </div>

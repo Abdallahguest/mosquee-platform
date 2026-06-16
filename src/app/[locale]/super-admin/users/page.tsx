@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import CreateUserForm from "@/components/superadmin/CreateUserForm"
 import UserVerifyButton from "@/components/superadmin/UserVerifyButton"
 import ResetPasswordButton from "@/components/superadmin/ResetPasswordButton"
+import EditUserButton from "@/components/superadmin/EditUserButton"
+import DeleteUserButton from "@/components/superadmin/DeleteUserButton"
 
 export default async function UsersPage() {
   await requireSuperAdmin()
@@ -36,24 +38,27 @@ export default async function UsersPage() {
       <div className="space-y-2">
         {users.map((u) => (
           <Card key={u.id}>
-            {/* Infos au-dessus, actions en dessous sur mobile ; côte à côte sur desktop */}
-            <CardContent className="py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="min-w-0">
-                <span className="font-medium">{u.name}</span>
-                <p className="text-sm text-gray-500 wrap-break-word">{u.email}</p>
-              </div>
-              {/* Badges + actions : passent à la ligne au lieu de déborder */}
-              <div className="flex flex-wrap items-center gap-2">
-                {u.role === "super_admin" && <Badge className="bg-purple-600">super-admin</Badge>}
-                {u.emailVerified
-                  ? <Badge variant="secondary">✓ vérifié</Badge>
-                  : <Badge variant="outline">non vérifié</Badge>}
-                {u.role !== "super_admin" && (
-                  <>
-                    <UserVerifyButton userId={u.id} verified={u.emailVerified} />
-                    <ResetPasswordButton userId={u.id} />
-                  </>
-                )}
+            <CardContent className="py-3 space-y-3">
+              {/* Ligne principale : infos + badges + actions */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="font-medium">{u.name}</span>
+                  <p className="text-sm text-gray-500 wrap-break-word">{u.email}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {u.role === "super_admin" && <Badge className="bg-purple-600">super-admin</Badge>}
+                  {u.emailVerified
+                    ? <Badge variant="secondary">✓ vérifié</Badge>
+                    : <Badge variant="outline">non vérifié</Badge>}
+                  {u.role !== "super_admin" && (
+                    <>
+                      <UserVerifyButton userId={u.id} verified={u.emailVerified} />
+                      <ResetPasswordButton userId={u.id} />
+                      <EditUserButton userId={u.id} name={u.name} email={u.email} role={u.role} />
+                      <DeleteUserButton userId={u.id} userName={u.name} />
+                    </>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -6,7 +6,9 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
-import { mosques, users, mosqueAdmins } from "@/db/schema"
+// NB : la table `session` est importée sous l'alias `sessionTable` pour éviter
+// le conflit avec les variables locales `const session = await requireSuperAdmin()`.
+import { mosques, users, mosqueAdmins, account, session as sessionTable } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 
 export type ActionResult<T = void> =
@@ -295,5 +297,129 @@ export async function resetUserPassword(formData: FormData): Promise<ActionResul
       success: false,
       error: error instanceof Error ? error.message : "Erreur lors de la réinitialisation.",
     }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// CRUD comptes : Update + Delete
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── UPDATE : modifier nom / email / rôle d'un compte ──
+const UpdateUserSchema = z.object({
+  userId: z.string().min(1),
+  name:   z.string().min(1, "Nom requis").max(100),
+  email:  z.string().email("Email invalide"),
+  // Seuls "admin" et "member" sont autorisés. On ne peut PAS promouvoir en
+  // super_admin via ce formulaire (sécurité), ni dégrader un super_admin.
+  role:   z.enum(["admin", "member"], { message: "Rôle invalide" }),
+})
+
+export async function updateUserAccount(formData: FormData): Promise<ActionResult> {
+  const session = await requireSuperAdmin()
+
+  const parsed = UpdateUserSchema.safeParse({
+    userId: formData.get("userId"),
+    name:   formData.get("name"),
+    email:  String(formData.get("email") ?? "").trim().toLowerCase(),
+    role:   formData.get("role"),
+  })
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Données invalides" }
+  }
+
+  // Récupérer le compte cible
+  const [target] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(eq(users.id, parsed.data.userId))
+    .limit(1)
+
+  if (!target) return { success: false, error: "Compte introuvable." }
+
+  // Garde-fou : un super-admin ne peut pas modifier un autre super-admin
+  // (ni se rétrograder lui-même via ce formulaire).
+  if (!canSuperAdminActOnUser(
+    { id: session.user.id, role: "super_admin" },
+    { id: target.id, role: target.role }
+  )) {
+    return { success: false, error: "Action non autorisée sur ce compte." }
+  }
+
+  // Anti-doublon : l'email ne doit pas déjà appartenir à un AUTRE compte.
+  const [emailOwner] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, parsed.data.email))
+    .limit(1)
+
+  if (emailOwner && emailOwner.id !== parsed.data.userId) {
+    return { success: false, error: "Cet email est déjà utilisé par un autre compte." }
+  }
+
+  try {
+    await db
+      .update(users)
+      .set({ name: parsed.data.name, email: parsed.data.email, role: parsed.data.role })
+      .where(eq(users.id, parsed.data.userId))
+
+    revalidatePath("/super-admin/users")
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "Erreur lors de la mise à jour du compte." }
+  }
+}
+
+// ── DELETE : supprimer un compte ──
+// Règles : pas de super-admin, pas d'auto-suppression, refus si encore admin
+// d'au moins une mosquée (il faut d'abord le retirer via la page Admins).
+export async function deleteUserAccount(userId: string): Promise<ActionResult> {
+  const session = await requireSuperAdmin()
+
+  // 1. Anti-verrouillage : on ne peut pas supprimer son propre compte
+  if (userId === session.user.id) {
+    return { success: false, error: "Vous ne pouvez pas supprimer votre propre compte." }
+  }
+
+  // 2. Récupérer le compte cible
+  const [target] = await db
+    .select({ id: users.id, role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1)
+
+  if (!target) return { success: false, error: "Compte introuvable." }
+
+  // 3. Pas d'action sur un super-admin
+  if (!canSuperAdminActOnUser(
+    { id: session.user.id, role: "super_admin" },
+    { id: target.id, role: target.role }
+  )) {
+    return { success: false, error: "Action non autorisée sur ce compte." }
+  }
+
+  // 4. Refuser si le compte est encore admin d'au moins une mosquée
+  const adminLinks = await db
+    .select({ mosqueId: mosqueAdmins.mosqueId })
+    .from(mosqueAdmins)
+    .where(eq(mosqueAdmins.userId, userId))
+
+  if (adminLinks.length > 0) {
+    return {
+      success: false,
+      error: `Ce compte administre encore ${adminLinks.length} mosquée(s). Retirez-le d'abord de ses mosquées (page Admins) avant de le supprimer.`,
+    }
+  }
+
+  // 5. Suppression directe en base, dans l'ordre des dépendances.
+  //    (La table `session` est importée sous l'alias `sessionTable`.)
+  try {
+    await db.delete(sessionTable).where(eq(sessionTable.userId, userId))  // sessions actives
+    await db.delete(account).where(eq(account.userId, userId))            // liens d'auth
+    await db.delete(users).where(eq(users.id, userId))                    // le compte
+    revalidatePath("/super-admin/users")
+    return { success: true, data: undefined }
+  } catch {
+    return { success: false, error: "Erreur lors de la suppression du compte." }
   }
 }

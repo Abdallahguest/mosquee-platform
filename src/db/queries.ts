@@ -1,6 +1,6 @@
 import { db } from "./index"
 import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers } from "./schema"
-import { eq, and, gt, desc, isNull, or, asc, count } from "drizzle-orm"
+import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
 import type { Mosque, Announcement, Event, MosqueMember } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
@@ -319,4 +319,121 @@ export async function getMemberById(id: number, mosqueId: number): Promise<Mosqu
     .where(and(eq(mosqueMembers.id, id), eq(mosqueMembers.mosqueId, mosqueId)))
     .limit(1)
   return result[0] ?? null
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// AJOUT — Requêtes paginées pour les pages publiques "voir tout"
+// À COLLER dans src/db/queries.ts (à la fin du fichier).
+//
+// ⚠️ AJOUT D'IMPORT REQUIS : ajoute `lt` à la ligne d'import de drizzle-orm,
+//    qui devient :
+//      import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
+//
+// Chaque fonction retourne { items, total } : `total` sert à décider s'il faut
+// afficher le bouton "Voir les suivantes". Pagination côté base (LIMIT/OFFSET)
+// pour rester léger sur connexion lente.
+// ════════════════════════════════════════════════════════════════════════════
+
+export interface PaginatedResult<T> {
+  items: T[]
+  total: number
+}
+
+// ── ANNONCES actives, paginées (mêmes règles que getActiveAnnouncements) ──
+export async function getActiveAnnouncementsPaginated(
+  mosqueId: number,
+  page: number = 1,
+  perPage: number = 5
+): Promise<PaginatedResult<Announcement>> {
+  const now = new Date()
+  const offset = (Math.max(1, page) - 1) * perPage
+
+  const whereClause = and(
+    eq(announcements.mosqueId, mosqueId),
+    eq(announcements.isPublished, true),
+    or(isNull(announcements.expiresAt), gt(announcements.expiresAt, now))
+  )
+
+  try {
+    const [items, totalRows] = await Promise.all([
+      db
+        .select()
+        .from(announcements)
+        .where(whereClause)
+        .orderBy(desc(announcements.isPinned), desc(announcements.publishedAt))
+        .limit(perPage)
+        .offset(offset),
+      db.select({ v: count() }).from(announcements).where(whereClause),
+    ])
+    return { items, total: totalRows[0]?.v ?? 0 }
+  } catch (error) {
+    console.error("Erreur annonces paginées:", error)
+    return { items: [], total: 0 }
+  }
+}
+
+// ── ÉVÉNEMENTS à venir, paginés ──
+export async function getUpcomingEventsPaginated(
+  mosqueId: number,
+  page: number = 1,
+  perPage: number = 5
+): Promise<PaginatedResult<Event>> {
+  const now = new Date()
+  const offset = (Math.max(1, page) - 1) * perPage
+
+  const whereClause = and(
+    eq(events.mosqueId, mosqueId),
+    eq(events.isPublished, true),
+    gt(events.startAt, now)
+  )
+
+  try {
+    const [items, totalRows] = await Promise.all([
+      db
+        .select()
+        .from(events)
+        .where(whereClause)
+        .orderBy(asc(events.startAt))   // à venir : le plus proche d'abord
+        .limit(perPage)
+        .offset(offset),
+      db.select({ v: count() }).from(events).where(whereClause),
+    ])
+    return { items, total: totalRows[0]?.v ?? 0 }
+  } catch (error) {
+    console.error("Erreur événements à venir paginés:", error)
+    return { items: [], total: 0 }
+  }
+}
+
+// ── ÉVÉNEMENTS passés, paginés (archive) ──
+export async function getPastEventsPaginated(
+  mosqueId: number,
+  page: number = 1,
+  perPage: number = 5
+): Promise<PaginatedResult<Event>> {
+  const now = new Date()
+  const offset = (Math.max(1, page) - 1) * perPage
+
+  const whereClause = and(
+    eq(events.mosqueId, mosqueId),
+    eq(events.isPublished, true),
+    lt(events.startAt, now)
+  )
+
+  try {
+    const [items, totalRows] = await Promise.all([
+      db
+        .select()
+        .from(events)
+        .where(whereClause)
+        .orderBy(desc(events.startAt))  // passés : le plus récent d'abord
+        .limit(perPage)
+        .offset(offset),
+      db.select({ v: count() }).from(events).where(whereClause),
+    ])
+    return { items, total: totalRows[0]?.v ?? 0 }
+  } catch (error) {
+    console.error("Erreur événements passés paginés:", error)
+    return { items: [], total: 0 }
+  }
 }

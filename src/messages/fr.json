@@ -8,7 +8,10 @@
     "allMosques": "Toutes les mosquées",
     "noContent": "Aucune annonce ni événement pour le moment.",
     "contentInLang": "Contenu en {lang}",
-    "readMore": "Lire la suite"
+    "readMore": "Lire la suite",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageInfo": "Page {page} / {total}"
   },
   "home": {
     "title": "Plateforme Mosquée",
@@ -39,7 +42,9 @@
     "readMore": "Lire la suite",
     "backToMosque": "Retour à la mosquée",
     "listenAudio": "Écouter le message",
-    "hasAudio": "Message audio disponible"
+    "hasAudio": "Message audio disponible",
+    "allTitle": "Toutes les annonces",
+    "seeAll": "Voir toutes les annonces"
   },
   "events": {
     "title": "Événements à venir",
@@ -48,7 +53,13 @@
     "readMore": "Voir les détails",
     "backToMosque": "Retour à la mosquée",
     "listenAudio": "Écouter le message",
-    "hasAudio": "Message audio disponible"
+    "hasAudio": "Message audio disponible",
+    "allTitle": "Tous les événements",
+    "seeAll": "Voir tous les événements",
+    "upcoming": "À venir",
+    "past": "Passés",
+    "noUpcoming": "Aucun événement à venir.",
+    "noPast": "Aucun événement passé."
   },
   "footer": {
     "tagline": "Plateforme respectueuse · sans intérêt ni tromperie · rien de caché"

@@ -8,7 +8,10 @@
     "allMosques": "All mosques",
     "noContent": "No announcements or events yet.",
     "contentInLang": "Content in {lang}",
-    "readMore": "Read more"
+    "readMore": "Read more",
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {page} / {total}"
   },
   "home": {
     "title": "Mosque Platform",
@@ -39,7 +42,9 @@
     "readMore": "Read more",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
-    "hasAudio": "Audio message available"
+    "hasAudio": "Audio message available",
+    "allTitle": "All announcements",
+    "seeAll": "See all announcements"
   },
   "events": {
     "title": "Upcoming events",
@@ -48,7 +53,13 @@
     "readMore": "View details",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
-    "hasAudio": "Audio message available"
+    "hasAudio": "Audio message available",
+    "allTitle": "All events",
+    "seeAll": "See all events",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "noUpcoming": "No upcoming events.",
+    "noPast": "No past events."
   },
   "footer": {
     "tagline": "Respectful platform · no interest, no deception · nothing hidden"

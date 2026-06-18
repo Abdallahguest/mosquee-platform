@@ -4,6 +4,7 @@ import { getMosqueBySlug } from "@/db/queries"
 import { getMosqueName } from "@/lib/mosque-name"
 import { getActiveAnnouncements } from "@/db/queries"
 import { getUpcomingEvents } from "@/db/queries"
+import { Link } from "@/i18n/navigation"
 import PublicNav from "@/components/public/PublicNav"
 import PrayerSchedule from "@/components/public/PrayerSchedule"
 import AnnouncementCard from "@/components/public/AnnouncementCard"
@@ -56,6 +57,12 @@ export default async function MosquePublicPage({ params }: PageProps) {
     weekday: "long", day: "numeric", month: "long", timeZone: mosque.timezone,
   })
 
+  // Les listes d'accueil sont plafonnées (LIMIT 5 côté requête). Si on atteint
+  // ce plafond, il existe probablement davantage de contenu → on propose un
+  // lien vers la page dédiée "voir tout".
+  const ANNOUNCEMENTS_PREVIEW = 5
+  const EVENTS_PREVIEW = 5
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <PublicNav mosqueName={displayName} />
@@ -101,6 +108,16 @@ export default async function MosquePublicPage({ params }: PageProps) {
                   <AnnouncementCard key={a.id} announcement={a} slug={slug} />
                 ))}
               </div>
+              {activeAnnouncements.length >= ANNOUNCEMENTS_PREVIEW && (
+                <Link
+                  href={`/m/${slug}/announcements`}
+                  className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"
+                >
+                  {ta("seeAll")}
+                  <span aria-hidden="true" className="rtl:hidden">&nbsp;→</span>
+                  <span aria-hidden="true" className="hidden rtl:inline">&nbsp;←</span>
+                </Link>
+              )}
             </section>
           )}
 
@@ -117,6 +134,16 @@ export default async function MosquePublicPage({ params }: PageProps) {
                   <EventCard key={ev.id} event={ev} slug={slug} />
                 ))}
               </div>
+              {upcomingEvents.length >= EVENTS_PREVIEW && (
+                <Link
+                  href={`/m/${slug}/events`}
+                  className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"
+                >
+                  {te("seeAll")}
+                  <span aria-hidden="true" className="rtl:hidden">&nbsp;→</span>
+                  <span aria-hidden="true" className="hidden rtl:inline">&nbsp;←</span>
+                </Link>
+              )}
             </section>
           )}
 

@@ -437,3 +437,27 @@ export async function getPastEventsPaginated(
     return { items: [], total: 0 }
   }
 }
+
+// ── EXISTE-T-IL DES ÉVÉNEMENTS PASSÉS ? (requête ultra-légère, LIMIT 1) ──
+// Sert à l'accueil pour décider d'afficher le lien vers l'archive même quand
+// il n'y a aucun événement à venir. On ne compte pas : on s'arrête au premier.
+export async function hasPastEvents(mosqueId: number): Promise<boolean> {
+  const now = new Date()
+  try {
+    const rows = await db
+      .select({ id: events.id })
+      .from(events)
+      .where(
+        and(
+          eq(events.mosqueId, mosqueId),
+          eq(events.isPublished, true),
+          lt(events.startAt, now)
+        )
+      )
+      .limit(1)
+    return rows.length > 0
+  } catch (error) {
+    console.error("Erreur hasPastEvents:", error)
+    return false
+  }
+}

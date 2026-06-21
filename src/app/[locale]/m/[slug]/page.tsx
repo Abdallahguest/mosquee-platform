@@ -4,6 +4,7 @@ import { getMosqueBySlug } from "@/db/queries"
 import { getMosqueName } from "@/lib/mosque-name"
 import { getActiveAnnouncements } from "@/db/queries"
 import { getUpcomingEvents } from "@/db/queries"
+import { hasPastEvents } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import PublicNav from "@/components/public/PublicNav"
 import PrayerSchedule from "@/components/public/PrayerSchedule"
@@ -38,9 +39,10 @@ export default async function MosquePublicPage({ params }: PageProps) {
   const locale = await getLocale()
   const displayName = getMosqueName(mosque, locale)
 
-  const [activeAnnouncements, upcomingEvents] = await Promise.all([
+  const [activeAnnouncements, upcomingEvents, pastEventsExist] = await Promise.all([
     getActiveAnnouncements(mosque.id),
     getUpcomingEvents(mosque.id),
+    hasPastEvents(mosque.id),
   ])
 
   const schedule = {
@@ -57,11 +59,10 @@ export default async function MosquePublicPage({ params }: PageProps) {
     weekday: "long", day: "numeric", month: "long", timeZone: mosque.timezone,
   })
 
-  // Les listes d'accueil sont plafonnées (LIMIT 5 côté requête). Si on atteint
-  // ce plafond, il existe probablement davantage de contenu → on propose un
-  // lien vers la page dédiée "voir tout".
-  const ANNOUNCEMENTS_PREVIEW = 5
-  const EVENTS_PREVIEW = 5
+  // Les listes d'accueil sont plafonnées (LIMIT 5 côté requête). On propose
+  // toujours un lien "voir tout" dès qu'une section a du contenu : il mène à la
+  // page dédiée (annonces complètes / événements à venir ET archive des passés).
+  // C'est notamment le seul accès du public aux événements passés.
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -108,7 +109,7 @@ export default async function MosquePublicPage({ params }: PageProps) {
                   <AnnouncementCard key={a.id} announcement={a} slug={slug} />
                 ))}
               </div>
-              {activeAnnouncements.length >= ANNOUNCEMENTS_PREVIEW && (
+              {activeAnnouncements.length > 0 && (
                 <Link
                   href={`/m/${slug}/announcements`}
                   className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"
@@ -121,33 +122,43 @@ export default async function MosquePublicPage({ params }: PageProps) {
             </section>
           )}
 
-          {upcomingEvents.length > 0 && (
+          {(upcomingEvents.length > 0 || pastEventsExist) && (
             <section>
               <h2 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <span>📅</span> {te("title")}
-                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-normal">
-                  {upcomingEvents.length}
-                </span>
+                {upcomingEvents.length > 0 && (
+                  <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-normal">
+                    {upcomingEvents.length}
+                  </span>
+                )}
               </h2>
-              <div className="flex flex-col gap-3">
-                {upcomingEvents.map((ev) => (
-                  <EventCard key={ev.id} event={ev} slug={slug} />
-                ))}
-              </div>
-              {upcomingEvents.length >= EVENTS_PREVIEW && (
-                <Link
-                  href={`/m/${slug}/events`}
-                  className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"
-                >
-                  {te("seeAll")}
-                  <span aria-hidden="true" className="rtl:hidden">&nbsp;→</span>
-                  <span aria-hidden="true" className="hidden rtl:inline">&nbsp;←</span>
-                </Link>
+
+              {upcomingEvents.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {upcomingEvents.map((ev) => (
+                    <EventCard key={ev.id} event={ev} slug={slug} />
+                  ))}
+                </div>
+              ) : (
+                // Aucun événement à venir, mais des événements passés existent :
+                // on invite à consulter l'archive.
+                <p className="text-sm text-gray-500">{te("noUpcoming")}</p>
               )}
+
+              {/* Lien toujours présent dès que la section existe : il mène à la
+                  page complète (à venir + onglet archive des passés). */}
+              <Link
+                href={`/m/${slug}/events`}
+                className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"
+              >
+                {te("seeAll")}
+                <span aria-hidden="true" className="rtl:hidden">&nbsp;→</span>
+                <span aria-hidden="true" className="hidden rtl:inline">&nbsp;←</span>
+              </Link>
             </section>
           )}
 
-          {activeAnnouncements.length === 0 && upcomingEvents.length === 0 && (
+          {activeAnnouncements.length === 0 && upcomingEvents.length === 0 && !pastEventsExist && (
             <div className="text-center py-8 text-gray-400">
               <p>{tc("noContent")}</p>
             </div>

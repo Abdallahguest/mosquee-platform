@@ -42,6 +42,7 @@
     "readMore": "Read more",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
+    "openAudio": "Open audio",
     "hasAudio": "Audio message available",
     "allTitle": "All announcements",
     "seeAll": "See all announcements"
@@ -53,6 +54,7 @@
     "readMore": "View details",
     "backToMosque": "Back to mosque",
     "listenAudio": "Listen to the message",
+    "openAudio": "Open audio",
     "hasAudio": "Audio message available",
     "allTitle": "All events",
     "seeAll": "See all events",

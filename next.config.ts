@@ -1,31 +1,20 @@
 import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
-import withPWAInit from "@ducanh2912/next-pwa"
+import withSerwistInit from "@serwist/next"
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts")
 
-const withPWA = withPWAInit({
-  dest: "public",
+const withSerwist = withSerwistInit({
+  // Le service worker source (compilé en public/sw.js au build).
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  // Désactivé en développement : évite les galères de cache en dev,
+  // et reste compatible avec `next dev --turbopack`.
   disable: process.env.NODE_ENV === "development",
-  register: true,
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
+  // Recharge la page au retour de connexion (remplace reloadOnOnline de next-pwa).
   reloadOnOnline: true,
-  workboxOptions: {
-    skipWaiting: true,
-    runtimeCaching: [
-      {
-        urlPattern: /^https?.*/,
-        handler: "NetworkFirst",
-        options: {
-          cacheName: "offlineCache",
-          expiration: {
-            maxEntries: 200,
-          },
-        },
-      },
-    ],
-  },
+  // Précache la page de repli hors-ligne pour qu'elle soit toujours disponible.
+  additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
 })
 
 const nextConfig: NextConfig = {
@@ -61,4 +50,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPWA(withNextIntl(nextConfig))
+export default withSerwist(withNextIntl(nextConfig))

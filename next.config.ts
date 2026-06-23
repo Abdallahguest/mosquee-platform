@@ -10,7 +10,7 @@ const withSerwist = withSerwistInit({
   swDest: "public/sw.js",
   // Désactivé en développement : évite les galères de cache en dev,
   // et reste compatible avec `next dev --turbopack`.
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV !== "production",
   // Recharge la page au retour de connexion (remplace reloadOnOnline de next-pwa).
   reloadOnOnline: true,
   // Précache la page de repli hors-ligne pour qu'elle soit toujours disponible.

@@ -10,7 +10,7 @@ Conakry, Guinée
 
 🔗 LinkedIn : [À compléter]
 
-🔗 Portfolio / Projet : https://mosquee-platform.vercel.app.org
+🔗 Portfolio / Projet : https://mosquee-platform.vercel.app
 
 ---
 

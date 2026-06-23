@@ -2,8 +2,6 @@ import { defaultCache } from "@serwist/next/worker"
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist"
 import { Serwist, NetworkFirst, ExpirationPlugin } from "serwist"
 
-// Déclare la valeur de `injectionPoint` pour TypeScript.
-// `self.__SW_MANIFEST` est remplacé au build par la liste réelle des fichiers à précacher.
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
     __SW_MANIFEST: (PrecacheEntry | string)[] | undefined
@@ -12,43 +10,46 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope
 
+// URL de l'origine du site (pour ne mettre en cache que NOS pages).
+const ORIGIN = self.location.origin
+
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
-    // ── PAGES (navigations) : NetworkFirst ──
-    // On tente TOUJOURS le réseau d'abord (horaires/annonces frais).
-    // On ne sert le cache QUE si le réseau échoue (hors-ligne).
-    // Aligné anti-gharar : jamais de contenu périmé affiché tant qu'il y a du réseau.
+    // ── PAGES & contenu de navigation : NetworkFirst ──
+    // Matcher élargi : on capture aussi bien les navigations classiques
+    // (request.mode === "navigate") que les requêtes RSC de Next.js
+    // (en-tête "RSC") et les documents de même origine. C'est ce qui
+    // permet à la page de s'afficher hors-ligne après une visite en ligne.
     {
-      matcher({ request }) {
-        return request.mode === "navigate"
+      matcher({ request, url }) {
+        const sameOrigin = url.origin === ORIGIN
+        if (!sameOrigin) return false
+        const isNavigation = request.mode === "navigate"
+        const isRSC = request.headers.has("RSC") || request.headers.has("Next-Router-Prefetch")
+        const isDocument = request.destination === "document"
+        return isNavigation || isRSC || isDocument
       },
       handler: new NetworkFirst({
         cacheName: "pages",
-        // 3s : en réseau très lent, on bascule vite sur le cache plutôt que faire attendre.
         networkTimeoutSeconds: 3,
         plugins: [
           new ExpirationPlugin({
-            // On garde au plus 50 pages récemment consultées (anti-israf).
             maxEntries: 50,
-            // Et au plus 7 jours : au-delà, le contenu est trop vieux pour être servi.
             maxAgeSeconds: 7 * 24 * 60 * 60,
           }),
         ],
       }),
     },
-    // ── Le reste (assets, données RSC, etc.) : comportement par défaut serwist ──
+    // ── Le reste (assets, etc.) : comportement par défaut serwist ──
     ...defaultCache,
   ],
   fallbacks: {
     entries: [
       {
-        // Page de repli affichée UNIQUEMENT pour une navigation (document)
-        // qui n'est ni en réseau ni en cache. Une page déjà visitée est
-        // servie depuis le cache "pages", pas remplacée par ce repli.
         url: "/~offline",
         matcher({ request }) {
           return request.destination === "document"

@@ -1,23 +1,174 @@
-# 🕌 Plateforme Mosquée
+ABDOULAYE BAH
 
-Application web de gestion pour mosquées — horaires de prière calculés
-automatiquement, annonces et événements. Conçue selon les principes du
-fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
+Conakry, Guinée
 
-![Performance](https://img.shields.io/badge/Performance-94-success)
-![Accessibility](https://img.shields.io/badge/Accessibility-100-success)
-![SEO](https://img.shields.io/badge/SEO-100-success)
+📧 abdallahmarly90@gmail.com 
 
-## ✨ Démo en ligne
+📞 +224 626736219
 
-[→ Voir la démo](https://votre-url.vercel.app)
-[→ Page d'une mosquée](https://votre-url.vercel.app/m/masdjid-taqwa)
+🔗 GitHub : https://github.com/Abdallahguest
 
-## 📋 Fonctionnalités
+🔗 LinkedIn : [À compléter]
 
-### Page publique
-- Horaires de prière calculés astronomiquement (méthodes MWL, ISNA,
-  Egyptian, Umm Al-Qura, Karachi)
+🔗 Portfolio / Projet : https://mosquee-platform.vercel.app.org
+
+---
+
+PROFIL
+
+Étudiant en Licence 3 Génie Logiciel, passionné par le développement d'applications web et les systèmes d'information.
+
+Je conçois et développe des applications full-stack modernes avec TypeScript, Next.js, PostgreSQL, Java, Spring Boot et Laravel.
+
+Actuellement fondateur et développeur principal d'Amana Connect, une plateforme SaaS multi-tenant de gestion de mosquées validée sur le terrain auprès d'utilisateurs réels.
+
+Je recherche des opportunités de stage, d'emploi junior ou de collaboration me permettant de contribuer à des projets concrets tout en développant mes compétences en ingénierie logicielle.
+
+---
+
+EXPÉRIENCE PROJET
+
+Fondateur & Développeur Full Stack
+
+Amana Connect — 2025 à aujourd'hui
+
+Conception, développement et déploiement d'une plateforme SaaS multi-tenant destinée aux mosquées.
+
+Responsabilités :
+
+- Analyse des besoins utilisateurs
+- Conception de l'architecture logicielle
+- Développement frontend et backend
+- Gestion de base de données PostgreSQL
+- Mise en œuvre de l'authentification sécurisée
+- Internationalisation FR / EN / AR
+- Déploiement cloud
+- Tests automatisés
+
+Réalisations :
+
+- Plateforme déployée en production
+- Architecture SaaS multi-tenant
+- Validation terrain auprès d'une mosquée réelle
+- Interface responsive mobile
+- Support du RTL arabe
+- Mise en place d'un système d'administration complet
+
+Technologies :
+
+Next.js, TypeScript, PostgreSQL, Drizzle ORM, Tailwind CSS, Better Auth, Zod, Vitest, Vercel, Resend.
+
+---
+
+FORMATION
+
+Licence Génie Logiciel
+
+Université Nongo Conakry (UNC)
+
+Conakry, Guinée
+
+2022 – Présent
+
+Principaux domaines étudiés :
+
+- Programmation orientée objet
+- Bases de données
+- Génie logiciel
+- Réseaux informatiques
+- Développement web
+- Architecture logicielle
+- Analyse et conception des systèmes
+
+---
+
+COMPÉTENCES TECHNIQUES
+
+Langages
+
+- TypeScript
+- JavaScript
+- Java
+- SQL
+- HTML5
+- CSS3
+
+Frontend
+
+- Next.js
+- React
+- Tailwind CSS
+- Responsive Design
+- Internationalisation (i18n)
+
+Backend
+
+- Node.js
+- Laravel
+- Spring Boot
+- API REST
+- Authentification
+
+Bases de données
+
+- PostgreSQL
+- MySQL
+- Oracle SQL
+
+Outils
+
+- Git
+- GitHub
+- Vercel
+- Neon
+- VS Code
+- Postman
+
+Qualité Logicielle
+
+- Tests unitaires
+- Vitest
+- Validation Zod
+- TypeScript strict
+
+---
+
+PROJETS ACADÉMIQUES ET PERSONNELS
+
+Amana Connect
+
+Plateforme SaaS de gestion de mosquées.
+
+Technologies :
+
+Next.js, PostgreSQL, TypeScript.
+
+Gestion de Bibliothèque
+
+Application de gestion utilisant Java et SQL.
+
+API REST Spring Boot
+
+Développement d'un backend REST avec authentification et persistance de données.
+
+---
+
+LANGUES
+
+- Français : Courant
+- Anglais : Technique / Professionnel
+- Arabe : Lecture et étude
+
+---
+
+CENTRES D'INTÉRÊT
+
+- Génie logiciel
+- Architecture logicielle
+- Développement web
+- Open source
+- Systèmes d'information
+- Innovation numérique utile
 - Compte à rebours en temps réel vers la prochaine prière
 - Annonces de la mosquée
 - Événements à venir
@@ -98,8 +249,8 @@ Cette plateforme respecte les principes du commerce islamique :
 
 ## 📄 Licence
 
-[À définir : MIT, ou propriétaire selon votre choix]
+Propriétaire
 
 ---
 
-Développé par Abdallah · Étudiant L3 Génie Logiciel
+Développé par Abdoulaye Bah · Étudiant L3 Génie Logiciel

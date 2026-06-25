@@ -11,6 +11,7 @@ import PrayerSchedule from "@/components/public/PrayerSchedule"
 import AnnouncementCard from "@/components/public/AnnouncementCard"
 import EventCard from "@/components/public/EventCard"
 import PublicFooter from "@/components/public/PublicFooter"
+import OfflineCacheRecorder from "@/components/public/OfflineCacheRecorder"
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>
@@ -55,6 +56,16 @@ export default async function MosquePublicPage({ params }: PageProps) {
     timezone:     mosque.timezone,
   }
 
+  // Instantané des horaires pour le cache hors-ligne (sans le fuseau).
+  const offlineSchedule = {
+    fajrAdhan:    mosque.fajrAdhan,    fajrIqama:    mosque.fajrIqama,
+    dhuhrAdhan:   mosque.dhuhrAdhan,   dhuhrIqama:   mosque.dhuhrIqama,
+    asrAdhan:     mosque.asrAdhan,     asrIqama:     mosque.asrIqama,
+    maghribAdhan: mosque.maghribAdhan, maghribIqama: mosque.maghribIqama,
+    ishaAdhan:    mosque.ishaAdhan,    ishaIqama:    mosque.ishaIqama,
+    jumuaAdhan:   mosque.jumuaAdhan,   jumuaIqama:   mosque.jumuaIqama,
+  }
+
   const today = new Date().toLocaleDateString(locale, {
     weekday: "long", day: "numeric", month: "long", timeZone: mosque.timezone,
   })
@@ -66,6 +77,25 @@ export default async function MosquePublicPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Enregistre les données pour la consultation hors connexion (invisible). */}
+      <OfflineCacheRecorder
+        slug={slug}
+        name={displayName}
+        city={mosque.city}
+        schedule={offlineSchedule}
+        announcements={activeAnnouncements.map((a) => ({
+          id: a.id,
+          title: a.title,
+          publishedAt: a.publishedAt ? new Date(a.publishedAt).toISOString() : null,
+        }))}
+        events={upcomingEvents.map((ev) => ({
+          id: ev.id,
+          title: ev.title,
+          startAt: new Date(ev.startAt).toISOString(),
+          location: ev.location ?? null,
+        }))}
+      />
+
       <PublicNav mosqueName={displayName} />
 
       <main className="flex-1">
@@ -140,13 +170,9 @@ export default async function MosquePublicPage({ params }: PageProps) {
                   ))}
                 </div>
               ) : (
-                // Aucun événement à venir, mais des événements passés existent :
-                // on invite à consulter l'archive.
                 <p className="text-sm text-gray-500">{te("noUpcoming")}</p>
               )}
 
-              {/* Lien toujours présent dès que la section existe : il mène à la
-                  page complète (à venir + onglet archive des passés). */}
               <Link
                 href={`/m/${slug}/events`}
                 className="inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"

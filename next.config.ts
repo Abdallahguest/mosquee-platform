@@ -14,7 +14,7 @@ const withSerwist = withSerwistInit({
   // Recharge la page au retour de connexion (remplace reloadOnOnline de next-pwa).
   reloadOnOnline: true,
   // Précache la page de repli hors-ligne pour qu'elle soit toujours disponible.
-  additionalPrecacheEntries: [{ url: "/offline", revision: "2" }],
+  additionalPrecacheEntries: [{ url: "/offline", revision: "3" }],
 })
 
 const nextConfig: NextConfig = {

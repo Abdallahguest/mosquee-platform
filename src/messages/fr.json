@@ -128,10 +128,7 @@
       "saving": "Enregistrement...",
       "createdSuccess": "Annonce créée avec succès.",
       "fieldAudioUrl": "Lien d'écoute (facultatif)",
-      "audioUrlHelp": "Collez ici le lien complet de votre enregistrement (Google Drive, etc.). Il doit commencer par https://. Le texte de l'annonce reste affiché ; l'audio est un complément.",
-      "draftFound": "Vous avez un brouillon non publié.",
-      "draftRestore": "Récupérer le brouillon",
-      "draftIgnore": "Ignorer"
+      "audioUrlHelp": "Collez ici le lien complet de votre enregistrement (Google Drive, etc.). Il doit commencer par https://. Le texte de l'annonce reste affiché ; l'audio est un complément."
     },
     "eventForm": {
       "newTitle": "Nouvel événement",
@@ -342,6 +339,11 @@
         "conseiller": "Conseiller",
         "equipe": "Équipe"
       }
+    },
+    "draft": {
+      "found": "Vous avez un brouillon non publié.",
+      "restore": "Récupérer le brouillon",
+      "ignore": "Ignorer"
     }
   }
 }

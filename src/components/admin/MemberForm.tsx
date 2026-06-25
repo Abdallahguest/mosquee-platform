@@ -5,6 +5,7 @@ import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import { createMember, updateMember } from "@/lib/actions/member.actions"
+import { useDraftPersistence } from "@/lib/use-draft-persistence"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,10 +30,20 @@ interface MemberFormProps {
 export default function MemberForm({ editing, onSaved, onCancelEdit }: MemberFormProps) {
   const t = useTranslations("admin.members")
   const tc = useTranslations("admin.common")
+  const td = useTranslations("admin.draft")
   const { fromResult } = useErrorMessages()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
+
+  // ── Écriture résiliente : sauvegarde locale du brouillon (Niveau A) ──
+  // La clé change selon création / édition : le hook se réinitialise tout seul
+  // quand l'admin bascule d'un membre à l'autre (ou vers "nouveau").
+  const { hasDraft, draftSavedAt, restoreDraft, clearDraft, dismissDraft } =
+    useDraftPersistence({
+      formKey: editing ? `member:edit:${editing.id}` : "member:new",
+      formRef,
+    })
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -46,15 +57,43 @@ export default function MemberForm({ editing, onSaved, onCancelEdit }: MemberFor
 
     setLoading(false)
     if (!result.success) {
+      // Envoi échoué : on GARDE le brouillon pour réessai.
       setError(fromResult(result))
       return
     }
+    // Envoi réussi : le brouillon n'est plus nécessaire.
+    clearDraft()
     formRef.current?.reset()
     onSaved()
   }
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
+
+      {/* Proposition de restauration d'un brouillon non enregistré */}
+      {hasDraft && (
+        <Alert className="border-amber-200 bg-amber-50 text-amber-800">
+          <AlertDescription className="flex flex-col gap-2">
+            <span>
+              {td("found")}
+              {draftSavedAt && (
+                <span className="text-xs opacity-80">
+                  {" "}({new Date(draftSavedAt).toLocaleString()})
+                </span>
+              )}
+            </span>
+            <span className="flex gap-2">
+              <button type="button" onClick={restoreDraft} className="text-sm font-medium underline">
+                {td("restore")}
+              </button>
+              <button type="button" onClick={dismissDraft} className="text-sm opacity-70">
+                {td("ignore")}
+              </button>
+            </span>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
 
       <div className="space-y-1.5">

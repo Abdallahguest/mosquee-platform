@@ -35,6 +35,7 @@ interface AnnouncementFormProps {
 export default function AnnouncementForm({ announcement }: AnnouncementFormProps) {
   const t = useTranslations("admin.announcementForm")
   const tc = useTranslations("admin.common")
+  const td = useTranslations("admin.draft")
   const { fromResult } = useErrorMessages()
   const isEdit = announcement != null
   const router = useRouter()
@@ -100,7 +101,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             <Alert className="border-amber-200 bg-amber-50 text-amber-800">
               <AlertDescription className="flex flex-col gap-2">
                 <span>
-                  {t("draftFound")}
+                  {td("found")}
                   {draftSavedAt && (
                     <span className="text-xs opacity-80">
                       {" "}({new Date(draftSavedAt).toLocaleString()})
@@ -113,14 +114,14 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
                     onClick={restoreDraft}
                     className="text-sm font-medium underline"
                   >
-                    {t("draftRestore")}
+                    {td("restore")}
                   </button>
                   <button
                     type="button"
                     onClick={dismissDraft}
                     className="text-sm opacity-70"
                   >
-                    {t("draftIgnore")}
+                    {td("ignore")}
                   </button>
                 </span>
               </AlertDescription>

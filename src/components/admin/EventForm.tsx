@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import { createEvent, updateEvent } from "@/lib/actions/event.actions"
 import { useRouter } from "@/i18n/navigation"
+import { useDraftPersistence } from "@/lib/use-draft-persistence"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -37,6 +38,7 @@ function toLocalInput(date: Date | null | undefined): string | undefined {
 export default function EventForm({ event }: EventFormProps) {
   const t = useTranslations("admin.eventForm")
   const tc = useTranslations("admin.common")
+  const td = useTranslations("admin.draft")
   const { fromResult } = useErrorMessages()
   const isEdit = event != null
   const router = useRouter()
@@ -44,6 +46,13 @@ export default function EventForm({ event }: EventFormProps) {
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
+
+  // ── Écriture résiliente : sauvegarde locale du brouillon (Niveau A) ──
+  const { hasDraft, draftSavedAt, restoreDraft, clearDraft, dismissDraft } =
+    useDraftPersistence({
+      formKey: isEdit ? `event:edit:${event.id}` : "event:new",
+      formRef,
+    })
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -58,10 +67,14 @@ export default function EventForm({ event }: EventFormProps) {
       : await createEvent(formData)
 
     if (!result.success) {
+      // Envoi échoué : on GARDE le brouillon pour réessai.
       setError(fromResult(result))
       setLoading(false)
       return
     }
+
+    // Envoi réussi : le brouillon n'est plus nécessaire.
+    clearDraft()
 
     if (isEdit) {
       router.push("/admin/events")
@@ -84,6 +97,30 @@ export default function EventForm({ event }: EventFormProps) {
       </CardHeader>
       <CardContent>
         <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
+
+          {/* Proposition de restauration d'un brouillon non publié */}
+          {hasDraft && (
+            <Alert className="border-amber-200 bg-amber-50 text-amber-800">
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  {td("found")}
+                  {draftSavedAt && (
+                    <span className="text-xs opacity-80">
+                      {" "}({new Date(draftSavedAt).toLocaleString()})
+                    </span>
+                  )}
+                </span>
+                <span className="flex gap-2">
+                  <button type="button" onClick={restoreDraft} className="text-sm font-medium underline">
+                    {td("restore")}
+                  </button>
+                  <button type="button" onClick={dismissDraft} className="text-sm opacity-70">
+                    {td("ignore")}
+                  </button>
+                </span>
+              </AlertDescription>
+            </Alert>
+          )}
 
           {error && (
             <Alert variant="destructive">

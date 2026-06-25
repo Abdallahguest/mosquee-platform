@@ -128,7 +128,10 @@
       "saving": "Saving...",
       "createdSuccess": "Announcement created successfully.",
       "fieldAudioUrl": "Listening link (optional)",
-      "audioUrlHelp": "Paste the full link to your recording here (Google Drive, etc.). It must start with https://. The text stays visible; the audio is a complement."
+      "audioUrlHelp": "Paste the full link to your recording here (Google Drive, etc.). It must start with https://. The text stays visible; the audio is a complement.",
+      "draftFound": "You have an unpublished draft.",
+      "draftRestore": "Restore draft",
+      "draftIgnore": "Dismiss"
     },
     "eventForm": {
       "newTitle": "New event",

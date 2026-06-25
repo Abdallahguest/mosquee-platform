@@ -12,6 +12,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Page offline : route hors-locale, jamais préfixée par i18n
+  if (pathname === "/offline" || pathname === "/sw.js") {
+    return NextResponse.next()
+  }
+
   // Détecter routes admin/auth (avec ou sans préfixe locale)
   const isAdminRoute =
   pathname.includes("/admin") || pathname.includes("/super-admin")
@@ -45,5 +50,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|_vercel|offline|sw.js|manifest.webmanifest|.*\\..*).*)"],
 }

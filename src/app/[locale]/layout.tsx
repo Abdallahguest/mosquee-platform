@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
 import { Geist, Noto_Sans_Arabic } from "next/font/google"
 import "../globals.css"
+import OfflineBanner from "@/components/public/OfflineBanner"
 
 // Police latine (FR/EN)
 const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--font-latin" })
@@ -59,6 +60,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={dir} className="h-full">
       <body className={`${geist.variable} ${notoArabic.variable} ${fontClass} h-full bg-gray-50 antialiased`}>
+        <OfflineBanner />
         <NextIntlClientProvider>
           {children}
         </NextIntlClientProvider>

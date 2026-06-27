@@ -59,7 +59,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       await sendEmail({
         to: user.email,
-        subject: "Vérifiez votre compte Plateforme Mosquée",
+        subject: "Vérifiez votre compte Amana Connect",
         html: verificationEmailTemplate(url, user.name),
       })
     },

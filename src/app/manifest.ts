@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Plateforme Mosquée",
-    short_name: "Mosquée",
+    name: "Amana Connect",
+    short_name: "Amana",
     description: "Horaires de prière, annonces et événements de votre mosquée",
     start_url: "/",
     display: "standalone",

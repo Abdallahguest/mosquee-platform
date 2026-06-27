@@ -20,6 +20,7 @@ export interface PrayerTime {
   isNext: boolean
   isPast: boolean
   isInactive?: boolean         // Jumu'ah en semaine : affichée mais grisée
+  dhuhrNote?: string           // Vendredi : heure de Dhuhr remplacée par Jumu'ah, gardée en note discrète
 }
 
 export interface ScheduleInput {
@@ -36,6 +37,7 @@ export interface DailySchedule {
   prayers: PrayerTime[]
   nextPrayer: PrayerTime | null
   timezone: string
+  isFriday: boolean
 }
 
 const PRAYER_DISPLAY_NAMES: Record<ScheduleSlotName, string> = {
@@ -143,11 +145,17 @@ export function buildDailySchedule(input: ScheduleInput, now: Date): DailySchedu
 
   // Jumu'ah : toujours affichée.
   if (isFriday) {
-    // Active, insérée juste après Dhuhr.
+    // Le vendredi, Jumu'ah REMPLACE Dhuhr à la même position.
+    // L'heure de Dhuhr n'est pas perdue : elle est gardée en note discrète
+    // (dhuhrNote) pour qui ne peut pas accomplir la Jumu'ah en groupe
+    // (malade, voyageur, prière à domicile). Anti-jahàla : l'info reste due.
     const jumua = slot("Jumua", input.jumuaAdhan, input.jumuaIqama)
+    if (isValidHHMM(input.dhuhrIqama)) {
+      jumua.dhuhrNote = input.dhuhrIqama
+    }
     const dhuhrIdx = prayers.findIndex((p) => p.name === "Dhuhr")
-    if (dhuhrIdx !== -1) prayers.splice(dhuhrIdx + 1, 0, jumua)
-    else prayers.push(jumua)
+    if (dhuhrIdx !== -1) prayers.splice(dhuhrIdx, 1, jumua)
+    else prayers.splice(1, 0, jumua)
   } else {
     // En semaine : en dernier, inactive (grisée).
     prayers.push(slot("Jumua", input.jumuaAdhan, input.jumuaIqama, { inactive: true }))
@@ -174,5 +182,5 @@ export function buildDailySchedule(input: ScheduleInput, now: Date): DailySchedu
     }
   }
 
-  return { prayers, nextPrayer, timezone: tz }
+  return { prayers, nextPrayer, timezone: tz, isFriday }
 }

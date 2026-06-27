@@ -14,7 +14,7 @@ const FROM = process.env.EMAIL_FROM ?? "noreply@mail.amanaconnect.org"
 
 // Nom affiché de l'expéditeur (ce que voit le destinataire avant l'adresse).
 // Configurable aussi, repli sur un nom clair.
-const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Plateforme Mosquée"
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Amana Connect"
 
 export async function sendEmail({ to, subject, html }: {
   to: string

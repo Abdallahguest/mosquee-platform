@@ -14,7 +14,7 @@
     "pageInfo": "Page {page} / {total}"
   },
   "home": {
-    "title": "Plateforme Mosquée",
+    "title": "Amana Connect",
     "subtitle": "Horaires de prière, annonces et événements.",
     "adminAccess": "Accès administration"
   },
@@ -33,7 +33,8 @@
     "Isha": "Isha'",
     "Jumua": "Jumu'ah",
     "passed": "Prière passée",
-    "scheduleLegend": "Prière de groupe affichée en grand · Appel à la prière au clic"
+    "scheduleLegend": "Prière de groupe affichée en grand · Appel à la prière au clic",
+    "fridayNote": "Le vendredi, la prière de Dhuhr est remplacée par la Jumu'ah. L'heure de Dhuhr reste indiquée pour qui ne peut l'accomplir en groupe."
   },
   "announcements": {
     "title": "Annonces",

@@ -23,7 +23,7 @@ export function verificationEmailTemplate(url: string, name: string): string {
       <div style="text-align: center; font-size: 40px; margin-bottom: 16px;">🕌</div>
       <h1 style="font-size: 20px; text-align: center;">Vérifiez votre email</h1>
       <p>Assalamu alaykum ${name},</p>
-      <p>Merci de votre inscription sur la Plateforme Mosquée. Cliquez sur le bouton ci-dessous pour activer votre compte :</p>
+      <p>Merci de votre inscription sur Amana Connect. Cliquez sur le bouton ci-dessous pour activer votre compte :</p>
       <div style="text-align: center;">
         <a href="${url}" style="${buttonStyle}">Activer mon compte</a>
       </div>

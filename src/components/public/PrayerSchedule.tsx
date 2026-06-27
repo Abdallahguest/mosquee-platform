@@ -22,14 +22,18 @@ export default function PrayerSchedule({ schedule }: PrayerScheduleProps) {
   const [now, setNow] = useState<Date | null>(null)
 
   useEffect(() => {
-    setNow(new Date()) // monte côté client (évite tout mismatch SSR)
-    const id = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(id)
+    const tick = () => setNow(new Date())
+    const id = setInterval(tick, 1000)
+    const timeoutId = setTimeout(tick, 0) // premier tick différé : évite le setState synchrone dans l'effet
+    return () => {
+      clearInterval(id)
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   // Avant le montage client : rendu neutre stable (pas de flash, pas de mismatch).
   const effectiveNow = now ?? new Date(0)
-  const { prayers, nextPrayer } = buildDailySchedule(schedule, effectiveNow)
+  const { prayers, nextPrayer, isFriday } = buildDailySchedule(schedule, effectiveNow)
 
   // Compte à rebours vers l'iqama de la prochaine prière.
   let countdown = ""
@@ -84,6 +88,11 @@ export default function PrayerSchedule({ schedule }: PrayerScheduleProps) {
           <p className="text-[11px] text-gray-500">
             {t("scheduleLegend")}
           </p>
+          {mounted && isFriday && (
+            <p className="text-[11px] text-green-700 mt-1.5">
+              {t("fridayNote")}
+            </p>
+          )}
         </div>
       </div>
 
@@ -158,6 +167,11 @@ function PrayerRow({ prayer }: { prayer: PrayerTime }) {
         }`}>
           {prayer.iqamaString}
         </span>
+        {prayer.dhuhrNote && (
+          <span className="text-[11px] text-gray-500 block">
+            {t("Dhuhr")} · {prayer.dhuhrNote}
+          </span>
+        )}
         {hasAdhan && open && (
           <span className="text-[11px] text-gray-500">
             {t("adhanLabel")} · {prayer.adhanString}

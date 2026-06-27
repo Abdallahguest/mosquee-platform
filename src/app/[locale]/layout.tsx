@@ -16,13 +16,14 @@ const notoArabic = Noto_Sans_Arabic({
 })
 
 export const metadata: Metadata = {
-  title: "Plateforme Mosquée",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://amanaconnect.org"),
+  title: "Amana Connect",
   description: "Horaires de prière, annonces et événements",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Mosquée",
+    title: "Amana",
   },
   icons: {
     apple: "/icons/icon-192.png",

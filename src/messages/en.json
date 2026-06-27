@@ -14,7 +14,7 @@
     "pageInfo": "Page {page} / {total}"
   },
   "home": {
-    "title": "Mosque Platform",
+    "title": "Amana Connect",
     "subtitle": "Prayer times, announcements and events.",
     "adminAccess": "Admin access"
   },
@@ -33,7 +33,8 @@
     "Isha": "Isha'",
     "Jumua": "Jumu'ah",
     "passed": "Past prayer",
-    "scheduleLegend": "Congregational prayer shown large · Call to prayer on tap"
+    "scheduleLegend": "Congregational prayer shown large · Call to prayer on tap",
+    "fridayNote": "On Fridays, the Dhuhr prayer is replaced by Jumu'ah. The Dhuhr time is still shown for those who cannot pray it in congregation."
   },
   "announcements": {
     "title": "Announcements",

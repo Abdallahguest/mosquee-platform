@@ -145,12 +145,25 @@ describe("bug historique du countdown (la nuit)", () => {
 })
 
 describe("Jumu'ah (vendredi)", () => {
-  it("affichée EN PLUS de Dhuhr, juste après", () => {
+  it("le vendredi, Jumu'ah REMPLACE Dhuhr (Dhuhr disparaît du tableau)", () => {
     const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T08:00:00Z"))
     const names = prayers.map((p) => p.name)
-    expect(names).toContain("Dhuhr")
+    expect(names).not.toContain("Dhuhr")
     expect(names).toContain("Jumua")
-    expect(names.indexOf("Jumua")).toBe(names.indexOf("Dhuhr") + 1)
+    // Jumu'ah occupe la position de Dhuhr (juste après Fajr).
+    expect(names).toEqual(["Fajr", "Jumua", "Asr", "Maghrib", "Isha"])
+  })
+
+  it("le vendredi, l'heure de Dhuhr est conservée en note discrète sur Jumu'ah", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-05T08:00:00Z"))
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua?.dhuhrNote).toBe("13:35")
+  })
+
+  it("en semaine, Jumu'ah n'a PAS de note Dhuhr", () => {
+    const { prayers } = getDailyPrayerTimes(makeMosque(), at("2026-06-01T08:00:00Z"))
+    const jumua = prayers.find((p) => p.name === "Jumua")
+    expect(jumua?.dhuhrNote).toBeUndefined()
   })
 
   it("iqama Jumu'ah = 13:15 (début khutba), adhan = 13:00", () => {

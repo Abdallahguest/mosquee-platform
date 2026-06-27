@@ -12,8 +12,7 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 
 ## ✨ Démo en ligne
 
-[→ Voir la démo](https://mosquee-platform.vercel.app) · [amanaconnect.org](https://amanaconnect.org)
-[→ Page d'une mosquée](https://mosquee-platform.vercel.app/m/masdjid-taqwa)
+[→ Voir la démo](https://amanaconnect.org) · [→ Page d'une mosquée](https://amanaconnect.org/m/masdjid-taqwa)
 
 ## 📋 Fonctionnalités
 
@@ -38,7 +37,7 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 
 ### Super-administration
 
-- Gestion des mosquées (création, vérification)
+- Gestion complète des mosquées (CRUD : création, modification, suppression en cascade)
 - Gestion complète des comptes (CRUD avec garde-fous)
 - Isolation stricte des données entre mosquées (multi-tenant)
 
@@ -57,7 +56,7 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 | Hors-ligne (PWA) | Serwist (service worker) |
 | Validation | Zod |
 | E-mail | Resend |
-| Tests | Vitest (113 tests) |
+| Tests | Vitest (115 tests) |
 | Hébergement | Vercel |
 
 ## 🏗️ Architecture
@@ -89,7 +88,7 @@ cp .env.example .env.local
 
 # Pousser le schéma et insérer des données de test
 pnpm db:push
-pnpm db:seed
+pnpm db:seed   # ⚠️ environnement local uniquement — ne jamais exécuter contre la production
 
 # Lancer en développement
 pnpm dev
@@ -108,7 +107,7 @@ pnpm test:coverage  # avec couverture
 - Lighthouse : Performance 94 · Accessibilité 100 · Best Practices 100 · SEO 100
 - Conformité WCAG 2.1 AA
 - TypeScript strict, ESLint, Prettier
-- 113 tests automatisés (logique métier + intégration des actions serveur)
+- 115 tests automatisés (logique métier + intégration des actions serveur)
 - **Validation terrain** : testé et approuvé par le responsable de la mosquée
   Masdjid TAQWA (Conakry) dans le cadre d'une expérimentation réelle
 

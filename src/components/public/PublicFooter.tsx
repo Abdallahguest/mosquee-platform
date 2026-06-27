@@ -1,3 +1,5 @@
+import { getLocale } from "next-intl/server"
+
 interface PublicFooterProps {
   /** Nom déjà résolu selon la langue (via getMosqueName). Si absent, on prend mosque.name. */
   displayName?: string
@@ -15,7 +17,11 @@ interface PublicFooterProps {
   }
 }
 
-export default function PublicFooter({ mosque, displayName }: PublicFooterProps) {
+export default async function PublicFooter({ mosque, displayName }: PublicFooterProps) {
+  const locale = await getLocale()
+  // Le guide existe en fr/en/ar ; ce sont les 3 seules locales supportées par next-intl ici.
+  const guideHref = `/guides/guide-public-${locale}.pdf`
+
   // Adresse complète : du plus large au plus précis, on ne montre que ce qui est rempli.
   const addressParts = [mosque.city, mosque.commune, mosque.quartier, mosque.secteur].filter(Boolean)
 
@@ -57,7 +63,15 @@ export default function PublicFooter({ mosque, displayName }: PublicFooterProps)
           </div>
         )}
 
-        <div className="border-t border-green-800 pt-3">
+        <div className="border-t border-green-800 pt-3 space-y-2">
+          <a
+            href={guideHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-green-200 hover:text-white underline"
+          >
+            <span aria-hidden="true">📄</span> Guide d&apos;utilisation (PDF)
+          </a>
           <p className="text-[11px] text-green-300">
             Plateforme respectueuse · sans intérêt ni tromperie · rien de caché
           </p>

@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server"
+import { getTranslations, getLocale } from "next-intl/server"
 import { getSessionMosque } from "@/lib/auth-helpers"
 import MosqueSettingsForm from "@/components/admin/MosqueSettingsForm"
 import PrayerTimesForm from "@/components/admin/PrayerTimesForm"
@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 export default async function AdminSettingsPage() {
   const { mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return <NoMosque />
+
+  const locale = await getLocale()
+  const guideHref = `/guides/guide-admin-${locale}.pdf`
 
   const t = await getTranslations("admin.settings")
 
@@ -49,6 +52,23 @@ export default async function AdminSettingsPage() {
         </CardHeader>
         <CardContent>
           <ExportButton mosqueId={mosque.id} mosqueSlug={mosque.slug} />
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="text-base">Guide d&apos;utilisation</CardTitle>
+          <CardDescription>Le mode d&apos;emploi complet de votre espace administrateur, à consulter ou télécharger.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <a
+            href={guideHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-900 underline"
+          >
+            <span aria-hidden="true">📄</span> Ouvrir le guide (PDF)
+          </a>
         </CardContent>
       </Card>
     </div>

@@ -87,7 +87,7 @@ export const mosqueAdmins = pgTable("mosque_admins", {
 // ── TABLE ANNONCES ──
 export const announcements = pgTable("announcements", {
   id:          serial("id").primaryKey(),
-  mosqueId:    integer("mosque_id").notNull().references(() => mosques.id),
+  mosqueId:    integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
   title:       varchar("title", { length: 100 }).notNull(),
   content:     text("content").notNull(),
   authorId:    varchar("author_id", { length: 255 }).notNull().references(() => users.id),
@@ -102,7 +102,7 @@ export const announcements = pgTable("announcements", {
 // ── TABLE ÉVÉNEMENTS ──
 export const events = pgTable("events", {
   id:          serial("id").primaryKey(),
-  mosqueId:    integer("mosque_id").notNull().references(() => mosques.id),
+  mosqueId:    integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
   title:       varchar("title", { length: 100 }).notNull(),
   description: text("description"),
   location:    varchar("location", { length: 200 }).notNull().default("À la mosquée"),

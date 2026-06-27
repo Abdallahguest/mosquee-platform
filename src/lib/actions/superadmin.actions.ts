@@ -240,12 +240,21 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
 export async function deleteMosque(id: number): Promise<ActionResult> {
   await requireSuperAdmin()
 
+  const [target] = await db.select({ id: mosques.id }).from(mosques).where(eq(mosques.id, id)).limit(1)
+  if (!target) return { success: false, error: "Mosquée introuvable." }
+
   try {
+    // La suppression en cascade (annonces, événements, membres, admins) est
+    // gérée par les contraintes ON DELETE CASCADE en base (Neon). Voir
+    // migration-2026-06-step2-cascade-fk.sql. Ce DELETE suffit donc seul.
     await db.delete(mosques).where(eq(mosques.id, id))
     revalidatePath("/super-admin")
     return { success: true, data: undefined }
   } catch {
-    return { success: false, error: "Erreur lors de la suppression. Vérifiez qu'aucune donnée n'y est rattachée." }
+    return {
+      success: false,
+      error: "Erreur lors de la suppression. Si des annonces ou événements existent encore, vérifiez que la migration de cascade a été appliquée en base.",
+    }
   }
 }
 

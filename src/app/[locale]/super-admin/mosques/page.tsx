@@ -1,13 +1,21 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
-import { getAllMosquesAdmin } from "@/db/queries"
+import { getAllMosquesAdmin, getMosqueDeletionStats } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import DeleteMosqueButton from "@/components/superadmin/DeleteMosqueButton"
 
 export default async function SuperAdminPage() {
   await requireSuperAdmin()
   const mosques = await getAllMosquesAdmin()
+  // Stats par mosquée (annonces/événements/membres/admins), pour que la
+  // confirmation de suppression affiche exactement ce qui va disparaître.
+  const statsByMosque = new Map(
+    await Promise.all(
+      mosques.map(async (m) => [m.id, await getMosqueDeletionStats(m.id)] as const)
+    )
+  )
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -46,16 +54,23 @@ export default async function SuperAdminPage() {
                   </p>
                 </div>
                 {/* Actions : pleine largeur répartie sur mobile, compactes sur desktop */}
-                <div className="flex gap-2 shrink-0">
-                  <Link href={`/m/${m.slug}`} className="flex-1 sm:flex-none">
-                    <Button variant="ghost" size="sm" className="w-full sm:w-auto">Voir</Button>
-                  </Link>
-                  <Link href={`/super-admin/mosques/${m.id}/edit`} className="flex-1 sm:flex-none">
-                    <Button variant="outline" size="sm" className="w-full sm:w-auto">Modifier</Button>
-                  </Link>
-                  <Link href={`/super-admin/mosques/${m.id}/admins`} className="flex-1 sm:flex-none">
-                    <Button variant="outline" size="sm" className="w-full sm:w-auto">Admins</Button>
-                  </Link>
+                <div className="flex flex-col gap-2 sm:items-end shrink-0">
+                  <div className="flex gap-2">
+                    <Link href={`/m/${m.slug}`} className="flex-1 sm:flex-none">
+                      <Button variant="ghost" size="sm" className="w-full sm:w-auto">Voir</Button>
+                    </Link>
+                    <Link href={`/super-admin/mosques/${m.id}/edit`} className="flex-1 sm:flex-none">
+                      <Button variant="outline" size="sm" className="w-full sm:w-auto">Modifier</Button>
+                    </Link>
+                    <Link href={`/super-admin/mosques/${m.id}/admins`} className="flex-1 sm:flex-none">
+                      <Button variant="outline" size="sm" className="w-full sm:w-auto">Admins</Button>
+                    </Link>
+                  </div>
+                  <DeleteMosqueButton
+                    mosqueId={m.id}
+                    mosqueName={m.name}
+                    stats={statsByMosque.get(m.id) ?? { announcements: 0, events: 0, members: 0, admins: 0 }}
+                  />
                 </div>
               </CardContent>
             </Card>

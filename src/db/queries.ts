@@ -140,6 +140,29 @@ export async function getMosqueById(id: number) {
   return result[0] ?? null
 }
 
+// Compte ce qui sera supprimé en cascade si la mosquée est effacée.
+// Utilisé pour afficher le décompte exact dans la confirmation de
+// suppression (anti-jahàla : le super-admin doit savoir ce qu'il efface).
+export async function getMosqueDeletionStats(mosqueId: number) {
+  try {
+    const [[a], [e], [m], [ad]] = await Promise.all([
+      db.select({ n: count() }).from(announcements).where(eq(announcements.mosqueId, mosqueId)),
+      db.select({ n: count() }).from(events).where(eq(events.mosqueId, mosqueId)),
+      db.select({ n: count() }).from(mosqueMembers).where(eq(mosqueMembers.mosqueId, mosqueId)),
+      db.select({ n: count() }).from(mosqueAdmins).where(eq(mosqueAdmins.mosqueId, mosqueId)),
+    ])
+    return {
+      announcements: a?.n ?? 0,
+      events:        e?.n ?? 0,
+      members:       m?.n ?? 0,
+      admins:        ad?.n ?? 0,
+    }
+  } catch (error) {
+    console.error("Erreur récupération stats de suppression mosquée:", error)
+    return { announcements: 0, events: 0, members: 0, admins: 0 }
+  }
+}
+
 // ── ANNONCES ──
 
 // Épinglées d'abord (desc isPinned : true avant false), puis par date de publication.

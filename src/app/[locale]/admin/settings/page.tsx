@@ -13,7 +13,8 @@ export default async function AdminSettingsPage() {
   const locale = await getLocale()
   const guideHref = `/guides/guide-admin-${locale}.pdf`
 
-  const t = await getTranslations("admin.settings")
+  const t  = await getTranslations("admin.settings")
+  const tg = await getTranslations("superAdmin.settings")
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
@@ -57,8 +58,8 @@ export default async function AdminSettingsPage() {
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle className="text-base">Guide d&apos;utilisation</CardTitle>
-          <CardDescription>Le mode d&apos;emploi complet de votre espace administrateur, à consulter ou télécharger.</CardDescription>
+          <CardTitle className="text-base">{tg("guideTitle")}</CardTitle>
+          <CardDescription>{tg("guideDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <a
@@ -67,7 +68,7 @@ export default async function AdminSettingsPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-900 underline"
           >
-            <span aria-hidden="true">📄</span> Ouvrir le guide (PDF)
+            <span aria-hidden="true">📄</span> {tg("guideLink")}
           </a>
         </CardContent>
       </Card>

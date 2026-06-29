@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +14,7 @@ export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
+  const t = useTranslations("auth")
 
   const [password, setPassword] = useState("")
   const [confirm, setConfirm]   = useState("")
@@ -24,27 +26,24 @@ export default function ResetPasswordPage() {
     setError("")
 
     if (password !== confirm) {
-      setError("Les mots de passe ne correspondent pas.")
+      setError(t("passwordMismatch"))
       return
     }
     if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.")
+      setError(t("passwordTooShort"))
       return
     }
     if (!token) {
-      setError("Lien invalide ou expiré.")
+      setError(t("resetInvalidToken"))
       return
     }
 
     setLoading(true)
 
-    const { error } = await authClient.resetPassword({
-      newPassword: password,
-      token,
-    })
+    const { error } = await authClient.resetPassword({ newPassword: password, token })
 
     if (error) {
-      setError("Le lien a expiré ou est invalide. Refaites une demande.")
+      setError(t("resetExpiredToken"))
       setLoading(false)
       return
     }
@@ -56,8 +55,8 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">🕌</div>
-          <h1 className="text-2xl font-bold text-gray-900">Nouveau mot de passe</h1>
+          <div className="text-4xl mb-3" aria-hidden="true">🕌</div>
+          <h1 className="text-2xl font-bold text-gray-900">{t("resetTitle")}</h1>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
@@ -68,25 +67,27 @@ export default function ResetPasswordPage() {
               </Alert>
             )}
             <div className="space-y-1.5">
-              <Label htmlFor="password">Nouveau mot de passe</Label>
+              <Label htmlFor="password">{t("resetNewPassword")}</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Minimum 8 caractères"
+                placeholder={t("passwordPlaceholder")}
+                dir="ltr"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="confirm">Confirmer</Label>
+              <Label htmlFor="confirm">{t("resetConfirm")}</Label>
               <Input
                 id="confirm"
                 type="password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required
-                placeholder="••••••••"
+                placeholder={t("resetConfirmPlaceholder")}
+                dir="ltr"
               />
             </div>
             <Button
@@ -94,14 +95,14 @@ export default function ResetPasswordPage() {
               disabled={loading}
               className="w-full bg-green-700 hover:bg-green-800"
             >
-              {loading ? "Modification..." : "Changer le mot de passe"}
+              {loading ? t("resetLoading") : t("resetButton")}
             </Button>
           </form>
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
           <Link href="/login" className="text-green-700 hover:underline font-medium">
-            ← Retour à la connexion
+            {t("backToLogin")}
           </Link>
         </p>
       </div>

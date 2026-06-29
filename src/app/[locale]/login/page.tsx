@@ -2,15 +2,18 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState("")
+  const t = useTranslations("auth")
+
+  const [email, setEmail]       = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [error, setError]       = useState("")
+  const [loading, setLoading]   = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -18,19 +21,16 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const result = await authClient.signIn.email({
-        email,
-        password,
-      })
+      const result = await authClient.signIn.email({ email, password })
 
       if (result.error) {
-        setError(result.error.message || "Erreur de connexion")
+        setError(result.error.message || t("genericError"))
       } else {
         router.push("/admin")
         router.refresh()
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de connexion")
+      setError(err instanceof Error ? err.message : t("genericError"))
     } finally {
       setLoading(false)
     }
@@ -40,13 +40,9 @@ export default function LoginPage() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🕌</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Connexion Admin
-          </h1>
-          <p className="text-gray-500">
-            Accédez au panneau d&apos;administration
-          </p>
+          <div className="text-5xl mb-4" aria-hidden="true">🕌</div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("loginTitle")}</h1>
+          <p className="text-gray-500">{t("loginSubtitle")}</p>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-8">
@@ -59,7 +55,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Email
+                {t("fieldEmail")}
               </label>
               <input
                 type="email"
@@ -67,13 +63,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                placeholder="admin@mosquee.com"
+                placeholder={t("emailPlaceholder")}
+                dir="ltr"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Mot de passe
+                {t("fieldPassword")}
               </label>
               <input
                 type="password"
@@ -82,11 +79,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                 placeholder="••••••••"
+                dir="ltr"
               />
             </div>
-            <div className="text-right">
+
+            <div className="text-end">
               <Link href="/forgot-password" className="text-xs text-green-700 hover:underline">
-                Mot de passe oublié ?
+                {t("forgotPassword")}
               </Link>
             </div>
 
@@ -95,29 +94,23 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-green-700 text-white py-3 rounded-xl font-medium hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? "Connexion..." : "Se connecter"}
+              {loading ? t("loginLoading") : t("loginButton")}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500">
-              Pas encore de compte ?{" "}
-              <Link
-                href="/register"
-                className="text-green-700 hover:underline font-medium"
-              >
-                S&apos;inscrire
+              {t("noAccount")}{" "}
+              <Link href="/register" className="text-green-700 hover:underline font-medium">
+                {t("signUpLink")}
               </Link>
             </p>
           </div>
         </div>
 
         <div className="mt-6 text-center">
-          <Link
-            href="/"
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ← Retour à l&apos;accueil
+          <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            {t("backToHome")}
           </Link>
         </div>
       </div>

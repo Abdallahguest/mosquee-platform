@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth")
+
   const [email, setEmail]     = useState("")
   const [sent, setSent]       = useState(false)
   const [error, setError]     = useState("")
@@ -25,7 +28,7 @@ export default function ForgotPasswordPage() {
     })
 
     if (error) {
-      setError("Une erreur est survenue. Réessayez.")
+      setError(t("genericError"))
       setLoading(false)
       return
     }
@@ -38,16 +41,14 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">🕌</div>
-          <h1 className="text-2xl font-bold text-gray-900">Mot de passe oublié</h1>
+          <div className="text-4xl mb-3" aria-hidden="true">🕌</div>
+          <h1 className="text-2xl font-bold text-gray-900">{t("forgotTitle")}</h1>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
           {sent ? (
             <Alert className="border-green-200 bg-green-50 text-green-800">
-              <AlertDescription>
-                Si un compte existe avec cet email, un lien de réinitialisation a été envoyé. Vérifiez votre boîte de réception.
-              </AlertDescription>
+              <AlertDescription>{t("forgotSentMessage")}</AlertDescription>
             </Alert>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,14 +58,15 @@ export default function ForgotPasswordPage() {
                 </Alert>
               )}
               <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("fieldEmail")}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="admin@mosquee.com"
+                  placeholder={t("emailPlaceholder")}
+                  dir="ltr"
                 />
               </div>
               <Button
@@ -72,7 +74,7 @@ export default function ForgotPasswordPage() {
                 disabled={loading}
                 className="w-full bg-green-700 hover:bg-green-800"
               >
-                {loading ? "Envoi..." : "Envoyer le lien"}
+                {loading ? t("forgotSending") : t("forgotSendButton")}
               </Button>
             </form>
           )}
@@ -80,7 +82,7 @@ export default function ForgotPasswordPage() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           <Link href="/login" className="text-green-700 hover:underline font-medium">
-            ← Retour à la connexion
+            {t("backToLogin")}
           </Link>
         </p>
       </div>

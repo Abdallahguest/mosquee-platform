@@ -16,7 +16,16 @@
   "home": {
     "title": "Amana Connect",
     "subtitle": "Prayer times, announcements and events.",
-    "adminAccess": "Admin access"
+    "adminAccess": "Admin access",
+    "pitch": "The free platform to display your mosque's prayer times, announcements and events — available offline.",
+    "mosquesTitle": "Mosques on the platform",
+    "searchPlaceholder": "Search by name or city…",
+    "noResults": "No mosque matches your search.",
+    "andMore": "and {count} more…",
+    "ctaTitle": "Your mosque is not listed yet?",
+    "ctaBody": "Contact us to add it for free.",
+    "ctaEmail": "By email",
+    "ctaWhatsApp": "WhatsApp"
   },
   "auth": {
     "loginTitle": "Sign in",

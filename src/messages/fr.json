@@ -16,7 +16,16 @@
   "home": {
     "title": "Amana Connect",
     "subtitle": "Horaires de prière, annonces et événements.",
-    "adminAccess": "Accès administration"
+    "adminAccess": "Accès administration",
+    "pitch": "La plateforme gratuite pour afficher les horaires de prière, les annonces et les événements de votre mosquée — consultable hors connexion.",
+    "mosquesTitle": "Mosquées sur la plateforme",
+    "searchPlaceholder": "Rechercher par nom ou ville…",
+    "noResults": "Aucune mosquée ne correspond à votre recherche.",
+    "andMore": "et {count} autre(s)…",
+    "ctaTitle": "Votre mosquée n'est pas encore là ?",
+    "ctaBody": "Contactez-nous pour l'ajouter gratuitement.",
+    "ctaEmail": "Par email",
+    "ctaWhatsApp": "WhatsApp"
   },
   "auth": {
     "loginTitle": "Connexion",

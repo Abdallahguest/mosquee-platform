@@ -69,7 +69,6 @@ async function seed() {
           latitude: 9.537,
           longitude: -13.6773,
           timezone: "Africa/Conakry",
-          adminEmail: "admin@masdjid-taqwa.com",
           isVerified: true,
         },
         {
@@ -80,7 +79,6 @@ async function seed() {
           latitude: 11.3181,
           longitude: -12.2895,
           timezone: "Africa/Conakry",
-          adminEmail: "admin@mosquee-labe.com",
           isVerified: true,
         },
       ])

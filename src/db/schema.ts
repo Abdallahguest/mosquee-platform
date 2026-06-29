@@ -34,7 +34,6 @@ export const mosques = pgTable("mosques", {
   latitude:          doublePrecision("latitude").notNull(),
   longitude:         doublePrecision("longitude").notNull(),
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
-  adminEmail:        varchar("admin_email", { length: 255 }),
   isVerified:        boolean("is_verified").notNull().default(false),
   createdAt:         timestamp("created_at").notNull().defaultNow(),
   donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel

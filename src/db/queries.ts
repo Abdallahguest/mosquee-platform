@@ -417,24 +417,6 @@ export async function getMemberById(id: number, mosqueId: number): Promise<Mosqu
   return result[0] ?? null
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// AJOUT — Requêtes paginées pour les pages publiques "voir tout"
-// À COLLER dans src/db/queries.ts (à la fin du fichier).
-//
-// ⚠️ AJOUT D'IMPORT REQUIS : ajoute `lt` à la ligne d'import de drizzle-orm,
-//    qui devient :
-//      import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
-//
-// Chaque fonction retourne { items, total } : `total` sert à décider s'il faut
-// afficher le bouton "Voir les suivantes". Pagination côté base (LIMIT/OFFSET)
-// pour rester léger sur connexion lente.
-// ════════════════════════════════════════════════════════════════════════════
-
-export interface PaginatedResult<T> {
-  items: T[]
-  total: number
-}
-
 // ── ANNONCES actives, paginées (mêmes règles que getActiveAnnouncements) ──
 export async function getActiveAnnouncementsPaginated(
   mosqueId: number,

@@ -29,11 +29,12 @@ export default async function EditAnnouncementPage({ params }: PageProps) {
 
       <AnnouncementForm
         announcement={{
-          id: announcement.id,
-          title: announcement.title,
-          content: announcement.content,
+          id:          announcement.id,
+          title:       announcement.title,
+          content:     announcement.content,
           isPublished: announcement.isPublished,
-          audioUrl: announcement.audioUrl,
+          audioUrl:    announcement.audioUrl,
+          expiresAt:   announcement.expiresAt,
         }}
       />
     </main>

@@ -177,3 +177,13 @@ DDoS gratuitement.
 (enregistrements DNS SPF/DKIM validés). Actuellement en mode test (envoi
 uniquement vers `abdallahmarly90@gmail.com`). Passage en production nécessite
 la validation du compte Resend.
+
+---
+
+## Note — Commit 1476230 (intitulé trompeur)
+
+Le commit `1476230` porte le titre "Tests E2E sur flux critiques" mais ne
+contient pas de tests E2E au sens Playwright/Cypress (navigateur réel). Il
+contient des mocks Vitest ajoutés aux tests unitaires existants pour neutraliser
+le nouvel audit log. Le commit `8932038` corrige les lacunes réelles signalées :
+pagination admin branchée, audit log superadmin complet, DECISIONS.md restauré.

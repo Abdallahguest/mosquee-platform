@@ -191,7 +191,18 @@
       "eventsDesc": "{count, plural, =0 {None upcoming} one {# upcoming} other {# upcoming}}",
       "settingsDesc": "Mosque information",
       "totalCount": "{count} total",
-      "connectedSince": "You have been signed in since {date}"
+      "connectedSince": "You have been signed in since {date}",
+      "onboardingTitle": "Where to start?",
+      "onboardingSubtitle": "Your space is ready. Here are the first 3 things to do:",
+      "onboardingStep1Title": "Enter your prayer times",
+      "onboardingStep1Desc": "This is the first thing worshippers look for.",
+      "onboardingStep1Link": "Go to settings →",
+      "onboardingStep2Title": "Publish your first announcement",
+      "onboardingStep2Desc": "A welcome message or useful information.",
+      "onboardingStep2Link": "Create an announcement →",
+      "onboardingStep3Title": "Visit your public page",
+      "onboardingStep3Desc": "See what worshippers see.",
+      "onboardingStep3Link": "View page →"
     },
     "noMosque": {
       "title": "No mosque linked to your account",

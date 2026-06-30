@@ -191,7 +191,18 @@
       "eventsDesc": "{count, plural, =0 {Aucun à venir} one {# à venir} other {# à venir}}",
       "settingsDesc": "Informations de la mosquée",
       "totalCount": "{count} au total",
-      "connectedSince": "Vous êtes connecté depuis le {date}"
+      "connectedSince": "Vous êtes connecté depuis le {date}",
+      "onboardingTitle": "Par où commencer ?",
+      "onboardingSubtitle": "Votre espace est prêt. Voici les 3 premières choses à faire :",
+      "onboardingStep1Title": "Saisissez vos horaires de prière",
+      "onboardingStep1Desc": "C'est la première chose que les fidèles cherchent.",
+      "onboardingStep1Link": "Aller aux paramètres →",
+      "onboardingStep2Title": "Publiez une première annonce",
+      "onboardingStep2Desc": "Un message de bienvenue ou une information utile.",
+      "onboardingStep2Link": "Créer une annonce →",
+      "onboardingStep3Title": "Visitez votre page publique",
+      "onboardingStep3Desc": "Vérifiez ce que voient les fidèles.",
+      "onboardingStep3Link": "Voir la page →"
     },
     "noMosque": {
       "title": "Aucune mosquée associée à votre compte",

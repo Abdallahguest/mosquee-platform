@@ -49,6 +49,8 @@ export default async function AdminPage() {
     },
   ]
 
+  const isFirstTime = allAnnouncements.length === 0 && allEvents.length === 0
+
   const connectedDate = new Date(session.session.createdAt).toLocaleString(locale, {
     day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
   })
@@ -68,7 +70,7 @@ export default async function AdminPage() {
           <LogoutButton />
         </div>
 
-        {/* Bloc info mosquée — vert (cohérent avec l'interface), corrige P2 */}
+        {/* Bloc info mosquée */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
           <p className="text-sm text-green-800">
             <strong>{t("yourMosque")} :</strong> {mosque.name} — {mosque.city}
@@ -82,6 +84,55 @@ export default async function AdminPage() {
           <span aria-hidden="true">🕌</span> {t("viewPublicPage")} <span aria-hidden="true">→</span>
         </Link>
       </div>
+
+      {/* Onboarding — affiché uniquement si aucune annonce ET aucun événement */}
+      {isFirstTime && (
+        <div className="mb-8 bg-amber-50 border border-amber-200 rounded-2xl p-6">
+          <h2 className="font-semibold text-amber-900 mb-1">{t("onboardingTitle")}</h2>
+          <p className="text-sm text-amber-700 mb-4">{t("onboardingSubtitle")}</p>
+          <ol className="space-y-4">
+            {[
+              {
+                step: "1",
+                title: t("onboardingStep1Title"),
+                desc:  t("onboardingStep1Desc"),
+                href:  "/admin/settings",
+                link:  t("onboardingStep1Link"),
+              },
+              {
+                step: "2",
+                title: t("onboardingStep2Title"),
+                desc:  t("onboardingStep2Desc"),
+                href:  "/admin/announcements",
+                link:  t("onboardingStep2Link"),
+              },
+              {
+                step: "3",
+                title: t("onboardingStep3Title"),
+                desc:  t("onboardingStep3Desc"),
+                href:  `/m/${mosque.slug}`,
+                link:  t("onboardingStep3Link"),
+              },
+            ].map((item) => (
+              <li key={item.step} className="flex gap-4">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-200 text-amber-900 text-sm font-bold flex items-center justify-center">
+                  {item.step}
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-amber-900">{item.title}</p>
+                  <p className="text-xs text-amber-700 mt-0.5">{item.desc}</p>
+                  <Link
+                    href={item.href}
+                    className="text-xs text-green-700 hover:underline font-medium mt-1 inline-block"
+                  >
+                    {item.link}
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Stats rapides */}
       <div className="grid grid-cols-3 gap-4 mb-8">

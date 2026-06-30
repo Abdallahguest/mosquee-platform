@@ -191,7 +191,18 @@
       "eventsDesc": "{count, plural, zero {لا شيء قادم} one {فعالية قادمة} two {فعاليتان قادمتان} few {# فعاليات قادمة} many {# فعالية قادمة} other {# قادمة}}",
       "settingsDesc": "معلومات المسجد",
       "totalCount": "{count} الإجمالي",
-      "connectedSince": "أنت متصل منذ {date}"
+      "connectedSince": "أنت متصل منذ {date}",
+      "onboardingTitle": "من أين تبدأ؟",
+      "onboardingSubtitle": "مساحتك جاهزة. إليك أول 3 خطوات:",
+      "onboardingStep1Title": "أدخل مواقيت الصلاة",
+      "onboardingStep1Desc": "هذا أول ما يبحث عنه المصلون.",
+      "onboardingStep1Link": "الذهاب إلى الإعدادات →",
+      "onboardingStep2Title": "انشر أول إعلان",
+      "onboardingStep2Desc": "رسالة ترحيب أو معلومة مفيدة.",
+      "onboardingStep2Link": "إنشاء إعلان →",
+      "onboardingStep3Title": "زُر صفحتك العامة",
+      "onboardingStep3Desc": "شاهد ما يراه المصلون.",
+      "onboardingStep3Link": "عرض الصفحة →"
     },
     "noMosque": {
       "title": "لا يوجد مسجد مرتبط بحسابك",

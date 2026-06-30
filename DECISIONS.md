@@ -163,15 +163,20 @@ l'état `isInactive`.
 
 ---
 
-## D-013 — Domaine amanaconnect.org sur Cloudflare
+## D-013 — Domaine amanaconnect.org sur Cloudflare (domaine primaire)
 
 **Décision :** Le domaine `amanaconnect.org` est géré sur Cloudflare avec les
-DNS pointant vers Vercel. Le projet est accessible via `amanaconnect.org` et
-`mosquee-platform.vercel.app` (alias Vercel).
+DNS pointant vers Vercel. C'est le **domaine primaire** du projet.
+`mosquee-platform.vercel.app` redirige en **307** vers `amanaconnect.org` —
+les deux URLs ne sont pas canoniquement équivalentes.
 
 **Pourquoi :** Nom de domaine professionnel pour les démonstrations terrain et
 la crédibilité auprès des mosquées. Cloudflare offre le CDN et la protection
 DDoS gratuitement.
+
+**Configuration Vercel (vérifiée) :**
+- `amanaconnect.org` → Production (domaine primaire)
+- `mosquee-platform.vercel.app` → Redirect 307 vers `amanaconnect.org`
 
 **Emails Resend :** Le domaine est configuré pour l'envoi d'emails via Resend
 (enregistrements DNS SPF/DKIM validés). Actuellement en mode test (envoi

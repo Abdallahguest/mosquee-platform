@@ -9,6 +9,7 @@ import { auth } from "@/lib/auth"
 import { mosques, users, mosqueAdmins, account, session as sessionTable } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
+import { isValidOrangeMoneyNumber, normalizeOrangeMoneyNumber } from "@/lib/orange-money"
 
 export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }
@@ -161,9 +162,12 @@ const MosqueSchema = z.object({
   timezone:          z.string().min(1),
   isVerified:        z.boolean().default(false),
   donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
+  orangeMoneyNumber: z.string()
+    .transform(normalizeOrangeMoneyNumber)
+    .refine(isValidOrangeMoneyNumber, "Numéro Orange Money invalide (9 chiffres, commence par 6)")
+    .optional(),
   contactEmail: z.string().email("Email invalide").or(z.literal("")).optional(),
   contactPhone: z.string().max(50).optional(),
-  orangeMoneyNumber: z.string().max(30).optional(),
 })
 
 function parseForm(formData: FormData) {

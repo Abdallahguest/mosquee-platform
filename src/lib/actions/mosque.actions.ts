@@ -7,6 +7,7 @@ import { db } from "@/db/index"
 import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import type { ActionResult } from "./action-result"
+import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 
 const MosqueSettingsSchema = z.object({
   name:              z.string().min(1, "NAME_REQUIRED").max(200, "NAME_TOO_LONG"),
@@ -37,7 +38,7 @@ export async function updateMosqueSettings(
   id: number,
   formData: FormData
 ): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null || mosqueId !== id) {
     return { success: false, error: "UNAUTHORIZED" }
   }
@@ -90,6 +91,13 @@ export async function updateMosqueSettings(
     revalidatePath("/admin/settings")
     revalidatePath(`/m/${mosque.slug}`)
 
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.SETTINGS_UPDATE,
+      targetId: `mosque:${id}`,
+      details:  parsed.data.name,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "SAVE_FAILED" }

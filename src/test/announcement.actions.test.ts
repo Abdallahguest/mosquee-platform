@@ -22,6 +22,9 @@ vi.mock("@/db/index", () => ({
 }))
 vi.mock("@/lib/auth-helpers", () => ({ getSessionMosque: () => h.getSessionMosque() }))
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }))
+// logAction est un effet de bord non pertinent pour ces tests unitaires.
+// On le neutralise pour ne pas polluer drizzle.captured.inserts.
+vi.mock("@/lib/audit", () => ({ logAction: vi.fn(), AUDIT_ACTIONS: new Proxy({}, { get: (_t, k) => k }) }))
 
 import {
   createAnnouncement,

@@ -7,6 +7,7 @@ import { db } from "@/db/index"
 import { announcements } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import type { ActionResult } from "./action-result"
+import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 
 const AnnouncementSchema = z.object({
   title:       z.string().min(1, "TITLE_REQUIRED").max(100, "TITLE_TOO_LONG"),
@@ -61,6 +62,13 @@ export async function createAnnouncement(
       .returning({ id: announcements.id })
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.ANNOUNCEMENT_CREATE,
+      targetId: `announcement:${announcement.id}`,
+      details:  parsed.data.title,
+    })
     return { success: true, data: { id: announcement.id } }
   } catch {
     return { success: false, error: "CREATE_FAILED" }
@@ -72,7 +80,7 @@ export async function updateAnnouncement(
   formData: FormData
 ): Promise<ActionResult> {
   try {
-    const { mosque, mosqueId } = await getSessionMosque()
+    const { session, mosque, mosqueId } = await getSessionMosque()
     if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
     const raw = {
@@ -110,6 +118,13 @@ export async function updateAnnouncement(
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.ANNOUNCEMENT_UPDATE,
+      targetId: `announcement:${id}`,
+      details:  parsed.data.title,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "UPDATE_FAILED" }
@@ -117,7 +132,7 @@ export async function updateAnnouncement(
 }
 
 export async function deleteAnnouncement(id: number): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
@@ -126,6 +141,12 @@ export async function deleteAnnouncement(id: number): Promise<ActionResult> {
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.ANNOUNCEMENT_DELETE,
+      targetId: `announcement:${id}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "DELETE_FAILED" }
@@ -136,7 +157,7 @@ export async function toggleAnnouncementPublished(
   id: number,
   current: boolean
 ): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
@@ -149,6 +170,12 @@ export async function toggleAnnouncementPublished(
       .where(and(eq(announcements.id, id), eq(announcements.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   current ? AUDIT_ACTIONS.ANNOUNCEMENT_UNPUBLISH : AUDIT_ACTIONS.ANNOUNCEMENT_PUBLISH,
+      targetId: `announcement:${id}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "UPDATE_FAILED" }

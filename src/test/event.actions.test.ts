@@ -16,6 +16,7 @@ vi.mock("@/db/index", () => ({
 }))
 vi.mock("@/lib/auth-helpers", () => ({ getSessionMosque: () => h.getSessionMosque() }))
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }))
+vi.mock("@/lib/audit", () => ({ logAction: vi.fn(), AUDIT_ACTIONS: new Proxy({}, { get: (_t, k) => k }) }))
 
 import { createEvent, updateEvent, deleteEvent } from "@/lib/actions/event.actions"
 

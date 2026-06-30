@@ -135,7 +135,27 @@ export const mosqueMembers = pgTable("mosque_members", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 })
 
-// ── TYPES INFÉRÉS ──
+// ── TABLE AUDIT LOG ──
+// Enregistre les actions significatives des admins et super-admins.
+// Lecture seule côté applicatif : jamais modifiée ni supprimée par l'app.
+// Conservation longue durée (pas d'expiration applicative — gérer via politique Neon si besoin).
+export const auditLog = pgTable("audit_log", {
+  id:         serial("id").primaryKey(),
+  // Qui a agi (null si action système)
+  userId:     varchar("user_id",     { length: 255 }),
+  // Sur quelle mosquée (null = action super-admin globale)
+  mosqueId:   integer("mosque_id"),
+  // Action : "announcement.create", "event.delete", "settings.update", etc.
+  action:     varchar("action",      { length: 100 }).notNull(),
+  // Cible : ex. "announcement:42", "event:7"
+  targetId:   varchar("target_id",   { length: 100 }),
+  // Détails libres (titre, champs modifiés…) — jamais de données sensibles
+  details:    text("details"),
+  createdAt:  timestamp("created_at").notNull().defaultNow(),
+})
+
+export type AuditLog    = typeof auditLog.$inferSelect
+export type NewAuditLog = typeof auditLog.$inferInsert
 export type Mosque       = typeof mosques.$inferSelect
 export type NewMosque    = typeof mosques.$inferInsert
 export type Announcement = typeof announcements.$inferSelect

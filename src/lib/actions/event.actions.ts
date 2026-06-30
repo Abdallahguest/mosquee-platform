@@ -7,6 +7,7 @@ import { db } from "@/db/index"
 import { events } from "@/db/schema"
 import { eq, and } from "drizzle-orm"
 import type { ActionResult } from "./action-result"
+import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 
 const EventSchema = z.object({
   title:       z.string().min(1, "TITLE_REQUIRED").max(100, "TITLE_TOO_LONG"),
@@ -34,7 +35,7 @@ function revalidateContent(slug: string) {
 export async function createEvent(
   formData: FormData
 ): Promise<ActionResult<{ id: number }>> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   const raw = {
@@ -68,6 +69,13 @@ export async function createEvent(
       .returning({ id: events.id })
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.EVENT_CREATE,
+      targetId: `event:${event.id}`,
+      details:  parsed.data.title,
+    })
     return { success: true, data: { id: event.id } }
   } catch {
     return { success: false, error: "CREATE_FAILED" }
@@ -78,7 +86,7 @@ export async function updateEvent(
   id: number,
   formData: FormData
 ): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   const raw = {
@@ -119,6 +127,13 @@ export async function updateEvent(
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.EVENT_UPDATE,
+      targetId: `event:${id}`,
+      details:  parsed.data.title,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "UPDATE_FAILED" }
@@ -126,7 +141,7 @@ export async function updateEvent(
 }
 
 export async function deleteEvent(id: number): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
@@ -135,6 +150,12 @@ export async function deleteEvent(id: number): Promise<ActionResult> {
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.EVENT_DELETE,
+      targetId: `event:${id}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "DELETE_FAILED" }
@@ -145,7 +166,7 @@ export async function toggleEventPublished(
   id: number,
   current: boolean
 ): Promise<ActionResult> {
-  const { mosque, mosqueId } = await getSessionMosque()
+  const { session, mosque, mosqueId } = await getSessionMosque()
   if (!mosque || mosqueId == null) return { success: false, error: "NO_MOSQUE" }
 
   try {
@@ -155,6 +176,13 @@ export async function toggleEventPublished(
       .where(and(eq(events.id, id), eq(events.mosqueId, mosqueId)))
 
     revalidateContent(mosque.slug)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   current ? AUDIT_ACTIONS.EVENT_DELETE : AUDIT_ACTIONS.EVENT_CREATE,
+      targetId: `event:${id}`,
+      details:  current ? "unpublish" : "publish",
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "UPDATE_FAILED" }

@@ -19,7 +19,7 @@ export function proxy(request: NextRequest) {
 
   // Détecter routes admin/auth (avec ou sans préfixe locale)
   const isAdminRoute =
-  pathname.includes("/admin") || pathname.includes("/super-admin")
+    pathname.includes("/admin") || pathname.includes("/super-admin")
   const isAuthRoute =
     pathname.includes("/login") ||
     pathname.includes("/register") ||
@@ -27,6 +27,16 @@ export function proxy(request: NextRequest) {
     pathname.includes("/reset-password")
 
   if (isAdminRoute || isAuthRoute) {
+    // Vérification de la PRÉSENCE du cookie — garde légère mais suffisante
+    // pour le middleware Edge. La validité réelle est vérifiée par
+    // requireSession() dans chaque layout/page protégée (côté Node.js,
+    // avec accès à la base de données).
+    //
+    // Pourquoi pas auth.api.getSession() ici ?
+    // Better-Auth v1 nécessite un accès DB pour valider les sessions (pas
+    // de JWT stateless par défaut). Le Edge Runtime ne peut pas accéder à
+    // Neon de façon fiable. Cette double vérification (middleware léger +
+    // requireSession() lourd) est le pattern recommandé par Better-Auth.
     const sessionToken =
       request.cookies.get("better-auth.session_token")?.value ??
       request.cookies.get("__Secure-better-auth.session_token")?.value
@@ -36,6 +46,7 @@ export function proxy(request: NextRequest) {
       url.pathname = "/login"
       return NextResponse.redirect(url)
     }
+
     // Ne pas rediriger reset-password même si connecté
     const isResetRoute = pathname.includes("/reset-password")
     if (isAuthRoute && sessionToken && !isResetRoute) {
@@ -45,7 +56,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // i18n pour TOUTES les routes (y compris admin/auth maintenant)
+  // i18n pour TOUTES les routes (y compris admin/auth)
   return intlMiddleware(request)
 }
 

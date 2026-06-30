@@ -6,25 +6,30 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
-// NB : la table `session` est importée sous l'alias `sessionTable` pour éviter
-// le conflit avec les variables locales `const session = await requireSuperAdmin()`.
 import { mosques, users, mosqueAdmins, account, session as sessionTable } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
+import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 
 export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }
   | { success: false; error: string; data?: never  }
 
 export async function assignAdminToMosque(mosqueId: number, userId: string): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
   try {
     await db
       .insert(mosqueAdmins)
       .values({ mosqueId, userId })
-      .onConflictDoNothing()  // évite le doublon si déjà lié
+      .onConflictDoNothing()
 
     revalidatePath(`/super-admin/mosques/${mosqueId}/admins`)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.ADMIN_ASSIGN,
+      targetId: `user:${userId}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de l'assignation." }
@@ -32,7 +37,7 @@ export async function assignAdminToMosque(mosqueId: number, userId: string): Pro
 }
 
 export async function removeAdminFromMosque(mosqueId: number, userId: string): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
   try {
     await db
@@ -40,6 +45,12 @@ export async function removeAdminFromMosque(mosqueId: number, userId: string): P
       .where(and(eq(mosqueAdmins.mosqueId, mosqueId), eq(mosqueAdmins.userId, userId)))
 
     revalidatePath(`/super-admin/mosques/${mosqueId}/admins`)
+    await logAction({
+      userId:   session.user.id,
+      mosqueId,
+      action:   AUDIT_ACTIONS.ADMIN_REMOVE,
+      targetId: `user:${userId}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors du retrait." }
@@ -53,7 +64,7 @@ const CreateUserSchema = z.object({
 })
 
 export async function createUserAccount(formData: FormData): Promise<ActionResult<{ email: string }>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
   const parsed = CreateUserSchema.safeParse({
     name:     formData.get("name"),
@@ -81,7 +92,13 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
       .set({ emailVerified: true })
       .where(eq(users.email, parsed.data.email))
 
-    revalidatePath("/super-admin/users")
+    revalidatePath("/super-admin")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.USER_CREATE,
+      targetId: `user:${parsed.data.email}`,
+      details:  parsed.data.name,
+    })
     return { success: true, data: { email: parsed.data.email } }
   } catch (error) {
     return {
@@ -115,6 +132,12 @@ export async function setUserVerified(userId: string, verified: boolean): Promis
   try {
     await db.update(users).set({ emailVerified: verified }).where(eq(users.id, userId))
     revalidatePath("/super-admin/users")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.USER_UPDATE,
+      targetId: `user:${userId}`,
+      details:  verified ? "email_verified=true" : "email_verified=false",
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la mise à jour." }
@@ -165,7 +188,7 @@ function parseForm(formData: FormData) {
 }
 
 export async function createMosque(formData: FormData): Promise<ActionResult<{ id: number }>> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
   const parsed = MosqueSchema.safeParse(parseForm(formData))
   if (!parsed.success) {
@@ -192,9 +215,14 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
       .returning({ id: mosques.id })
 
     revalidatePath("/super-admin")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.MOSQUE_CREATE,
+      targetId: `mosque:${mosque.id}`,
+      details:  parsed.data.name,
+    })
     return { success: true, data: { id: mosque.id } }
   } catch (error) {
-    // Erreur probable : slug déjà pris (unique)
     return {
       success: false,
       error: error instanceof Error && error.message.includes("unique")
@@ -205,7 +233,7 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
 }
 
 export async function updateMosqueAdmin(id: number, formData: FormData): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
   const parsed = MosqueSchema.safeParse(parseForm(formData))
   if (!parsed.success) {
@@ -231,6 +259,12 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
     .where(eq(mosques.id, id))
     revalidatePath("/super-admin")
     revalidatePath(`/m/${parsed.data.slug}`)
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.MOSQUE_UPDATE,
+      targetId: `mosque:${id}`,
+      details:  parsed.data.name,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la mise à jour." }
@@ -238,17 +272,20 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
 }
 
 export async function deleteMosque(id: number): Promise<ActionResult> {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
 
-  const [target] = await db.select({ id: mosques.id }).from(mosques).where(eq(mosques.id, id)).limit(1)
+  const [target] = await db.select({ id: mosques.id, name: mosques.name }).from(mosques).where(eq(mosques.id, id)).limit(1)
   if (!target) return { success: false, error: "Mosquée introuvable." }
 
   try {
-    // La suppression en cascade (annonces, événements, membres, admins) est
-    // gérée par les contraintes ON DELETE CASCADE en base (Neon). Voir
-    // migration-2026-06-step2-cascade-fk.sql. Ce DELETE suffit donc seul.
     await db.delete(mosques).where(eq(mosques.id, id))
     revalidatePath("/super-admin")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.MOSQUE_DELETE,
+      targetId: `mosque:${id}`,
+      details:  target.name,
+    })
     return { success: true, data: undefined }
   } catch {
     return {
@@ -300,6 +337,12 @@ export async function resetUserPassword(formData: FormData): Promise<ActionResul
     await ctx.internalAdapter.updatePassword(parsed.data.userId, hashed)
 
     revalidatePath("/super-admin/users")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.USER_UPDATE,
+      targetId: `user:${parsed.data.userId}`,
+      details:  "password_reset",
+    })
     return { success: true, data: undefined }
   } catch (error) {
     return {
@@ -373,6 +416,12 @@ export async function updateUserAccount(formData: FormData): Promise<ActionResul
       .where(eq(users.id, parsed.data.userId))
 
     revalidatePath("/super-admin/users")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.USER_UPDATE,
+      targetId: `user:${parsed.data.userId}`,
+      details:  `name=${parsed.data.name} role=${parsed.data.role}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la mise à jour du compte." }
@@ -423,10 +472,15 @@ export async function deleteUserAccount(userId: string): Promise<ActionResult> {
   // 5. Suppression directe en base, dans l'ordre des dépendances.
   //    (La table `session` est importée sous l'alias `sessionTable`.)
   try {
-    await db.delete(sessionTable).where(eq(sessionTable.userId, userId))  // sessions actives
-    await db.delete(account).where(eq(account.userId, userId))            // liens d'auth
-    await db.delete(users).where(eq(users.id, userId))                    // le compte
+    await db.delete(sessionTable).where(eq(sessionTable.userId, userId))
+    await db.delete(account).where(eq(account.userId, userId))
+    await db.delete(users).where(eq(users.id, userId))
     revalidatePath("/super-admin/users")
+    await logAction({
+      userId:   session.user.id,
+      action:   AUDIT_ACTIONS.USER_DELETE,
+      targetId: `user:${userId}`,
+    })
     return { success: true, data: undefined }
   } catch {
     return { success: false, error: "Erreur lors de la suppression du compte." }

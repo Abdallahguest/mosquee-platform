@@ -144,3 +144,36 @@ l'application (membres, admins, etc.).
 
 **Pourquoi :** Principe éthique non négociable du projet. Les profils membres
 ont un nom, une catégorie et un rôle — pas de photo.
+
+## D-012 — Jumu'ah : affichée toute la semaine, active uniquement le vendredi
+
+**Décision :** La Jumu'ah est toujours présente dans le tableau des horaires,
+mais grisée (`isInactive: true`) en dehors du vendredi. Le vendredi, elle
+remplace Dhuhr à la même position dans la liste. L'heure de Dhuhr reste
+affichée en note discrète pour ceux qui ne peuvent pas accomplir la Jumu'ah
+en groupe (malades, voyageurs, prière à domicile).
+
+**Pourquoi :** Anti-jahàla : supprimer la Jumu'ah en semaine ou l'heure de
+Dhuhr le vendredi priverait les fidèles d'informations utiles. La transparence
+prime sur la simplicité visuelle.
+
+**Implémentation :** Logique dans `prayer-schedule-core.ts` →
+`buildDailySchedule()`. Rendu dans `PrayerSchedule.tsx` → `PrayerRow` gère
+l'état `isInactive`.
+
+---
+
+## D-013 — Domaine amanaconnect.org sur Cloudflare
+
+**Décision :** Le domaine `amanaconnect.org` est géré sur Cloudflare avec les
+DNS pointant vers Vercel. Le projet est accessible via `amanaconnect.org` et
+`mosquee-platform.vercel.app` (alias Vercel).
+
+**Pourquoi :** Nom de domaine professionnel pour les démonstrations terrain et
+la crédibilité auprès des mosquées. Cloudflare offre le CDN et la protection
+DDoS gratuitement.
+
+**Emails Resend :** Le domaine est configuré pour l'envoi d'emails via Resend
+(enregistrements DNS SPF/DKIM validés). Actuellement en mode test (envoi
+uniquement vers `abdallahmarly90@gmail.com`). Passage en production nécessite
+la validation du compte Resend.

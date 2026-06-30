@@ -390,6 +390,7 @@
       "LONGITUDE_INVALID": "خط الطول غير صحيح.",
       "TIMEZONE_REQUIRED": "المنطقة الزمنية مطلوبة.",
       "DONATION_URL_INVALID": "رابط التبرع غير صحيح.",
+      "ORANGE_MONEY_INVALID": "رقم Orange Money غير صالح. الصيغة المتوقعة: 9 أرقام تبدأ بـ 6 (مثال: 620000000).",
       "CONTACT_EMAIL_INVALID": "بريد التواصل غير صحيح.",
       "PHONE_TOO_LONG": "رقم الهاتف طويل جدًا.",
       "TIMES_SAVED": "تم حفظ المواقيت.",

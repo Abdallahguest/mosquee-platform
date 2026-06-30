@@ -1,4 +1,5 @@
 import { getLocale } from "next-intl/server"
+import { formatOrangeMoneyNumber } from "@/lib/orange-money"
 
 interface PublicFooterProps {
   /** Nom déjà résolu selon la langue (via getMosqueName). Si absent, on prend mosque.name. */
@@ -69,16 +70,16 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
             <p className="text-xs font-semibold text-orange-300 flex items-center gap-1.5">
               <span aria-hidden="true">🟠</span> Orange Money
             </p>
-            {/* Numéro en clair (anti-jahàla : le fidèle voit exactement où va son argent) */}
+            {/* Numéro formaté en clair (anti-jahàla : le fidèle voit exactement où va son argent) */}
             <p className="text-white font-mono text-lg font-bold tracking-wide" dir="ltr">
-              {mosque.orangeMoneyNumber}
+              {formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
             </p>
             <p className="text-[11px] text-green-300">
-              Envoyez directement depuis votre téléphone · Don géré par la mosquée
+              Envoyez directement depuis votre téléphone · Don géré par la mosquée · la plateforme ne traite aucun paiement
             </p>
-            {/* Bouton tel: cliquable — ouvre l'app Orange Money sur mobile */}
+            {/* Bouton tel: — ouvre l'app Orange Money sur mobile */}
             <a
-              href={`tel:${mosque.orangeMoneyNumber.replace(/\s/g, "")}`}
+              href={`tel:${mosque.orangeMoneyNumber.replace(/[\s\-().+]/g, "")}`}
               className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
             >
               <span aria-hidden="true">📞</span> Appeler ce numéro

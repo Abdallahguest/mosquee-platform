@@ -390,6 +390,7 @@
       "LONGITUDE_INVALID": "La longitude est invalide.",
       "TIMEZONE_REQUIRED": "Le fuseau horaire est obligatoire.",
       "DONATION_URL_INVALID": "Le lien de don est invalide.",
+      "ORANGE_MONEY_INVALID": "Numéro Orange Money invalide. Format attendu : 9 chiffres commençant par 6 (ex: 620000000).",
       "CONTACT_EMAIL_INVALID": "L'email de contact est invalide.",
       "PHONE_TOO_LONG": "Le téléphone est trop long.",
       "TIMES_SAVED": "Horaires enregistrés.",

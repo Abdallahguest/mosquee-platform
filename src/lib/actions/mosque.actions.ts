@@ -8,6 +8,7 @@ import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import type { ActionResult } from "./action-result"
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
+import { isValidOrangeMoneyNumber } from "@/lib/orange-money"
 
 const MosqueSettingsSchema = z.object({
   name:              z.string().min(1, "NAME_REQUIRED").max(200, "NAME_TOO_LONG"),
@@ -26,7 +27,9 @@ const MosqueSettingsSchema = z.object({
   donationUrl:  z.string().url("DONATION_URL_INVALID").or(z.literal("")).optional(),
   contactEmail: z.string().email("CONTACT_EMAIL_INVALID").or(z.literal("")).optional(),
   contactPhone: z.string().max(50, "PHONE_TOO_LONG").optional(),
-  orangeMoneyNumber: z.string().max(30, "PHONE_TOO_LONG").optional(),
+  orangeMoneyNumber: z.string()
+    .refine(isValidOrangeMoneyNumber, { message: "ORANGE_MONEY_INVALID" })
+    .optional(),
   welcomeMessage: z.string().max(500, "WELCOME_TOO_LONG").optional(),
   footerText:     z.string().max(500, "FOOTER_TOO_LONG").optional(),
 })

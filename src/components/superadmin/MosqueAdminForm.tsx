@@ -22,6 +22,7 @@ interface MosqueAdminFormProps {
     donationUrl?: string | null
     contactEmail?: string | null
     contactPhone?: string | null
+    orangeMoneyNumber?: string | null
   }
 }
 
@@ -142,6 +143,21 @@ export default function MosqueAdminForm({ mosque }: MosqueAdminFormProps) {
       <div className="space-y-1.5">
         <Label htmlFor="contactPhone">Téléphone de contact (optionnel)</Label>
         <Input id="contactPhone" name="contactPhone" defaultValue={mosque?.contactPhone ?? ""} />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="orangeMoneyNumber">Numéro Orange Money pour les dons (optionnel)</Label>
+        <Input
+          id="orangeMoneyNumber"
+          name="orangeMoneyNumber"
+          type="tel"
+          defaultValue={mosque?.orangeMoneyNumber ?? ""}
+          placeholder="620000000"
+          dir="ltr"
+        />
+        <p className="text-xs text-muted-foreground">
+          9 chiffres commençant par 6. Affiché en clair sur la page publique — la plateforme ne traite aucun paiement.
+        </p>
       </div>
 
       <div className="space-y-1.5">

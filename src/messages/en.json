@@ -390,6 +390,7 @@
       "LONGITUDE_INVALID": "Longitude is invalid.",
       "TIMEZONE_REQUIRED": "Time zone is required.",
       "DONATION_URL_INVALID": "The donation link is invalid.",
+      "ORANGE_MONEY_INVALID": "Invalid Orange Money number. Expected format: 9 digits starting with 6 (e.g. 620000000).",
       "CONTACT_EMAIL_INVALID": "The contact email is invalid.",
       "PHONE_TOO_LONG": "Phone number is too long.",
       "TIMES_SAVED": "Times saved.",

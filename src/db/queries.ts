@@ -1,7 +1,7 @@
 import { db } from "./index"
-import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers } from "./schema"
+import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers, auditLog } from "./schema"
 import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
-import type { Mosque, Announcement, Event, MosqueMember } from "./schema"
+import type { Mosque, Announcement, Event, MosqueMember, AuditLog } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)
@@ -555,5 +555,25 @@ export async function hasPastEvents(mosqueId: number): Promise<boolean> {
   } catch (error) {
     console.error("Erreur hasPastEvents:", error)
     return false
+  }
+}
+
+// ── JOURNAL D'ACTIVITÉ (audit_log) ──
+// Retourne les N dernières actions pour une mosquée donnée.
+// Utilisé par la page /admin/activity.
+export async function getRecentAuditLog(
+  mosqueId: number,
+  limit: number = 30
+): Promise<AuditLog[]> {
+  try {
+    return await db
+      .select()
+      .from(auditLog)
+      .where(eq(auditLog.mosqueId, mosqueId))
+      .orderBy(desc(auditLog.createdAt))
+      .limit(limit)
+  } catch (error) {
+    console.error("Erreur récupération journal d'activité:", error)
+    return []
   }
 }

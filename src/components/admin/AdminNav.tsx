@@ -17,11 +17,12 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
   const [open, setOpen] = useState(false)
 
   const navLinks = [
-    { href: "/admin", label: t("dashboard") },
+    { href: "/admin",               label: t("dashboard") },
     { href: "/admin/announcements", label: t("announcements") },
-    { href: "/admin/events", label: t("events") },
-    { href: "/admin/members", label: t("members") },
-    { href: "/admin/settings", label: t("settings") },
+    { href: "/admin/events",        label: t("events") },
+    { href: "/admin/members",       label: t("members") },
+    { href: "/admin/settings",      label: t("settings") },
+    { href: "/admin/activity",      label: t("activity") },
   ]
 
   // Section active : correspondance exacte pour /admin, sinon préfixe

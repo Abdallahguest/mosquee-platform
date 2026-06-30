@@ -177,6 +177,7 @@
       "settings": "Settings",
       "viewPage": "View my mosque page",
       "menu": "Menu",
+      "activity": "Activity log"
       "logout": "Log out",
       "members": "Members"
     },
@@ -217,6 +218,9 @@
       "contentPlaceholder": "Write your announcement here...",
       "formattingHelp": "You can make text bold or italic and add links.",
       "publishNow": "Publish immediately",
+      "pinHelp": "A pinned announcement always appears at the top of the list on the public page.",
+      "fieldExpiresAt": "Expiry date (optional)",
+      "expiresHelp": "The announcement will automatically disappear from the public page on this date. Leave empty to keep it visible indefinitely.",
       "createButton": "Create announcement",
       "saveButton": "Save",
       "saving": "Saving...",
@@ -265,6 +269,14 @@
       "subtitle": "Create and manage your mosque's events",
       "listTitle": "Events ({count})",
       "newCardTitle": "New event"
+    },
+    "activityPage": {
+      "title": "Activity log",
+      "subtitle": "The last 30 actions performed on your mosque",
+      "empty": "No actions recorded yet.",
+      "colAction": "Action",
+      "colDate": "Date",
+      "colTarget": "Target"
     },
     "list": {
       "colTitle": "Title",

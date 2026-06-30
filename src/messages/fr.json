@@ -178,7 +178,8 @@
       "viewPage": "Voir la page de ma mosquée",
       "menu": "Menu",
       "logout": "Se déconnecter",
-      "members": "Membres"
+      "members": "Membres",
+      "activity": "Journal d'activité"
     },
     "dashboard": {
       "greeting": "Assalamu alaykum",
@@ -217,6 +218,9 @@
       "contentPlaceholder": "Écrivez votre annonce ici...",
       "formattingHelp": "Vous pouvez mettre du texte en gras ou en italique et ajouter des liens.",
       "publishNow": "Publier immédiatement",
+      "pinHelp": "Une annonce épinglée remonte toujours en tête de liste sur la page publique.",
+      "fieldExpiresAt": "Expiration (facultatif)",
+      "expiresHelp": "L'annonce disparaîtra automatiquement de la page publique à cette date. Laissez vide pour qu'elle reste visible indéfiniment.",
       "createButton": "Créer l'annonce",
       "saveButton": "Enregistrer",
       "saving": "Enregistrement...",
@@ -265,6 +269,14 @@
       "subtitle": "Créez et gérez les événements de votre mosquée",
       "listTitle": "Événements ({count})",
       "newCardTitle": "Nouvel événement"
+    },
+    "activityPage": {
+      "title": "Journal d'activité",
+      "subtitle": "Les 30 dernières actions effectuées sur votre mosquée",
+      "empty": "Aucune action enregistrée pour l'instant.",
+      "colAction": "Action",
+      "colDate": "Date",
+      "colTarget": "Cible"
     },
     "list": {
       "colTitle": "Titre",

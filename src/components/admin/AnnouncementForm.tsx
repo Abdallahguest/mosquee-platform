@@ -29,6 +29,7 @@ interface AnnouncementFormProps {
     content: string
     isPublished: boolean
     audioUrl: string | null
+    expiresAt?: Date | string | null
   }
 }
 
@@ -187,18 +188,36 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             <p className="text-xs text-muted-foreground">{t("audioUrlHelp")}</p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="isPublished"
-              id="isPublished"
-              value="true"
-              defaultChecked={announcement?.isPublished}
-              className="w-4 h-4 accent-green-600"
+          {/* Épinglage — aide contextuelle */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isPublished"
+                id="isPublished"
+                value="true"
+                defaultChecked={announcement?.isPublished}
+                className="w-4 h-4 accent-green-600"
+              />
+              <Label htmlFor="isPublished" className="font-normal cursor-pointer">
+                {t("publishNow")}
+              </Label>
+            </div>
+          </div>
+
+          {/* Expiration — aide contextuelle */}
+          <div className="space-y-1.5">
+            <Label htmlFor="expiresAt">{t("fieldExpiresAt")}</Label>
+            <Input
+              id="expiresAt"
+              name="expiresAt"
+              type="datetime-local"
+              dir="ltr"
+              defaultValue={announcement?.expiresAt
+                ? new Date(announcement.expiresAt).toISOString().slice(0, 16)
+                : ""}
             />
-            <Label htmlFor="isPublished" className="font-normal cursor-pointer">
-              {t("publishNow")}
-            </Label>
+            <p className="text-xs text-muted-foreground">{t("expiresHelp")}</p>
           </div>
 
           <Button

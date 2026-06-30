@@ -3,6 +3,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
 import { Geist, Noto_Sans_Arabic } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
 import "../globals.css"
 import OfflineBanner from "@/components/public/OfflineBanner"
 
@@ -65,6 +66,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           {children}
         </NextIntlClientProvider>
+        {/* Vercel Analytics — mesure les pages vues sans cookies publicitaires */}
+        <Analytics />
       </body>
     </html>
   )

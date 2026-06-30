@@ -325,7 +325,7 @@
       "fieldContactPhone": "Contact phone",
       "fieldDonationUrl": "Donation link (external address)",
       "donationHelp": "Link to your donation page. It opens in a new tab. Donations are handled directly by the mosque — the platform processes no payment.",
-      "fieldOrangeMoneyNumber": "Orange Money number for donations",
+      "fieldOrangeMoney": "Orange Money number for donations",
       "orangeMoneyHelp": "Number shown in plain text on the public page. Worshippers send directly from their phone. Leave empty if not applicable.",
       "preciseLocationTitle": "Precise location (optional)",
       "preciseLocationDesc": "Commune, district, sector — to help worshippers locate the mosque.",

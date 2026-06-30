@@ -1,39 +1,30 @@
-// ─────────────────────────────────────────────────────────────
-// orange-money.ts — Validation et formatage des numéros Orange Money
+// Valide et normalise un numéro Orange Money guinéen.
 //
-// Un numéro Orange Money guinéen : 9 chiffres commençant par 6.
-// Ex : 620000000, 661234567, 655 12 34 56 (espaces tolérés à la saisie).
+// Format attendu : 9 chiffres, commence par 6 (ex: 622123456).
+// Les espaces sont tolérés en saisie ("622 12 34 56") mais retirés avant
+// validation et stockage — la BDD ne garde que des chiffres.
 //
-// Anti-gharar : un numéro mal formaté pourrait faire envoyer de l'argent
-// au mauvais destinataire — la validation est donc stricte.
-// ─────────────────────────────────────────────────────────────
+// IMPORTANT : ceci ne vérifie qu'un FORMAT, pas l'existence réelle du
+// numéro ni qu'il est bien rattaché à un compte Orange Money actif.
+// La plateforme ne fait aucune vérification auprès d'Orange — c'est à
+// l'admin de la mosquée de saisir le bon numéro (anti-gharar : le don
+// passe en transfert direct, hors de tout contrôle de la plateforme).
 
-// Normalise : supprime tous les espaces, tirets et parenthèses.
-function normalize(raw: string): string {
-  return raw.replace(/[\s\-().+]/g, "")
+const ORANGE_MONEY_REGEX = /^6\d{8}$/
+
+export function normalizeOrangeMoneyNumber(raw: string): string {
+  return raw.replace(/\s/g, "")
 }
 
-// Un numéro valide commence par 6 et contient 9 chiffres au total.
-const GUINEA_ORANGE_RE = /^6\d{8}$/
-
-/**
- * Valide un numéro Orange Money guinéen.
- * Accepte les espaces (normalisés avant validation).
- * Accepte une chaîne vide ou undefined (champ optionnel non rempli).
- */
-export function isValidOrangeMoneyNumber(raw: string | null | undefined): boolean {
-  if (!raw) return true // champ optionnel : vide = ok
-  return GUINEA_ORANGE_RE.test(normalize(raw))
+export function isValidOrangeMoneyNumber(raw: string): boolean {
+  if (!raw) return true // champ optionnel : vide est valide
+  return ORANGE_MONEY_REGEX.test(normalizeOrangeMoneyNumber(raw))
 }
 
-/**
- * Formate un numéro pour l'affichage : XX XX XX XX X
- * Ex : "620000000" → "62 00 00 000"  (lisibilité humaine)
- * Si le format n'est pas reconnu, retourne la valeur brute.
- */
-export function formatOrangeMoneyNumber(raw: string): string {
-  const digits = normalize(raw)
-  if (!GUINEA_ORANGE_RE.test(digits)) return raw
-  // Groupe : 2 + 2 + 2 + 3
-  return `${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4, 6)} ${digits.slice(6)}`
+// Formate un numéro normalisé (9 chiffres) en groupes lisibles : "622 12 34 56".
+// Si le format est inattendu (longueur différente), retourne tel quel plutôt
+// que de produire un affichage tronqué ou trompeur.
+export function formatOrangeMoneyNumber(normalized: string): string {
+  if (!/^\d{9}$/.test(normalized)) return normalized
+  return normalized.replace(/(\d{3})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4")
 }

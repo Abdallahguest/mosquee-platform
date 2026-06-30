@@ -28,9 +28,9 @@ interface Mosque {
   longitude: number
   timezone: string
   donationUrl: string | null
+  orangeMoneyNumber: string | null
   contactEmail: string | null
   contactPhone: string | null
-  orangeMoneyNumber: string | null
   welcomeMessage: string | null
   footerText: string | null
 }
@@ -194,14 +194,11 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           </div>
           <Separator />
           <div className="space-y-1.5">
-            <Label htmlFor="orangeMoneyNumber">{t("fieldOrangeMoneyNumber")}</Label>
+            <Label htmlFor="orangeMoneyNumber">{t("fieldOrangeMoney")}</Label>
             <Input
-              id="orangeMoneyNumber"
-              name="orangeMoneyNumber"
-              type="tel"
+              id="orangeMoneyNumber" name="orangeMoneyNumber" type="tel"
               defaultValue={mosque.orangeMoneyNumber ?? ""}
-              placeholder="+224 6XX XX XX XX"
-              dir="ltr"
+              placeholder="6XX XX XX XX" dir="ltr"
             />
             <p className="text-xs text-muted-foreground">{t("orangeMoneyHelp")}</p>
           </div>

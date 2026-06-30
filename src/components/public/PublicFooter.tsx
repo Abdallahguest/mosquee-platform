@@ -49,6 +49,24 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
           </div>
         )}
 
+        {mosque.orangeMoneyNumber && (
+          <div className="bg-green-900/40 border border-green-700 rounded-lg px-4 py-3">
+            <p className="text-xs text-green-200 mb-1">Faire un don — Orange Money</p>
+            <p className="text-lg font-mono font-semibold text-white" dir="ltr">
+              {formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
+            </p>
+            <a
+              href={`tel:${mosque.orangeMoneyNumber}`}
+              className="inline-block mt-2 bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg transition-colors"
+            >
+              📞 Appeler ce numéro
+            </a>
+            <p className="text-[11px] text-green-300 mt-2">
+              Don remis directement à la mosquée par transfert Orange Money — la plateforme ne traite et ne touche aucun argent.
+            </p>
+          </div>
+        )}
+
         {mosque.donationUrl && (
           <div>
             <a
@@ -62,28 +80,6 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
             <p className="text-[11px] text-green-300 mt-1">
               Don géré directement par la mosquée (lien externe)
             </p>
-          </div>
-        )}
-
-        {mosque.orangeMoneyNumber && (
-          <div className="bg-green-900 border border-green-700 rounded-xl px-4 py-3 space-y-2">
-            <p className="text-xs font-semibold text-orange-300 flex items-center gap-1.5">
-              <span aria-hidden="true">🟠</span> Orange Money
-            </p>
-            {/* Numéro formaté en clair (anti-jahàla : le fidèle voit exactement où va son argent) */}
-            <p className="text-white font-mono text-lg font-bold tracking-wide" dir="ltr">
-              {formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
-            </p>
-            <p className="text-[11px] text-green-300">
-              Envoyez directement depuis votre téléphone · Don géré par la mosquée · la plateforme ne traite aucun paiement
-            </p>
-            {/* Bouton tel: — ouvre l'app Orange Money sur mobile */}
-            <a
-              href={`tel:${mosque.orangeMoneyNumber.replace(/[\s\-().+]/g, "")}`}
-              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-            >
-              <span aria-hidden="true">📞</span> Appeler ce numéro
-            </a>
           </div>
         )}
 

@@ -1,68 +1,55 @@
 import { describe, it, expect } from "vitest"
-import { isValidOrangeMoneyNumber, formatOrangeMoneyNumber } from "@/lib/orange-money"
+import {
+  normalizeOrangeMoneyNumber,
+  isValidOrangeMoneyNumber,
+  formatOrangeMoneyNumber,
+} from "../orange-money"
 
-// ── isValidOrangeMoneyNumber ──
-
-describe("isValidOrangeMoneyNumber", () => {
-
-  it("accepte une chaîne vide (champ non rempli)", () => {
-    expect(isValidOrangeMoneyNumber("")).toBe(true)
+describe("normalizeOrangeMoneyNumber", () => {
+  it("retire tous les espaces", () => {
+    expect(normalizeOrangeMoneyNumber("622 12 34 56")).toBe("622123456")
+    expect(normalizeOrangeMoneyNumber("6 2 2 1 2 3 4 5 6")).toBe("622123456")
   })
-
-  it("accepte null et undefined (champ optionnel)", () => {
-    expect(isValidOrangeMoneyNumber(null)).toBe(true)
-    expect(isValidOrangeMoneyNumber(undefined)).toBe(true)
+  it("laisse un numéro déjà sans espace inchangé", () => {
+    expect(normalizeOrangeMoneyNumber("622123456")).toBe("622123456")
   })
-
-  it("accepte un numéro valide sans espaces", () => {
-    expect(isValidOrangeMoneyNumber("620000000")).toBe(true)
-    expect(isValidOrangeMoneyNumber("661234567")).toBe(true)
-    expect(isValidOrangeMoneyNumber("699999999")).toBe(true)
-  })
-
-  it("accepte un numéro valide avec espaces (normalisé)", () => {
-    expect(isValidOrangeMoneyNumber("62 00 00 000")).toBe(true)
-    expect(isValidOrangeMoneyNumber("6 2 0 0 0 0 0 0 0")).toBe(true)
-  })
-
-  it("refuse un numéro commençant par 7 (pas Orange Money)", () => {
-    expect(isValidOrangeMoneyNumber("720000000")).toBe(false)
-  })
-
-  it("refuse un numéro commençant par 5 (Moov Money)", () => {
-    expect(isValidOrangeMoneyNumber("500000000")).toBe(false)
-  })
-
-  it("refuse un numéro trop court", () => {
-    expect(isValidOrangeMoneyNumber("62000000")).toBe(false)  // 8 chiffres
-    expect(isValidOrangeMoneyNumber("6")).toBe(false)
-  })
-
-  it("refuse un numéro trop long", () => {
-    expect(isValidOrangeMoneyNumber("6200000000")).toBe(false)  // 10 chiffres
-  })
-
-  it("refuse des caractères non numériques après normalisation", () => {
-    expect(isValidOrangeMoneyNumber("62000X000")).toBe(false)
-    expect(isValidOrangeMoneyNumber("abcdefghi")).toBe(false)
+  it("gère une chaîne vide", () => {
+    expect(normalizeOrangeMoneyNumber("")).toBe("")
   })
 })
 
-// ── formatOrangeMoneyNumber ──
-
-describe("formaOrangeMoneyNumber", () => {
-
-  it("formate un numéro valide en groupes lisibles", () => {
-    expect(formatOrangeMoneyNumber("620000000")).toBe("62 00 00 000")
-    expect(formatOrangeMoneyNumber("661234567")).toBe("66 12 34 567")
+describe("isValidOrangeMoneyNumber", () => {
+  it("accepte un numéro valide (9 chiffres, commence par 6)", () => {
+    expect(isValidOrangeMoneyNumber("622123456")).toBe(true)
   })
-
-  it("formate un numéro saisi avec espaces", () => {
-    expect(formatOrangeMoneyNumber("62 00 00 000")).toBe("62 00 00 000")
+  it("accepte un numéro valide avec espaces", () => {
+    expect(isValidOrangeMoneyNumber("622 12 34 56")).toBe(true)
   })
+  it("accepte une chaîne vide (champ optionnel)", () => {
+    expect(isValidOrangeMoneyNumber("")).toBe(true)
+  })
+  it("rejette un numéro ne commençant pas par 6", () => {
+    expect(isValidOrangeMoneyNumber("712345678")).toBe(false)
+    expect(isValidOrangeMoneyNumber("512345678")).toBe(false)
+  })
+  it("rejette un numéro trop court", () => {
+    expect(isValidOrangeMoneyNumber("62212345")).toBe(false)
+  })
+  it("rejette un numéro trop long", () => {
+    expect(isValidOrangeMoneyNumber("6221234567")).toBe(false)
+  })
+  it("rejette des caractères non numériques", () => {
+    expect(isValidOrangeMoneyNumber("62212345a")).toBe(false)
+    expect(isValidOrangeMoneyNumber("622-123-456")).toBe(false)
+  })
+})
 
-  it("retourne la valeur brute si le format n'est pas reconnu", () => {
-    expect(formatOrangeMoneyNumber("invalid")).toBe("invalid")
-    expect(formatOrangeMoneyNumber("720000000")).toBe("720000000")
+describe("formatOrangeMoneyNumber", () => {
+  it("formate un numéro normalisé en groupes lisibles", () => {
+    expect(formatOrangeMoneyNumber("622123456")).toBe("622 12 34 56")
+  })
+  it("retourne tel quel si la longueur est inattendue (pas de troncature trompeuse)", () => {
+    expect(formatOrangeMoneyNumber("12345")).toBe("12345")
+    expect(formatOrangeMoneyNumber("")).toBe("")
   })
 })

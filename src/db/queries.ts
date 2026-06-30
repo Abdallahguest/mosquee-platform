@@ -193,6 +193,31 @@ export async function getAllAnnouncements(mosqueId: number) {
     .orderBy(desc(announcements.isPinned), desc(announcements.publishedAt))
 }
 
+// Version paginée pour les listes admin (toutes annonces, pas seulement publiées)
+export async function getAllAnnouncementsPaginated(
+  mosqueId: number,
+  page: number = 1,
+  perPage: number = 20
+): Promise<PaginatedResult<Announcement>> {
+  const offset = (Math.max(1, page) - 1) * perPage
+  const whereClause = eq(announcements.mosqueId, mosqueId)
+  try {
+    const [items, totalRows] = await Promise.all([
+      db
+        .select()
+        .from(announcements)
+        .where(whereClause)
+        .orderBy(desc(announcements.isPinned), desc(announcements.publishedAt))
+        .limit(perPage)
+        .offset(offset),
+      db.select({ v: count() }).from(announcements).where(whereClause),
+    ])
+    return { items, total: totalRows[0]?.v ?? 0 }
+  } catch (error) {
+    console.error("Erreur annonces admin paginées:", error)
+    return { items: [], total: 0 }
+  }
+}
 export async function getAnnouncementById(id: number, mosqueId: number) {
   const result = await db
     .select()
@@ -226,6 +251,32 @@ export async function getAllEvents(mosqueId: number) {
     .from(events)
     .where(eq(events.mosqueId, mosqueId))
     .orderBy(desc(events.startAt))
+}
+
+// Version paginée pour les listes admin
+export async function getAllEventsPaginated(
+  mosqueId: number,
+  page: number = 1,
+  perPage: number = 20
+): Promise<PaginatedResult<Event>> {
+  const offset = (Math.max(1, page) - 1) * perPage
+  const whereClause = eq(events.mosqueId, mosqueId)
+  try {
+    const [items, totalRows] = await Promise.all([
+      db
+        .select()
+        .from(events)
+        .where(whereClause)
+        .orderBy(desc(events.startAt))
+        .limit(perPage)
+        .offset(offset),
+      db.select({ v: count() }).from(events).where(whereClause),
+    ])
+    return { items, total: totalRows[0]?.v ?? 0 }
+  } catch (error) {
+    console.error("Erreur événements admin paginés:", error)
+    return { items: [], total: 0 }
+  }
 }
 
 export async function getEventById(id: number, mosqueId: number) {

@@ -9,7 +9,8 @@ import {
   doublePrecision,
   integer,
   bigint,
-  unique
+  unique,
+  index,
 } from "drizzle-orm/pg-core"
 
 // ── TABLE MOSQUÉES ──
@@ -96,7 +97,12 @@ export const announcements = pgTable("announcements", {
   isPinned:    boolean("is_pinned").notNull().default(false),  // épinglée en tête de liste
   audioUrl:    varchar("audio_url", { length: 500 }),  // lien audio externe optionnel (aucun fichier stocké)
   createdAt:   timestamp("created_at").notNull().defaultNow(),
-})
+}, (table) => ({
+  // Index sur les colonnes de filtre fréquentes (getActiveAnnouncements, getAllAnnouncements)
+  mosqueIdIdx:    index("announcements_mosque_id_idx").on(table.mosqueId),
+  isPublishedIdx: index("announcements_is_published_idx").on(table.isPublished),
+  publishedAtIdx: index("announcements_published_at_idx").on(table.publishedAt),
+}))
 
 // ── TABLE ÉVÉNEMENTS ──
 export const events = pgTable("events", {
@@ -109,7 +115,12 @@ export const events = pgTable("events", {
   endAt:       timestamp("end_at"),
   isPublished: boolean("is_published").notNull().default(false),
   audioUrl:    varchar("audio_url", { length: 500 }),  // lien audio externe optionnel (aucun fichier stocké)
-})
+}, (table) => ({
+  // Index sur les colonnes de filtre fréquentes (getUpcomingEvents, hasPastEvents)
+  mosqueIdIdx:    index("events_mosque_id_idx").on(table.mosqueId),
+  isPublishedIdx: index("events_is_published_idx").on(table.isPublished),
+  startAtIdx:     index("events_start_at_idx").on(table.startAt),
+}))
 
 // ── TABLE MEMBRES (privée : admin + super-admin) ──
 // Catégorie fixe (contrôlée applicativement) + précision de rôle optionnelle.

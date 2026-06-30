@@ -1,5 +1,6 @@
 import { getLocale } from "next-intl/server"
-import { formatOrangeMoneyNumber } from "@/lib/orange-money"
+import { formatOrangeMoneyNumber, normalizeOrangeMoneyNumber } from "@/lib/orange-money"
+import OrangeMoneyButtons from "@/components/public/OrangeMoneyButtons"
 
 interface PublicFooterProps {
   /** Nom déjà résolu selon la langue (via getMosqueName). Si absent, on prend mosque.name. */
@@ -50,21 +51,10 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
         )}
 
         {mosque.orangeMoneyNumber && (
-          <div className="bg-green-900/40 border border-green-700 rounded-lg px-4 py-3">
-            <p className="text-xs text-green-200 mb-1">Faire un don — Orange Money</p>
-            <p className="text-lg font-mono font-semibold text-white" dir="ltr">
-              {formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
-            </p>
-            <a
-              href={`tel:${mosque.orangeMoneyNumber}`}
-              className="inline-block mt-2 bg-green-700 hover:bg-green-600 text-white text-sm px-4 py-1.5 rounded-lg transition-colors"
-            >
-              📞 Appeler ce numéro
-            </a>
-            <p className="text-[11px] text-green-300 mt-2">
-              Don remis directement à la mosquée par transfert Orange Money — la plateforme ne traite et ne touche aucun argent.
-            </p>
-          </div>
+          <OrangeMoneyButtons
+            number={normalizeOrangeMoneyNumber(mosque.orangeMoneyNumber)}
+            formatted={formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
+          />
         )}
 
         {mosque.donationUrl && (

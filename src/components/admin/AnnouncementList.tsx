@@ -201,7 +201,7 @@ export default function AnnouncementList({
                       onClick={() => handlePin(a.id, a.isPinned)}
                       disabled={loadingId === a.id}
                     >
-                      {a.isPinned ? t("unpin") : t("pin")}
+                      {loadingId === a.id ? <Spinner /> : (a.isPinned ? t("unpin") : t("pin"))}
                     </Button>
                     <Button
                       variant="outline"
@@ -209,7 +209,7 @@ export default function AnnouncementList({
                       onClick={() => handleToggle(a.id, a.isPublished)}
                       disabled={loadingId === a.id}
                     >
-                      {a.isPublished ? t("unpublish") : t("publish")}
+                      {loadingId === a.id ? <Spinner /> : (a.isPublished ? t("unpublish") : t("publish"))}
                     </Button>
                     <Button
                       variant="destructive"

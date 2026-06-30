@@ -162,7 +162,7 @@ export default function EventList({ events }: EventListProps) {
                       onClick={() => handleToggle(event.id, event.isPublished)}
                       disabled={loadingId === event.id}
                     >
-                      {event.isPublished ? t("unpublish") : t("publish")}
+                      {loadingId === event.id ? <Spinner /> : (event.isPublished ? t("unpublish") : t("publish"))}
                     </Button>
                     <Button
                       variant="destructive"

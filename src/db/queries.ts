@@ -185,6 +185,28 @@ export async function getActiveAnnouncements(mosqueId: number): Promise<Announce
     .limit(5)
 }
 
+// Version sans limite pour le dashboard (compte uniquement, pas d'affichage)
+export async function getAnnouncementsCount(mosqueId: number): Promise<{ total: number; published: number }> {
+  try {
+    const [all, pub] = await Promise.all([
+      db.select({ v: count() }).from(announcements).where(eq(announcements.mosqueId, mosqueId)),
+      db.select({ v: count() }).from(announcements).where(and(eq(announcements.mosqueId, mosqueId), eq(announcements.isPublished, true))),
+    ])
+    return { total: all[0]?.v ?? 0, published: pub[0]?.v ?? 0 }
+  } catch { return { total: 0, published: 0 } }
+}
+
+export async function getEventsCount(mosqueId: number): Promise<{ total: number; upcoming: number }> {
+  const now = new Date()
+  try {
+    const [all, upcoming] = await Promise.all([
+      db.select({ v: count() }).from(events).where(eq(events.mosqueId, mosqueId)),
+      db.select({ v: count() }).from(events).where(and(eq(events.mosqueId, mosqueId), eq(events.isPublished, true), gt(events.startAt, now))),
+    ])
+    return { total: all[0]?.v ?? 0, upcoming: upcoming[0]?.v ?? 0 }
+  } catch { return { total: 0, upcoming: 0 } }
+}
+
 export async function getAllAnnouncements(mosqueId: number) {
   return db
     .select()

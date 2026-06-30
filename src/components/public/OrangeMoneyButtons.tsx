@@ -53,6 +53,10 @@ export default function OrangeMoneyButtons({ number, formatted }: OrangeMoneyBut
         <span aria-hidden="true">🟠</span>
         Déposer via Orange Money
       </a>
+      {/* Note discrète : iOS bloque les liens USSD, le fidèle utilise le bouton Copier */}
+      <p className="text-[11px] text-green-400 text-center">
+        Bouton USSD fonctionnel sur Android. Sur iPhone, utilisez « Copier le numéro ».
+      </p>
 
       {/* Bouton C — Copier le numéro */}
       <button

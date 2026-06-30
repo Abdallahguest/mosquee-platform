@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation"
 import { getSessionMosque } from "@/lib/auth-helpers"
 import LogoutButton from "@/components/LogoutButton"
 import NoMosque from "@/components/admin/NoMosque"
-import { getAllAnnouncements, getAllEvents } from "@/db/queries"
+import { getAnnouncementsCount, getEventsCount } from "@/db/queries"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -15,15 +15,15 @@ export default async function AdminPage() {
   const t = await getTranslations("admin.dashboard")
   const locale = await getLocale()
 
-  const [allAnnouncements, allEvents] = await Promise.all([
-    getAllAnnouncements(mosqueId),
-    getAllEvents(mosqueId),
+  const [announcementsCount, eventsCount] = await Promise.all([
+    getAnnouncementsCount(mosqueId),
+    getEventsCount(mosqueId),
   ])
 
-  const publishedAnnouncements = allAnnouncements.filter(a => a.isPublished).length
-  const upcomingEvents = allEvents.filter(
-    e => e.isPublished && new Date(e.startAt) > new Date()
-  ).length
+  const publishedAnnouncements = announcementsCount.published
+  const upcomingEvents         = eventsCount.upcoming
+  const totalAnnouncements     = announcementsCount.total
+  const totalEvents            = eventsCount.total
 
   const navItems = [
     {
@@ -31,14 +31,14 @@ export default async function AdminPage() {
       icon:  "📢",
       label: t("statAnnouncements"),
       desc:  t("announcementsDesc", { count: publishedAnnouncements }),
-      total: allAnnouncements.length,
+      total: totalAnnouncements,
     },
     {
       href:  "/admin/events",
       icon:  "📅",
       label: t("statEvents"),
       desc:  t("eventsDesc", { count: upcomingEvents }),
-      total: allEvents.length,
+      total: totalEvents,
     },
     {
       href:  "/admin/settings",
@@ -49,7 +49,7 @@ export default async function AdminPage() {
     },
   ]
 
-  const isFirstTime = allAnnouncements.length === 0 && allEvents.length === 0
+  const isFirstTime = totalAnnouncements === 0 && totalEvents === 0
 
   const connectedDate = new Date(session.session.createdAt).toLocaleString(locale, {
     day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
@@ -137,8 +137,8 @@ export default async function AdminPage() {
       {/* Stats rapides */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
-          { label: t("statAnnouncements"), value: allAnnouncements.length, icon: "📢" },
-          { label: t("statEvents"),        value: allEvents.length,        icon: "📅" },
+          { label: t("statAnnouncements"), value: totalAnnouncements, icon: "📢" },
+          { label: t("statEvents"),        value: totalEvents,        icon: "📅" },
           { label: t("statMosque"),        value: mosque?.isVerified ? "✓" : "—", icon: "🕌" },
         ].map((stat) => (
           <Card key={stat.label}>

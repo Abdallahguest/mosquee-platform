@@ -69,14 +69,23 @@ export default function AnnouncementList({
     setLoadingId(null)
   }
 
+  // Spinner SVG inline léger — pas de dépendance externe
+  const Spinner = () => (
+    <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  )
+
   const fmtDate = (d: Date | null) =>
     d ? new Date(d).toLocaleDateString(locale, { day: "numeric", month: "short" }) : "—"
 
   if (announcements.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p className="text-base mb-1">{t("emptyAnnouncementsTitle")}</p>
-        <p className="text-sm">{t("emptyAnnouncementsBody")}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+        <div className="text-5xl mb-4" aria-hidden="true">📢</div>
+        <p className="text-base font-medium text-gray-700 mb-1">{t("emptyAnnouncementsTitle")}</p>
+        <p className="text-sm text-muted-foreground max-w-xs">{t("emptyAnnouncementsBody")}</p>
       </div>
     )
   }
@@ -116,7 +125,7 @@ export default function AnnouncementList({
                 onClick={() => handleToggle(a.id, a.isPublished)}
                 disabled={loadingId === a.id}
               >
-                {a.isPublished ? t("unpublish") : t("publish")}
+                {loadingId === a.id ? <Spinner /> : (a.isPublished ? t("unpublish") : t("publish"))}
               </Button>
             </div>
             <div className="flex gap-2 mt-2">
@@ -127,7 +136,7 @@ export default function AnnouncementList({
                 onClick={() => handlePin(a.id, a.isPinned)}
                 disabled={loadingId === a.id}
               >
-                {a.isPinned ? t("unpin") : t("pin")}
+                {loadingId === a.id ? <Spinner /> : (a.isPinned ? t("unpin") : t("pin"))}
               </Button>
             </div>
             {/* Supprimer séparé en dessous (anti-ghich) */}

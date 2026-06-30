@@ -61,7 +61,16 @@ src/
 │
 ├── i18n/                   # Config next-intl (routing, navigation)
 ├── messages/               # Traductions fr/en/ar (~350 clés)
-├── test/                   # Suite Vitest (115 tests)
+├── test/                   # Suite Vitest (127 tests)
+│   ├── helpers/            # drizzle-mock.ts, setup.ts
+│   └── *.test.ts           # authorization, announcement, event, member, prayer-times
+├── lib/
+│   ├── __tests__/          # Tests unitaires modules utilitaires (audio-link, mosque-name, orange-money)
+│   ├── audit.ts            # logAction() — journal d'activité (table audit_log)
+│   ├── orange-money.ts     # Validation/formatage numéros Orange Money guinéens
+│   ├── offline-cache.ts    # Cache localStorage (snapshots par mosquée)
+│   ├── use-draft-persistence.ts  # Hook écriture résiliente Niveau A
+│   └── ...
 └── proxy.ts                # Middleware (auth guard + i18n)
 ```
 

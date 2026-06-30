@@ -39,9 +39,10 @@ export default function MemberList({ members, onEdit }: MemberListProps) {
 
   if (members.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p className="text-base mb-1">{t("emptyTitle")}</p>
-        <p className="text-sm">{t("emptyBody")}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+        <div className="text-5xl mb-4" aria-hidden="true">👥</div>
+        <p className="text-base font-medium text-gray-700 mb-1">{t("emptyTitle")}</p>
+        <p className="text-sm text-muted-foreground max-w-xs">{t("emptyBody")}</p>
       </div>
     )
   }

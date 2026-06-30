@@ -49,13 +49,21 @@ export default function EventList({ events }: EventListProps) {
     setLoadingId(null)
   }
 
+  const Spinner = () => (
+    <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  )
+
   const fmtDate = (d: Date) =>
     new Date(d).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p>{t("emptyEvents")}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+        <div className="text-5xl mb-4" aria-hidden="true">📅</div>
+        <p className="text-base font-medium text-gray-700 mb-1">{t("emptyEvents")}</p>
       </div>
     )
   }
@@ -94,7 +102,7 @@ export default function EventList({ events }: EventListProps) {
                 onClick={() => handleToggle(event.id, event.isPublished)}
                 disabled={loadingId === event.id}
               >
-                {event.isPublished ? t("unpublish") : t("publish")}
+                {loadingId === event.id ? <Spinner /> : (event.isPublished ? t("unpublish") : t("publish"))}
               </Button>
             </div>
             <Button

@@ -56,7 +56,6 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
             formatted={formatOrangeMoneyNumber(mosque.orangeMoneyNumber)}
           />
         )}
-
         {mosque.donationUrl && (
           <div>
             <a

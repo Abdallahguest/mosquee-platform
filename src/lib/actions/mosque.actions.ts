@@ -26,6 +26,7 @@ const MosqueSettingsSchema = z.object({
   donationUrl:  z.string().url("DONATION_URL_INVALID").or(z.literal("")).optional(),
   contactEmail: z.string().email("CONTACT_EMAIL_INVALID").or(z.literal("")).optional(),
   contactPhone: z.string().max(50, "PHONE_TOO_LONG").optional(),
+  orangeMoneyNumber: z.string().max(30, "PHONE_TOO_LONG").optional(),
   welcomeMessage: z.string().max(500, "WELCOME_TOO_LONG").optional(),
   footerText:     z.string().max(500, "FOOTER_TOO_LONG").optional(),
 })
@@ -59,6 +60,7 @@ export async function updateMosqueSettings(
     donationUrl:  formData.get("donationUrl") || "",
     contactEmail: formData.get("contactEmail") || "",
     contactPhone: formData.get("contactPhone") || "",
+    orangeMoneyNumber: formData.get("orangeMoneyNumber") || "",
     welcomeMessage: formData.get("welcomeMessage") || "",
     footerText:     formData.get("footerText") || "",
   }
@@ -82,6 +84,7 @@ export async function updateMosqueSettings(
         donationUrl:    parsed.data.donationUrl    || null,
         contactEmail:   parsed.data.contactEmail   || null,
         contactPhone:   parsed.data.contactPhone   || null,
+        orangeMoneyNumber: parsed.data.orangeMoneyNumber || null,
         welcomeMessage: parsed.data.welcomeMessage || null,
         footerText:     parsed.data.footerText     || null,
       })

@@ -13,6 +13,7 @@ interface PublicFooterProps {
     contactEmail?: string | null
     contactPhone?: string | null
     donationUrl?: string | null
+    orangeMoneyNumber?: string | null
     footerText?: string | null
   }
 }
@@ -60,6 +61,28 @@ export default async function PublicFooter({ mosque, displayName }: PublicFooter
             <p className="text-[11px] text-green-300 mt-1">
               Don géré directement par la mosquée (lien externe)
             </p>
+          </div>
+        )}
+
+        {mosque.orangeMoneyNumber && (
+          <div className="bg-green-900 border border-green-700 rounded-xl px-4 py-3 space-y-2">
+            <p className="text-xs font-semibold text-orange-300 flex items-center gap-1.5">
+              <span aria-hidden="true">🟠</span> Orange Money
+            </p>
+            {/* Numéro en clair (anti-jahàla : le fidèle voit exactement où va son argent) */}
+            <p className="text-white font-mono text-lg font-bold tracking-wide" dir="ltr">
+              {mosque.orangeMoneyNumber}
+            </p>
+            <p className="text-[11px] text-green-300">
+              Envoyez directement depuis votre téléphone · Don géré par la mosquée
+            </p>
+            {/* Bouton tel: cliquable — ouvre l'app Orange Money sur mobile */}
+            <a
+              href={`tel:${mosque.orangeMoneyNumber.replace(/\s/g, "")}`}
+              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
+              <span aria-hidden="true">📞</span> Appeler ce numéro
+            </a>
           </div>
         )}
 

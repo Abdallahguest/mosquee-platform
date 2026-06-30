@@ -30,6 +30,7 @@ interface Mosque {
   donationUrl: string | null
   contactEmail: string | null
   contactPhone: string | null
+  orangeMoneyNumber: string | null
   welcomeMessage: string | null
   footerText: string | null
 }
@@ -190,6 +191,19 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
           <div className="space-y-1.5">
             <Label htmlFor="contactPhone">{t("fieldContactPhone")}</Label>
             <Input id="contactPhone" name="contactPhone" defaultValue={mosque.contactPhone ?? ""} placeholder="+224 6XX XX XX XX" dir="ltr" />
+          </div>
+          <Separator />
+          <div className="space-y-1.5">
+            <Label htmlFor="orangeMoneyNumber">{t("fieldOrangeMoneyNumber")}</Label>
+            <Input
+              id="orangeMoneyNumber"
+              name="orangeMoneyNumber"
+              type="tel"
+              defaultValue={mosque.orangeMoneyNumber ?? ""}
+              placeholder="+224 6XX XX XX XX"
+              dir="ltr"
+            />
+            <p className="text-xs text-muted-foreground">{t("orangeMoneyHelp")}</p>
           </div>
           <Separator />
           <div className="space-y-1.5">

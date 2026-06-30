@@ -40,6 +40,9 @@ export const mosques = pgTable("mosques", {
   donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel
   contactEmail: varchar("contact_email", { length: 255 }),  // optionnel
   contactPhone: varchar("contact_phone", { length: 50 }),   // optionnel
+  // Numéro Orange Money pour les dons directs (affiché en clair + lien tel:)
+  // Anti-jahàla : le fidèle voit exactement où va son argent avant d'agir.
+  orangeMoneyNumber: varchar("orange_money_number", { length: 30 }),
 
   // ── Textes personnalisés (optionnels) ──
   welcomeMessage: text("welcome_message"),  // affiché en haut de la page publique

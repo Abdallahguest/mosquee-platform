@@ -163,6 +163,7 @@ const MosqueSchema = z.object({
   donationUrl:  z.string().url("Lien de don invalide").or(z.literal("")).optional(),
   contactEmail: z.string().email("Email invalide").or(z.literal("")).optional(),
   contactPhone: z.string().max(50).optional(),
+  orangeMoneyNumber: z.string().max(30).optional(),
 })
 
 function parseForm(formData: FormData) {
@@ -184,6 +185,7 @@ function parseForm(formData: FormData) {
     donationUrl:  formData.get("donationUrl")  ?? "",
     contactEmail: formData.get("contactEmail") ?? "",
     contactPhone: formData.get("contactPhone") ?? "",
+    orangeMoneyNumber: formData.get("orangeMoneyNumber") ?? "",
   }
 }
 
@@ -211,6 +213,7 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
         donationUrl:  parsed.data.donationUrl  || null,
         contactEmail: parsed.data.contactEmail || null,
         contactPhone: parsed.data.contactPhone || null,
+        orangeMoneyNumber: parsed.data.orangeMoneyNumber || null,
       })
       .returning({ id: mosques.id })
 
@@ -255,6 +258,7 @@ export async function updateMosqueAdmin(id: number, formData: FormData): Promise
       donationUrl:  parsed.data.donationUrl  || null,
       contactEmail: parsed.data.contactEmail || null,
       contactPhone: parsed.data.contactPhone || null,
+      orangeMoneyNumber: parsed.data.orangeMoneyNumber || null,
     })
     .where(eq(mosques.id, id))
     revalidatePath("/super-admin")

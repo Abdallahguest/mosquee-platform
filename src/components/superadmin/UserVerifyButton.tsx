@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { setUserVerified } from "@/lib/actions/superadmin.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 
 export default function UserVerifyButton({ userId, verified }: { userId: string; verified: boolean }) {
@@ -11,8 +12,12 @@ export default function UserVerifyButton({ userId, verified }: { userId: string;
 
   async function handleToggle() {
     setLoading(true)
-    await setUserVerified(userId, !verified)
+    const result = await setUserVerified(userId, !verified)
     setLoading(false)
+    if (!result.success) {
+      showToast(result.error, "error")
+      return
+    }
     router.refresh()
   }
 

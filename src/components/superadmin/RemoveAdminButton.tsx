@@ -1,28 +1,34 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "@/i18n/navigation";
-import { removeAdminFromMosque } from "@/lib/actions/superadmin.actions";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { useRouter } from "@/i18n/navigation"
+import { removeAdminFromMosque } from "@/lib/actions/superadmin.actions"
+import { showToast } from "@/components/ui/toast-provider"
+import { Button } from "@/components/ui/button"
 
 export default function RemoveAdminButton({
   mosqueId,
   userId,
   userName,
 }: {
-  mosqueId: number;
-  userId: string;
-  userName: string;
+  mosqueId: number
+  userId: string
+  userName: string
 }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [confirm, setConfirm] = useState(false)
 
   async function handleRemove() {
-    setLoading(true);
-    await removeAdminFromMosque(mosqueId, userId);
-    setLoading(false);
-    router.refresh();
+    setLoading(true)
+    const result = await removeAdminFromMosque(mosqueId, userId)
+    setLoading(false)
+    if (!result.success) {
+      showToast(result.error, "error")
+      setConfirm(false)
+      return
+    }
+    router.refresh()
   }
 
   if (!confirm) {
@@ -35,7 +41,7 @@ export default function RemoveAdminButton({
       >
         Retirer
       </Button>
-    );
+    )
   }
 
   return (
@@ -54,5 +60,5 @@ export default function RemoveAdminButton({
         Non
       </Button>
     </div>
-  );
+  )
 }

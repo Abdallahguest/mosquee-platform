@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { resetUserPassword } from "@/lib/actions/superadmin.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -11,7 +12,6 @@ export default function ResetPasswordButton({ userId }: { userId: string }) {
   const [open, setOpen]         = useState(false)
   const [password, setPassword] = useState("")
   const [loading, setLoading]   = useState(false)
-  const [done, setDone]         = useState(false)
 
   async function handleReset() {
     if (password.length < 8) return
@@ -21,11 +21,14 @@ export default function ResetPasswordButton({ userId }: { userId: string }) {
     formData.set("newPassword", password)
     const result = await resetUserPassword(formData)
     setLoading(false)
-    if (result.success) {
-      setDone(true)
-      setTimeout(() => { setOpen(false); setDone(false); setPassword("") }, 2500)
-      router.refresh()
+    if (!result.success) {
+      showToast(result.error, "error")
+      return
     }
+    showToast("Mot de passe réinitialisé.", "success")
+    setOpen(false)
+    setPassword("")
+    router.refresh()
   }
 
   if (!open) {
@@ -47,7 +50,7 @@ export default function ResetPasswordButton({ userId }: { userId: string }) {
       />
       <div className="flex gap-2">
         <Button size="sm" onClick={handleReset} disabled={loading || password.length < 8} className="flex-1 sm:flex-none bg-green-700 hover:bg-green-800">
-          {done ? "✓" : loading ? "..." : "OK"}
+          {loading ? "..." : "OK"}
         </Button>
         <Button variant="ghost" size="sm" onClick={() => { setOpen(false); setPassword("") }} className="flex-1 sm:flex-none">
           Annuler

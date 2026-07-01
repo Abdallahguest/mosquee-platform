@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { assignAdminToMosque } from "@/lib/actions/superadmin.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 
 interface Candidate {
@@ -20,8 +21,13 @@ export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: nu
   async function handleAssign() {
     if (!selected) return
     setLoading(true)
-    await assignAdminToMosque(mosqueId, selected)
+    const result = await assignAdminToMosque(mosqueId, selected)
     setLoading(false)
+    if (!result.success) {
+      showToast(result.error, "error")
+      return
+    }
+    showToast("Admin assigné avec succès.", "success")
     setSelected("")
     router.refresh()
   }

@@ -8,6 +8,7 @@ import {
   toggleAnnouncementPublished,
   toggleAnnouncementPinned,
 } from "@/lib/actions/announcement.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge }  from "@/components/ui/badge"
@@ -35,10 +36,6 @@ interface Announcement {
 interface AnnouncementListProps {
   announcements: Announcement[]
 }
-
-import { showToast } from "@/components/ui/toast-provider"
-
-// ...
 
 export default function AnnouncementList({
   announcements,

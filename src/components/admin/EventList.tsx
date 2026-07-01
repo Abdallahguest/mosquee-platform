@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import { deleteEvent, toggleEventPublished } from "@/lib/actions/event.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge }  from "@/components/ui/badge"
@@ -24,10 +25,6 @@ interface Event {
 interface EventListProps {
   events: Event[]
 }
-
-import { showToast } from "@/components/ui/toast-provider"
-
-// ...
 
 export default function EventList({ events }: EventListProps) {
   const t = useTranslations("admin.list")

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { createUserAccount } from "@/lib/actions/superadmin.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,14 +11,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function CreateUserForm() {
   const router = useRouter()
-  const [error, setError]     = useState("")
-  const [success, setSuccess] = useState("")
+  const [error, setError]   = useState("")
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
-    setSuccess("")
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
@@ -28,17 +27,20 @@ export default function CreateUserForm() {
       setError(result.error)
       return
     }
-    setSuccess(`Compte créé pour ${result.data.email}. Communiquez-lui ses identifiants.`)
+
+    showToast(
+      `Compte créé pour ${result.data.email}. Communiquez-lui ses identifiants.`,
+      "success"
+    )
     e.currentTarget.reset()
     router.refresh()
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
-      {success && (
-        <Alert className="border-green-200 bg-green-50 text-green-800">
-          <AlertDescription>{success}</AlertDescription>
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 

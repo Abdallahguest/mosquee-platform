@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import { deleteMember } from "@/lib/actions/member.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import ConfirmDialog from "@/components/admin/ConfirmDialog"
@@ -20,10 +21,6 @@ interface MemberListProps {
   members: Member[]
   onEdit: (member: Member) => void
 }
-
-import { showToast } from "@/components/ui/toast-provider"
-
-// ...
 
 export default function MemberList({ members, onEdit }: MemberListProps) {
   const t = useTranslations("admin.members")

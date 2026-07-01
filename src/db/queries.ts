@@ -26,7 +26,9 @@ export async function getPrimaryMosqueByUserId(userId: string) {
   return list[0] ?? null
 }
 
-// Vérifie si un utilisateur est admin d'une mosquée donnée (pour les contrôles d'accès)
+// Vérifie si un utilisateur est admin d'une mosquée donnée.
+// Actuellement orpheline (non appelée depuis l'UI) — conservée en prévision
+// d'un contrôle d'accès plus fin si la Phase 3 terrain révèle ce besoin.
 export async function isUserAdminOfMosque(userId: string, mosqueId: number) {
   try {
     const result = await db
@@ -408,6 +410,8 @@ export async function getMosqueMembers(mosqueId: number): Promise<MosqueMember[]
   }
 }
 
+// Actuellement orpheline (non appelée depuis l'UI) — conservée en prévision
+// d'une page de détail membre si la Phase 3 terrain révèle ce besoin.
 export async function getMemberById(id: number, mosqueId: number): Promise<MosqueMember | null> {
   const result = await db
     .select()

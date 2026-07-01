@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
+import { logSignIn } from "@/lib/actions/auth-log.actions"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -25,12 +26,15 @@ export default function LoginPage() {
 
       if (result.error) {
         setError(result.error.message || t("genericError"))
+        logSignIn(email, false).catch(() => {})
       } else {
+        logSignIn(email, true).catch(() => {})
         router.push("/admin")
         router.refresh()
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("genericError"))
+      logSignIn(email, false).catch(() => {})
     } finally {
       setLoading(false)
     }

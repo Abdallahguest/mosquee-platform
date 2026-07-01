@@ -17,7 +17,8 @@ export async function getSessionMosque() {
 
 export async function requireSuperAdmin(): Promise<Session> {
   const session = await requireSession()
-  if (session.user.role !== "super_admin") redirect("/admin")
+  const user = session.user as { id: string; role?: string }
+  if (user.role !== "super_admin") redirect("/admin")
   return session
 }
 
@@ -25,9 +26,10 @@ export async function requireSuperAdmin(): Promise<Session> {
 export async function getSessionAuth() {
   const session = await requireSession()
   const mosquesList = await getMosquesByUserId(session.user.id)
+  const user = session.user as { id: string; role?: string }
   return {
     session,
-    user: { id: session.user.id, role: session.user.role },
+    user: { id: user.id, role: user.role ?? "admin" },
     userMosqueIds: mosquesList.map((m) => m.id),
   }
 }

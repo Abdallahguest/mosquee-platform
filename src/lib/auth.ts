@@ -4,7 +4,6 @@ import { db } from "@/db/index"
 import * as schema from "@/db/schema"
 import { sendEmail } from "@/lib/email"
 import { verificationEmailTemplate, resetPasswordEmailTemplate } from "@/lib/email-templates"
-import { logAction } from "@/lib/audit"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -85,29 +84,6 @@ export const auth = betterAuth({
     "http://localhost:3000",
     process.env.BETTER_AUTH_URL ?? "",
   ],
-
-  // ── Journalisation des connexions (anti-jahàla + audit) ──
-  // Enregistre dans audit_log les connexions réussies et les échecs.
-  // mosqueId = null car c'est un événement global (pas lié à une mosquée).
-  hooks: {
-    after: [
-      {
-        matcher(ctx) {
-          return ctx.path === "/sign-in/email"
-        },
-        async handler(ctx) {
-          const body = ctx.body as { email?: string } | undefined
-          const email = body?.email ?? "inconnu"
-          const success = ctx.context.returned && "user" in (ctx.context.returned as object)
-          await logAction({
-            userId:  null,
-            action:  success ? "auth.sign_in_success" : "auth.sign_in_failed",
-            details: email,
-          }).catch(() => {}) // silencieux si BDD indisponible
-        },
-      },
-    ],
-  },
 })
 
 export type Session = typeof auth.$Infer.Session

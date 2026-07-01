@@ -276,7 +276,24 @@
       "empty": "لا توجد إجراءات مسجلة بعد.",
       "colAction": "الإجراء",
       "colDate": "التاريخ",
-      "colTarget": "الهدف"
+      "colTarget": "الهدف",
+      "actions": {
+        "announcement.create":    "📢 تم إنشاء إعلان",
+        "announcement.update":    "📢 تم تعديل إعلان",
+        "announcement.delete":    "🗑 تم حذف إعلان",
+        "announcement.publish":   "✅ تم نشر إعلان",
+        "announcement.unpublish": "⏸ تم إلغاء نشر إعلان",
+        "announcement.pin":       "📌 تم تثبيت إعلان",
+        "announcement.unpin":     "📌 تم إلغاء تثبيت إعلان",
+        "event.create":           "📅 تم إنشاء فعالية",
+        "event.update":           "📅 تم تعديل فعالية",
+        "event.delete":           "🗑 تم حذف فعالية",
+        "member.create":          "👤 تمت إضافة عضو",
+        "member.update":          "👤 تم تعديل عضو",
+        "member.delete":          "🗑 تم حذف عضو",
+        "settings.update":        "⚙️ تم تعديل الإعدادات",
+        "prayer_times.update":    "🕌 تم تعديل أوقات الصلاة"
+      }
     },
     "list": {
       "colTitle": "العنوان",

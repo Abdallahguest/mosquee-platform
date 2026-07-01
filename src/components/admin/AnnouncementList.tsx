@@ -135,10 +135,15 @@ export default function AnnouncementList({
                 className="flex-1"
                 onClick={() => handlePin(a.id, a.isPinned)}
                 disabled={loadingId === a.id}
+                title={t("pinHelp")}
               >
                 {loadingId === a.id ? <Spinner /> : (a.isPinned ? t("unpin") : t("pin"))}
               </Button>
             </div>
+            {/* Aide contextuelle épinglage — visible mobile uniquement */}
+            {!a.isPinned && (
+              <p className="text-[11px] text-muted-foreground mt-1 px-0.5">{t("pinHelp")}</p>
+            )}
             {/* Supprimer séparé en dessous (anti-ghich) */}
             <Button
               variant="destructive"
@@ -200,6 +205,7 @@ export default function AnnouncementList({
                       size="sm"
                       onClick={() => handlePin(a.id, a.isPinned)}
                       disabled={loadingId === a.id}
+                      title={t("pinHelp")}
                     >
                       {loadingId === a.id ? <Spinner /> : (a.isPinned ? t("unpin") : t("pin"))}
                     </Button>

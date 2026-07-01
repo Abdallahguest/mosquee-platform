@@ -276,7 +276,24 @@
       "empty": "No actions recorded yet.",
       "colAction": "Action",
       "colDate": "Date",
-      "colTarget": "Target"
+      "colTarget": "Target",
+      "actions": {
+        "announcement.create":    "📢 Announcement created",
+        "announcement.update":    "📢 Announcement updated",
+        "announcement.delete":    "🗑 Announcement deleted",
+        "announcement.publish":   "✅ Announcement published",
+        "announcement.unpublish": "⏸ Announcement unpublished",
+        "announcement.pin":       "📌 Announcement pinned",
+        "announcement.unpin":     "📌 Announcement unpinned",
+        "event.create":           "📅 Event created",
+        "event.update":           "📅 Event updated",
+        "event.delete":           "🗑 Event deleted",
+        "member.create":          "👤 Member added",
+        "member.update":          "👤 Member updated",
+        "member.delete":          "🗑 Member deleted",
+        "settings.update":        "⚙️ Settings updated",
+        "prayer_times.update":    "🕌 Prayer times updated"
+      }
     },
     "list": {
       "colTitle": "Title",

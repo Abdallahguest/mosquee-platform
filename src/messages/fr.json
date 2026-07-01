@@ -276,7 +276,24 @@
       "empty": "Aucune action enregistrée pour l'instant.",
       "colAction": "Action",
       "colDate": "Date",
-      "colTarget": "Cible"
+      "colTarget": "Cible",
+      "actions": {
+        "announcement.create":    "📢 Annonce créée",
+        "announcement.update":    "📢 Annonce modifiée",
+        "announcement.delete":    "🗑 Annonce supprimée",
+        "announcement.publish":   "✅ Annonce publiée",
+        "announcement.unpublish": "⏸ Annonce dépubliée",
+        "announcement.pin":       "📌 Annonce épinglée",
+        "announcement.unpin":     "📌 Annonce désépinglée",
+        "event.create":           "📅 Événement créé",
+        "event.update":           "📅 Événement modifié",
+        "event.delete":           "🗑 Événement supprimé",
+        "member.create":          "👤 Membre ajouté",
+        "member.update":          "👤 Membre modifié",
+        "member.delete":          "🗑 Membre supprimé",
+        "settings.update":        "⚙️ Paramètres modifiés",
+        "prayer_times.update":    "🕌 Horaires modifiés"
+      }
     },
     "list": {
       "colTitle": "Titre",

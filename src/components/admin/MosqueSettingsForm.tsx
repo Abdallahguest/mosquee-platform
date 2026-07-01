@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useErrorMessages } from "@/lib/use-error-messages"
 import { updateMosqueSettings } from "@/lib/actions/mosque.actions"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -40,13 +41,11 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
   const tc = useTranslations("admin.common")
   const { fromResult } = useErrorMessages()
   const [error, setError]     = useState("")
-  const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
-    setSuccess("")
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
@@ -56,8 +55,7 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
     if (!result.success) {
       setError(fromResult(result))
     } else {
-      setSuccess(t("saved"))
-      setTimeout(() => setSuccess(""), 3000)
+      showToast(t("saved"), "success")
     }
     setLoading(false)
   }
@@ -68,11 +66,6 @@ export default function MosqueSettingsForm({ mosque }: { mosque: Mosque }) {
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      {success && (
-        <Alert className="border-green-200 bg-green-50 text-green-800">
-          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 

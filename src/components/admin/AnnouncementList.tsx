@@ -36,6 +36,10 @@ interface AnnouncementListProps {
   announcements: Announcement[]
 }
 
+import { showToast } from "@/components/ui/toast-provider"
+
+// ...
+
 export default function AnnouncementList({
   announcements,
 }: AnnouncementListProps) {
@@ -51,21 +55,21 @@ export default function AnnouncementList({
     setToDelete(null)
     setLoadingId(id)
     const result = await deleteAnnouncement(id)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 
   async function handleToggle(id: number, current: boolean) {
     setLoadingId(id)
     const result = await toggleAnnouncementPublished(id, current)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 
   async function handlePin(id: number, current: boolean) {
     setLoadingId(id)
     const result = await toggleAnnouncementPinned(id, current)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 

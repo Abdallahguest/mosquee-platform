@@ -25,6 +25,10 @@ interface EventListProps {
   events: Event[]
 }
 
+import { showToast } from "@/components/ui/toast-provider"
+
+// ...
+
 export default function EventList({ events }: EventListProps) {
   const t = useTranslations("admin.list")
   const locale = useLocale()
@@ -38,14 +42,14 @@ export default function EventList({ events }: EventListProps) {
     setToDelete(null)
     setLoadingId(id)
     const result = await deleteEvent(id)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 
   async function handleToggle(id: number, current: boolean) {
     setLoadingId(id)
     const result = await toggleEventPublished(id, current)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 

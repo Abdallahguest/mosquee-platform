@@ -10,6 +10,7 @@ import {
 } from "@/lib/actions/announcement.actions"
 import { useRouter } from "@/i18n/navigation"
 import { useDraftPersistence } from "@/lib/use-draft-persistence"
+import { showToast } from "@/components/ui/toast-provider"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -41,7 +42,6 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
   const isEdit = announcement != null
   const router = useRouter()
   const [error, setError]     = useState("")
-  const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -56,7 +56,6 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
-    setSuccess("")
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
@@ -81,10 +80,9 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
       return
     }
 
-    setSuccess(t("createdSuccess"))
+    showToast(t("createdSuccess"), "success")
     formRef.current?.reset()
     setLoading(false)
-    setTimeout(() => setSuccess(""), 3000)
   }
 
   return (
@@ -132,12 +130,6 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="border-green-200 bg-green-50 text-green-800">
-              <AlertDescription>{success}</AlertDescription>
             </Alert>
           )}
 

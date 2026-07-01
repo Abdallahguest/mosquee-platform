@@ -21,6 +21,10 @@ interface MemberListProps {
   onEdit: (member: Member) => void
 }
 
+import { showToast } from "@/components/ui/toast-provider"
+
+// ...
+
 export default function MemberList({ members, onEdit }: MemberListProps) {
   const t = useTranslations("admin.members")
   const { fromResult } = useErrorMessages()
@@ -33,7 +37,7 @@ export default function MemberList({ members, onEdit }: MemberListProps) {
     setToDelete(null)
     setLoadingId(id)
     const result = await deleteMember(id)
-    if (!result.success) alert(fromResult(result))
+    if (!result.success) showToast(fromResult(result), "error")
     setLoadingId(null)
   }
 

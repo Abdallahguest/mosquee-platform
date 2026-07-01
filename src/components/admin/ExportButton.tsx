@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { exportMosqueData } from "@/lib/actions/export.actions"
 import { Button } from "@/components/ui/button"
+import { showToast } from "@/components/ui/toast-provider"
 
 export default function ExportButton({ mosqueId, mosqueSlug }: { mosqueId: number; mosqueSlug: string }) {
   const t = useTranslations("admin.export")
@@ -15,7 +16,7 @@ export default function ExportButton({ mosqueId, mosqueSlug }: { mosqueId: numbe
     setLoading(false)
 
     if (!result.success) {
-      alert(result.error)
+      showToast(result.error ?? "Erreur lors de l'export", "error")
       return
     }
 

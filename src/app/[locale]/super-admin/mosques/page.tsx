@@ -1,5 +1,5 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
-import { getAllMosquesAdmin, getMosqueDeletionStats, getSuperAdminStats } from "@/db/queries"
+import { getAllMosquesAdmin, getMosqueDeletionStats } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"

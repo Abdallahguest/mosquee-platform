@@ -58,7 +58,7 @@ export default async function SuperAdminMosquesPage({ searchParams }: PageProps)
                     <span className="font-semibold">{m.name}</span>
                     {m.isVerified && <Badge variant="secondary">✓ Vérifiée</Badge>}
                   </div>
-                  <p className="text-sm text-gray-500 wrap-break-word">
+                  <p className="text-sm text-gray-500 break-words">
                     {m.city}, {m.country} · /{m.slug}
                   </p>
                 </div>

@@ -29,7 +29,7 @@ export default async function MosqueAdminsPage({ params }: PageProps) {
       <Link href="/super-admin/mosques" className="text-sm text-gray-400 hover:text-gray-600">
         ← Retour aux mosquées
       </Link>
-      <h1 className="text-2xl font-bold text-gray-900 mt-4 mb-1 wrap-break-word">Admins de {mosque.name}</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mt-4 mb-1 break-words">Admins de {mosque.name}</h1>
       <p className="text-gray-500 text-sm mb-8">Gérez qui peut administrer cette mosquée</p>
 
       {/* Assigner un admin */}
@@ -64,7 +64,7 @@ export default async function MosqueAdminsPage({ params }: PageProps) {
               <CardContent className="py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="min-w-0">
                   <span className="font-medium">{a.name}</span>
-                  <p className="text-sm text-gray-500 wrap-break-word">{a.email}</p>
+                  <p className="text-sm text-gray-500 break-words">{a.email}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   {a.role === "super_admin" && <Badge className="bg-purple-600">super-admin</Badge>}

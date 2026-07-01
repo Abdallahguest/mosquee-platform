@@ -100,7 +100,7 @@ export function useDraftPersistence({
         if (draft && isNonEmpty(draft.values)) {
           // eslint-disable-next-line react-hooks/set-state-in-effect
           setHasDraft(true)
-        /// eslint-disable-next-line react-hooks/set-state-in-effect
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setDraftSavedAt(draft.savedAt)
         }
       }

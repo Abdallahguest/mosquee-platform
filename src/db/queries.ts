@@ -417,6 +417,11 @@ export async function getMemberById(id: number, mosqueId: number): Promise<Mosqu
   return result[0] ?? null
 }
 
+export interface PaginatedResult<T> {
+  items: T[]
+  total: number
+}
+
 // ── ANNONCES actives, paginées (mêmes règles que getActiveAnnouncements) ──
 export async function getActiveAnnouncementsPaginated(
   mosqueId: number,

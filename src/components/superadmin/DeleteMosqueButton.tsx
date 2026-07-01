@@ -35,7 +35,7 @@ export default function DeleteMosqueButton({ mosqueId, mosqueName, stats }: Dele
   if (error) {
     return (
       <div className="flex flex-col gap-1">
-        <span className="text-xs text-red-600 break-words max-w-xs">{error}</span>
+        <span className="text-xs text-red-600 wrap-break-words max-w-xs">{error}</span>
         <Button variant="ghost" size="sm" onClick={() => setError("")} className="self-start text-gray-500">
           OK
         </Button>

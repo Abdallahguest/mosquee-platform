@@ -6,6 +6,7 @@ import { Geist, Noto_Sans_Arabic } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "../globals.css"
 import OfflineBanner from "@/components/public/OfflineBanner"
+import { ToastProvider } from "@/components/ui/toast-provider"
 
 // Police latine (FR/EN)
 const geist = Geist({ subsets: ["latin"], display: "swap", variable: "--font-latin" })
@@ -28,6 +29,8 @@ export const metadata: Metadata = {
   },
   icons: {
     apple: "/icons/icon-192.png",
+    icon:  "/icons/icon-192.png",
+    shortcut: "/icons/icon-192.png",
   },
 }
 
@@ -66,7 +69,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           {children}
         </NextIntlClientProvider>
-        {/* Vercel Analytics — mesure les pages vues sans cookies publicitaires */}
+        <ToastProvider />
         <Analytics />
       </body>
     </html>

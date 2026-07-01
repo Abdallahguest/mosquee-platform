@@ -15,6 +15,7 @@ export default function SuperAdminNav() {
     { href: "/super-admin",         label: t("dashboard") },
     { href: "/super-admin/mosques", label: t("mosques") },
     { href: "/super-admin/users",   label: t("users") },
+    { href: "/super-admin/health",  label: t("health") },
   ]
 
   const isActive = (href: string) =>

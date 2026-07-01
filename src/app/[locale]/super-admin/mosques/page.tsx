@@ -1,16 +1,28 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
-import { getAllMosquesAdmin, getMosqueDeletionStats } from "@/db/queries"
+import { getAllMosquesAdmin, getMosqueDeletionStats, getSuperAdminStats } from "@/db/queries"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import DeleteMosqueButton from "@/components/superadmin/DeleteMosqueButton"
 
-export default async function SuperAdminPage() {
+const PER_PAGE = 20
+
+interface PageProps {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function SuperAdminMosquesPage({ searchParams }: PageProps) {
   await requireSuperAdmin()
-  const mosques = await getAllMosquesAdmin()
-  // Stats par mosquée (annonces/événements/membres/admins), pour que la
-  // confirmation de suppression affiche exactement ce qui va disparaître.
+
+  const { page: pageParam } = await searchParams
+  const page = Math.max(1, Number(pageParam) || 1)
+
+  const allMosques = await getAllMosquesAdmin()
+  const total = allMosques.length
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE))
+  const mosques = allMosques.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
   const statsByMosque = new Map(
     await Promise.all(
       mosques.map(async (m) => [m.id, await getMosqueDeletionStats(m.id)] as const)
@@ -19,13 +31,11 @@ export default async function SuperAdminPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-      {/* En-tête : empilé sur mobile, en ligne sur écran large */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Super-Admin</h1>
-          <p className="text-gray-500 text-sm mt-1">{mosques.length} mosquée(s)</p>
+          <p className="text-gray-500 text-sm mt-1">{total} mosquée(s)</p>
         </div>
-        {/* Boutons : pleine largeur en colonne sur mobile, compacts en ligne sur desktop */}
         <div className="flex flex-col sm:flex-row gap-2">
           <Link href="/super-admin/users" className="w-full sm:w-auto">
             <Button variant="outline" className="w-full sm:w-auto">👥 Comptes</Button>
@@ -42,7 +52,6 @@ export default async function SuperAdminPage() {
         ) : (
           mosques.map((m) => (
             <Card key={m.id}>
-              {/* Ligne : infos au-dessus, actions en dessous sur mobile ; côte à côte sur desktop */}
               <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -53,7 +62,6 @@ export default async function SuperAdminPage() {
                     {m.city}, {m.country} · /{m.slug}
                   </p>
                 </div>
-                {/* Actions : pleine largeur répartie sur mobile, compactes sur desktop */}
                 <div className="flex flex-col gap-2 sm:items-end shrink-0">
                   <div className="flex gap-2">
                     <Link href={`/m/${m.slug}`} className="flex-1 sm:flex-none">
@@ -77,6 +85,23 @@ export default async function SuperAdminPage() {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 text-sm">
+          {page > 1 ? (
+            <Link href={{ pathname: "/super-admin/mosques", query: { page: page - 1 } }} className="text-green-700 hover:underline">
+              ← Précédent
+            </Link>
+          ) : <span />}
+          <span className="text-gray-500">Page {page} / {totalPages}</span>
+          {page < totalPages ? (
+            <Link href={{ pathname: "/super-admin/mosques", query: { page: page + 1 } }} className="text-green-700 hover:underline">
+              Suivant →
+            </Link>
+          ) : <span />}
+        </div>
+      )}
     </div>
   )
 }

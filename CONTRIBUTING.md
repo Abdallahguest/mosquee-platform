@@ -104,6 +104,36 @@ Voir `SECURITY.md` pour les détails.
 
 ---
 
+## Ajouter une nouvelle langue (i18n)
+
+Le projet supporte actuellement `fr`, `en`, `ar`. Pour ajouter une langue (ex: `sw` swahili) :
+
+**1. Déclarer la locale dans `src/i18n/routing.ts` :**
+```ts
+locales: ["fr", "en", "ar", "sw"],
+```
+
+**2. Créer le fichier de traduction `src/messages/sw.json` :**
+Copier `fr.json` comme base et traduire toutes les valeurs. Le fichier doit être
+un JSON valide — vérifier avec :
+```bash
+node -e "JSON.parse(require('fs').readFileSync('src/messages/sw.json','utf8')); console.log('OK')"
+```
+
+**3. Ajouter la police si nécessaire dans `src/app/[locale]/layout.tsx` :**
+Si la langue utilise un script non couvert par Geist (ex: arabe → Noto Sans Arabic),
+importer et brancher la police. Mettre `dir="rtl"` si langue droite-à-gauche.
+
+**4. Tester :**
+- Naviguer sur `/sw` (la locale sera activée par le préfixe)
+- Vérifier que toutes les clés i18n sont traduites (les clés manquantes
+  affichent la clé brute en développement)
+
+**Clés à ne pas oublier :** `common`, `home`, `auth`, `admin.*`, `superAdmin.*`,
+`announcements`, `events`, `prayer`, `privacy`.
+
+---
+
 ## Contact
 
 **Abdoulaye Bah** — abdallahmarly90@gmail.com

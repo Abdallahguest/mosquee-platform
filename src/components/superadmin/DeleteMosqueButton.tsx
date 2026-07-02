@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 import { deleteMosque } from "@/lib/actions/superadmin.actions"
 import { Button } from "@/components/ui/button"
 
@@ -13,6 +14,7 @@ interface DeleteMosqueButtonProps {
 
 export default function DeleteMosqueButton({ mosqueId, mosqueName, stats }: DeleteMosqueButtonProps) {
   const router = useRouter()
+  const t = useTranslations("superAdmin.components.deleteMosque")
   const [loading, setLoading] = useState(false)
   const [confirm, setConfirm] = useState(false)
   const [error, setError]     = useState("")
@@ -35,9 +37,9 @@ export default function DeleteMosqueButton({ mosqueId, mosqueName, stats }: Dele
   if (error) {
     return (
       <div className="flex flex-col gap-1">
-        <span className="text-xs text-red-600 wrap-break-words max-w-xs">{error}</span>
+        <span className="text-xs text-red-600 break-words max-w-xs">{error}</span>
         <Button variant="ghost" size="sm" onClick={() => setError("")} className="self-start text-gray-500">
-          OK
+          {t("okButton")}
         </Button>
       </div>
     )
@@ -45,13 +47,8 @@ export default function DeleteMosqueButton({ mosqueId, mosqueName, stats }: Dele
 
   if (!confirm) {
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setConfirm(true)}
-        className="text-red-600 hover:text-red-700"
-      >
-        Supprimer
+      <Button variant="ghost" size="sm" onClick={() => setConfirm(true)} className="text-red-600 hover:text-red-700">
+        {t("openButton")}
       </Button>
     )
   }
@@ -59,26 +56,22 @@ export default function DeleteMosqueButton({ mosqueId, mosqueName, stats }: Dele
   return (
     <div className="flex flex-col gap-2 text-end">
       <p className="text-xs text-red-700 max-w-55">
-        Supprimer <strong>{mosqueName}</strong> ?
+        {t("confirmTitle", { name: mosqueName })}
         {totalLinked > 0 && (
-          <>
-            {" "}Cela effacera aussi {stats.announcements} annonce(s), {stats.events} événement(s),{" "}
-            {stats.members} membre(s) et retirera {stats.admins} admin(s). Action irréversible.
-          </>
+          <span> {t("confirmDetails", {
+            announcements: stats.announcements,
+            events:        stats.events,
+            members:       stats.members,
+            admins:        stats.admins,
+          })}</span>
         )}
       </p>
       <div className="flex items-center justify-end gap-1">
         <Button variant="ghost" size="sm" onClick={() => setConfirm(false)}>
-          Annuler
+          {t("cancelButton")}
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleDelete}
-          disabled={loading}
-          className="text-red-600"
-        >
-          {loading ? "Suppression..." : "Oui, supprimer"}
+        <Button variant="ghost" size="sm" onClick={handleDelete} disabled={loading} className="text-red-600">
+          {loading ? t("confirmLoading") : t("confirmYes")}
         </Button>
       </div>
     </div>

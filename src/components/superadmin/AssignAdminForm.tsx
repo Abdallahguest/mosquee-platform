@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
+import { useTranslations } from "next-intl"
 import { assignAdminToMosque } from "@/lib/actions/superadmin.actions"
 import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,7 @@ interface Candidate {
 
 export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: number; candidates: Candidate[] }) {
   const router = useRouter()
+  const t = useTranslations("superAdmin.components.assignAdmin")
   const [selected, setSelected] = useState("")
   const [loading, setLoading]   = useState(false)
 
@@ -27,7 +29,7 @@ export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: nu
       showToast(result.error, "error")
       return
     }
-    showToast("Admin assigné avec succès.", "success")
+    showToast(t("successMessage"), "success")
     setSelected("")
     router.refresh()
   }
@@ -39,19 +41,15 @@ export default function AssignAdminForm({ mosqueId, candidates }: { mosqueId: nu
         onChange={(e) => setSelected(e.target.value)}
         className="w-full sm:flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
       >
-        <option value="">— Choisir un compte —</option>
+        <option value="">{t("placeholder")}</option>
         {candidates.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name} ({c.email})
           </option>
         ))}
       </select>
-      <Button
-        onClick={handleAssign}
-        disabled={loading || !selected}
-        className="w-full sm:w-auto bg-green-700 hover:bg-green-800"
-      >
-        {loading ? "..." : "Assigner"}
+      <Button onClick={handleAssign} disabled={loading || !selected} className="w-full sm:w-auto bg-green-700 hover:bg-green-800">
+        {loading ? "..." : t("assignButton")}
       </Button>
     </div>
   )

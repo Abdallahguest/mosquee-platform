@@ -99,6 +99,66 @@
       "guideTitle": "Guide d'utilisation",
       "guideDesc": "Le mode d'emploi complet de votre espace administrateur, à consulter ou télécharger.",
       "guideLink": "Ouvrir le guide (PDF)"
+    },
+    "components": {
+      "createUser": {
+        "fieldName": "Nom de l'admin",
+        "namePlaceholder": "Ex: Mamadou Diallo",
+        "fieldEmail": "Email",
+        "emailPlaceholder": "admin@mosquee.com",
+        "emailHelp": "Doit correspondre à l'email admin de la mosquée que vous lui associez.",
+        "fieldPassword": "Mot de passe temporaire",
+        "passwordPlaceholder": "Min. 8 caractères",
+        "passwordHelp": "Communiquez ce mot de passe à l'admin. Il pourra le changer ensuite.",
+        "submitButton": "Créer le compte (vérifié)",
+        "submitLoading": "Création...",
+        "successMessage": "Compte créé pour {email}. Communiquez-lui ses identifiants."
+      },
+      "editUser": {
+        "openButton": "Modifier",
+        "fieldName": "Nom",
+        "fieldEmail": "Email",
+        "fieldRole": "Rôle",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler"
+      },
+      "deleteUser": {
+        "openButton": "Supprimer",
+        "confirmText": "Supprimer {name} ?",
+        "confirmYes": "Oui",
+        "confirmNo": "Non"
+      },
+      "deleteMosque": {
+        "openButton": "Supprimer",
+        "confirmTitle": "Supprimer {name} ?",
+        "confirmDetails": "Cela effacera aussi {announcements} annonce(s), {events} événement(s), {members} membre(s) et retirera {admins} admin(s). Action irréversible.",
+        "confirmYes": "Oui, supprimer",
+        "confirmLoading": "Suppression...",
+        "cancelButton": "Annuler",
+        "okButton": "OK"
+      },
+      "assignAdmin": {
+        "placeholder": "— Choisir un compte —",
+        "assignButton": "Assigner",
+        "successMessage": "Admin assigné avec succès."
+      },
+      "removeAdmin": {
+        "openButton": "Retirer",
+        "confirmText": "Retirer {name} ?",
+        "confirmYes": "Oui",
+        "confirmNo": "Non"
+      },
+      "resetPassword": {
+        "openButton": "Réinitialiser MDP",
+        "placeholder": "Nouveau mot de passe",
+        "confirmButton": "OK",
+        "cancelButton": "Annuler",
+        "successMessage": "Mot de passe réinitialisé."
+      },
+      "verifyUser": {
+        "verify": "Vérifier",
+        "unverify": "Dé-vérifier"
+      }
     }
   },
   "prayer": {

@@ -35,6 +35,9 @@ jobs:
       - name: Run tests
         run: pnpm test:run
 
+      - name: Lint
+        run: pnpm lint
+
       - name: Coverage check
         run: pnpm test:coverage -- --reporter=text --coverage.thresholds.lines=80 --coverage.thresholds.functions=80
         continue-on-error: true

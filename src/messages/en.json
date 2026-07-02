@@ -99,6 +99,66 @@
       "guideTitle": "User guide",
       "guideDesc": "The complete guide to your admin panel, to consult or download.",
       "guideLink": "Open guide (PDF)"
+    },
+    "components": {
+      "createUser": {
+        "fieldName": "Admin name",
+        "namePlaceholder": "Ex: Mamadou Diallo",
+        "fieldEmail": "Email",
+        "emailPlaceholder": "admin@mosque.com",
+        "emailHelp": "Must match the admin email of the mosque you will assign.",
+        "fieldPassword": "Temporary password",
+        "passwordPlaceholder": "Min. 8 characters",
+        "passwordHelp": "Share this password with the admin. They can change it later.",
+        "submitButton": "Create account (verified)",
+        "submitLoading": "Creating...",
+        "successMessage": "Account created for {email}. Share their credentials."
+      },
+      "editUser": {
+        "openButton": "Edit",
+        "fieldName": "Name",
+        "fieldEmail": "Email",
+        "fieldRole": "Role",
+        "saveButton": "Save",
+        "cancelButton": "Cancel"
+      },
+      "deleteUser": {
+        "openButton": "Delete",
+        "confirmText": "Delete {name}?",
+        "confirmYes": "Yes",
+        "confirmNo": "No"
+      },
+      "deleteMosque": {
+        "openButton": "Delete",
+        "confirmTitle": "Delete {name}?",
+        "confirmDetails": "This will also delete {announcements} announcement(s), {events} event(s), {members} member(s) and remove {admins} admin(s). Irreversible.",
+        "confirmYes": "Yes, delete",
+        "confirmLoading": "Deleting...",
+        "cancelButton": "Cancel",
+        "okButton": "OK"
+      },
+      "assignAdmin": {
+        "placeholder": "— Choose an account —",
+        "assignButton": "Assign",
+        "successMessage": "Admin assigned successfully."
+      },
+      "removeAdmin": {
+        "openButton": "Remove",
+        "confirmText": "Remove {name}?",
+        "confirmYes": "Yes",
+        "confirmNo": "No"
+      },
+      "resetPassword": {
+        "openButton": "Reset password",
+        "placeholder": "New password",
+        "confirmButton": "OK",
+        "cancelButton": "Cancel",
+        "successMessage": "Password reset successfully."
+      },
+      "verifyUser": {
+        "verify": "Verify",
+        "unverify": "Unverify"
+      }
     }
   },
   "prayer": {

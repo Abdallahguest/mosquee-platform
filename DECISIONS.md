@@ -192,3 +192,23 @@ contient pas de tests E2E au sens Playwright/Cypress (navigateur réel). Il
 contient des mocks Vitest ajoutés aux tests unitaires existants pour neutraliser
 le nouvel audit log. Le commit `8932038` corrige les lacunes réelles signalées :
 pagination admin branchée, audit log superadmin complet, DECISIONS.md restauré.
+
+## D-014 — Procédure de migration BDD : génération Drizzle + application manuelle
+
+**Décision :** Les évolutions du schéma suivent ce workflow en deux étapes :
+1. Modifier `src/db/schema.ts`
+2. Générer le fichier SQL : `pnpm exec drizzle-kit generate --name="description"`
+3. En local uniquement : `pnpm db:push` pour tester
+4. En production : appliquer le SQL généré manuellement dans l'éditeur SQL Neon,
+   **après** avoir créé une branche de secours Neon.
+
+**Pourquoi pas `db:push` directement en production :**
+`db:push` ne génère pas de fichier de migration versionné. Une évolution non
+tracée est difficile à rejouer, à auditer ou à annuler. Le fichier SQL généré
+est conservé dans `drizzle/` et versionné dans git — c'est la source de vérité.
+
+**Ne jamais exécuter `pnpm db:seed` contre la production.**
+
+**Migration initiale :** `drizzle/0000_initial_schema.sql` couvre l'état complet
+du schéma au 27 juin 2026. Les migrations suivantes seront numérotées
+`0001_...`, `0002_...`, etc.

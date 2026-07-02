@@ -99,6 +99,66 @@
       "guideTitle": "دليل الاستخدام",
       "guideDesc": "الدليل الكامل للوحة الإدارة، للاطلاع أو التنزيل.",
       "guideLink": "فتح الدليل (PDF)"
+    },
+    "components": {
+      "createUser": {
+        "fieldName": "اسم المسؤول",
+        "namePlaceholder": "مثال: مامادو ديالو",
+        "fieldEmail": "البريد الإلكتروني",
+        "emailPlaceholder": "admin@mosque.com",
+        "emailHelp": "يجب أن يتطابق مع البريد الإلكتروني للمسؤول الذي ستُعيّنه.",
+        "fieldPassword": "كلمة مرور مؤقتة",
+        "passwordPlaceholder": "٨ أحرف على الأقل",
+        "passwordHelp": "شارك كلمة المرور هذه مع المسؤول. يمكنه تغييرها لاحقاً.",
+        "submitButton": "إنشاء الحساب (موثّق)",
+        "submitLoading": "جارٍ الإنشاء...",
+        "successMessage": "تم إنشاء الحساب لـ {email}. أرسل إليه بياناته."
+      },
+      "editUser": {
+        "openButton": "تعديل",
+        "fieldName": "الاسم",
+        "fieldEmail": "البريد الإلكتروني",
+        "fieldRole": "الدور",
+        "saveButton": "حفظ",
+        "cancelButton": "إلغاء"
+      },
+      "deleteUser": {
+        "openButton": "حذف",
+        "confirmText": "حذف {name}؟",
+        "confirmYes": "نعم",
+        "confirmNo": "لا"
+      },
+      "deleteMosque": {
+        "openButton": "حذف",
+        "confirmTitle": "حذف {name}؟",
+        "confirmDetails": "سيُحذف أيضاً {announcements} إعلان، {events} فعالية، {members} عضو، و{admins} مسؤول. لا يمكن التراجع.",
+        "confirmYes": "نعم، احذف",
+        "confirmLoading": "جارٍ الحذف...",
+        "cancelButton": "إلغاء",
+        "okButton": "موافق"
+      },
+      "assignAdmin": {
+        "placeholder": "— اختر حساباً —",
+        "assignButton": "تعيين",
+        "successMessage": "تم تعيين المسؤول بنجاح."
+      },
+      "removeAdmin": {
+        "openButton": "إزالة",
+        "confirmText": "إزالة {name}؟",
+        "confirmYes": "نعم",
+        "confirmNo": "لا"
+      },
+      "resetPassword": {
+        "openButton": "إعادة تعيين كلمة المرور",
+        "placeholder": "كلمة مرور جديدة",
+        "confirmButton": "موافق",
+        "cancelButton": "إلغاء",
+        "successMessage": "تمت إعادة تعيين كلمة المرور."
+      },
+      "verifyUser": {
+        "verify": "توثيق",
+        "unverify": "إلغاء التوثيق"
+      }
     }
   },
   "prayer": {

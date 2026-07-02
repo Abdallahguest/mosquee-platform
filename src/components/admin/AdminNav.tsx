@@ -62,6 +62,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
               <Link
                 href={`/m/${mosqueSlug}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-xs text-green-100 hover:text-white"
               >
                 {t("viewPage")} <span aria-hidden="true">↗</span>
@@ -107,6 +108,7 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
               <Link
                 href={`/m/${mosqueSlug}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm px-3 py-2 text-green-100"
               >
                 {t("viewPage")} <span aria-hidden="true">↗</span>

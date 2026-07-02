@@ -6,7 +6,7 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
-import { mosques, users, mosqueAdmins, account, session as sessionTable } from "@/db/schema"
+import { mosques, users, mosqueAdmins, account, session as sessionTable, verification } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 import { isValidOrangeMoneyNumber, normalizeOrangeMoneyNumber } from "@/lib/orange-money"
@@ -492,8 +492,9 @@ export async function deleteUserAccount(userId: string): Promise<ActionResult> {
   }
 
   // 5. Suppression directe en base, dans l'ordre des dépendances.
-  //    (La table `session` est importée sous l'alias `sessionTable`.)
   try {
+    // Supprimer dans l'ordre : vérifications → sessions → comptes auth → user
+    await db.delete(verification).where(eq(verification.identifier, userId))
     await db.delete(sessionTable).where(eq(sessionTable.userId, userId))
     await db.delete(account).where(eq(account.userId, userId))
     await db.delete(users).where(eq(users.id, userId))
@@ -504,7 +505,13 @@ export async function deleteUserAccount(userId: string): Promise<ActionResult> {
       targetId: `user:${userId}`,
     })
     return { success: true, data: undefined }
-  } catch {
-    return { success: false, error: "Erreur lors de la suppression du compte." }
+  } catch (error) {
+    console.error("Erreur suppression compte:", error)
+    return {
+      success: false,
+      error: error instanceof Error
+        ? `Erreur : ${error.message}`
+        : "Erreur lors de la suppression du compte.",
+    }
   }
 }

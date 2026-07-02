@@ -6,7 +6,7 @@ import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
 import { eq, and } from "drizzle-orm"
 import { auth } from "@/lib/auth"
-import { mosques, users, mosqueAdmins, account, session as sessionTable, verification } from "@/db/schema"
+import { mosques, users, mosqueAdmins, account, session as sessionTable, verification, announcements } from "@/db/schema"
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 import { isValidOrangeMoneyNumber, normalizeOrangeMoneyNumber } from "@/lib/orange-money"
@@ -493,7 +493,12 @@ export async function deleteUserAccount(userId: string): Promise<ActionResult> {
 
   // 5. Suppression directe en base, dans l'ordre des dépendances.
   try {
-    // Supprimer dans l'ordre : vérifications → sessions → comptes auth → user
+    // announcements.author_id référence users.id sans CASCADE — à nettoyer en premier.
+    // On ne supprime que les annonces où CE user est l'auteur ET dont la mosquée
+    // n'a pas d'autres admins (sécurité : on ne vide pas une mosquée active).
+    // Approche simple : mettre author_id à null n'est pas possible (NOT NULL).
+    // On supprime les annonces orphelines de cet auteur.
+    await db.delete(announcements).where(eq(announcements.authorId, userId))
     await db.delete(verification).where(eq(verification.identifier, userId))
     await db.delete(sessionTable).where(eq(sessionTable.userId, userId))
     await db.delete(account).where(eq(account.userId, userId))

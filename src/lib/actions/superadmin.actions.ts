@@ -10,6 +10,7 @@ import { mosques, users, mosqueAdmins, account, session as sessionTable } from "
 import { canSuperAdminActOnUser } from "@/lib/authorization"
 import { logAction, AUDIT_ACTIONS } from "@/lib/audit"
 import { isValidOrangeMoneyNumber, normalizeOrangeMoneyNumber } from "@/lib/orange-money"
+import { hashPassword } from "better-auth/crypto"
 
 export type ActionResult<T = void> =
   | { success: true;  data: T;       error?: never }
@@ -78,20 +79,33 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
   }
 
   try {
-    // Créer le compte via l'API Better-Auth (hash correct du mot de passe)
-    await auth.api.signUpEmail({
-      body: {
-        name:     parsed.data.name,
-        email:    parsed.data.email,
-        password: parsed.data.password,
-      },
+    // Bypass de disableSignUp : on crée l'utilisateur directement en BDD
+    // avec hashPassword de Better-Auth (même format, 100% compatible).
+    // auth.api.signUpEmail() est bloqué par disableSignUp: true — c'est voulu
+    // pour le public, mais le super-admin doit pouvoir créer des comptes.
+    const userId = crypto.randomUUID()
+    const hashedPassword = await hashPassword(parsed.data.password)
+
+    await db.insert(users).values({
+      id:            userId,
+      name:          parsed.data.name,
+      email:         parsed.data.email,
+      emailVerified: true,   // super-admin crée des comptes vérifiés directement
+      role:          "admin",
+      createdAt:     new Date(),
+      updatedAt:     new Date(),
     })
 
-    // Marquer l'email comme vérifié directement (c'est le super-admin qui crée)
-    await db
-      .update(users)
-      .set({ emailVerified: true })
-      .where(eq(users.email, parsed.data.email))
+    // Better-Auth stocke le mot de passe dans la table `account`, pas `users`
+    await db.insert(account).values({
+      id:         crypto.randomUUID(),
+      userId,
+      accountId:  parsed.data.email,
+      providerId: "credential",
+      password:   hashedPassword,
+      createdAt:  new Date(),
+      updatedAt:  new Date(),
+    })
 
     revalidatePath("/super-admin")
     await logAction({

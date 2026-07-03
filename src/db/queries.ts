@@ -552,17 +552,37 @@ export async function hasPastEvents(mosqueId: number): Promise<boolean> {
 // ── JOURNAL D'ACTIVITÉ (audit_log) ──
 // Retourne les N dernières actions pour une mosquée donnée.
 // Utilisé par la page /admin/activity.
+export interface AuditLogEntry {
+  id: number
+  action: string
+  details: string | null
+  targetId: string | null
+  createdAt: Date
+  userName: string | null
+  userEmail: string | null
+}
+
 export async function getRecentAuditLog(
   mosqueId: number,
-  limit: number = 30
-): Promise<AuditLog[]> {
+  limit: number = 50
+): Promise<AuditLogEntry[]> {
   try {
-    return await db
-      .select()
+    const rows = await db
+      .select({
+        id:        auditLog.id,
+        action:    auditLog.action,
+        details:   auditLog.details,
+        targetId:  auditLog.targetId,
+        createdAt: auditLog.createdAt,
+        userName:  users.name,
+        userEmail: users.email,
+      })
       .from(auditLog)
+      .leftJoin(users, eq(auditLog.userId, users.id))
       .where(eq(auditLog.mosqueId, mosqueId))
       .orderBy(desc(auditLog.createdAt))
       .limit(limit)
+    return rows
   } catch (error) {
     console.error("Erreur récupération journal d'activité:", error)
     return []

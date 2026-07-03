@@ -9,9 +9,10 @@ import LanguageSwitcher from "@/components/public/LanguageSwitcher"
 interface AdminNavProps {
   mosqueName?: string
   mosqueSlug?: string
+  isSuperAdmin?: boolean
 }
 
-export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
+export default function AdminNav({ mosqueName, mosqueSlug, isSuperAdmin }: AdminNavProps) {
   const t = useTranslations("admin.nav")
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
@@ -58,6 +59,14 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
 
           {/* Actions desktop */}
           <div className="hidden md:flex items-center gap-3">
+            {isSuperAdmin && (
+              <Link
+                href="/admin/select-mosque"
+                className="text-xs text-amber-300 hover:text-white font-medium"
+              >
+                🔀 {t("selectMosque")}
+              </Link>
+            )}
             {mosqueSlug && (
               <Link
                 href={`/m/${mosqueSlug}`}
@@ -112,6 +121,15 @@ export default function AdminNav({ mosqueName, mosqueSlug }: AdminNavProps) {
                 className="text-sm px-3 py-2 text-green-100"
               >
                 {t("viewPage")} <span aria-hidden="true">↗</span>
+              </Link>
+            )}
+            {isSuperAdmin && (
+              <Link
+                href="/admin/select-mosque"
+                onClick={() => setOpen(false)}
+                className="text-sm px-3 py-2 text-amber-300 font-medium"
+              >
+                🔀 {t("selectMosque")}
               </Link>
             )}
             <div className="px-3 pt-2">

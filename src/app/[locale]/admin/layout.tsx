@@ -15,15 +15,17 @@ export default async function AdminLayout({
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect("/login")
 
+  const user = session.user as { id: string; role?: string }
+  const isSuperAdmin = user.role === "super_admin"
+
   // Récupérer la mosquée pour afficher son nom dans la navbar
   const mosque = await getPrimaryMosqueByUserId(session.user.id)
   const locale = await getLocale()
-  // Nom localisé selon la langue de l'admin (cohérent avec le public).
   const mosqueName = mosque ? getMosqueName(mosque, locale) : undefined
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <AdminNav mosqueName={mosqueName} mosqueSlug={mosque?.slug} />
+      <AdminNav mosqueName={mosqueName} mosqueSlug={mosque?.slug} isSuperAdmin={isSuperAdmin} />
       <main className="flex-1">{children}</main>
       <AdminFooter userName={session.user.name} userEmail={session.user.email} />
     </div>

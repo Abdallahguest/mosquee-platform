@@ -240,7 +240,8 @@
       "menu": "Menu",
       "logout": "Se déconnecter",
       "members": "Membres",
-      "activity": "Journal d'activité"
+      "activity": "Journal d'activité",
+      "selectMosque": "Changer de mosquée"
     },
     "dashboard": {
       "greeting": "Assalamu alaykum",

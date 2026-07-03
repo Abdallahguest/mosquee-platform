@@ -1,7 +1,8 @@
-import { headers } from "next/headers"
+import { headers, cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth, type Session } from "@/lib/auth"
-import { getPrimaryMosqueByUserId, getMosquesByUserId } from "@/db/queries"
+import { getPrimaryMosqueByUserId, getMosquesByUserId, getMosqueById } from "@/db/queries"
+import { COOKIE_NAME } from "@/lib/actions/select-mosque.actions"
 
 export async function requireSession(): Promise<Session> {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -11,6 +12,22 @@ export async function requireSession(): Promise<Session> {
 
 export async function getSessionMosque() {
   const session = await requireSession()
+  const user = session.user as { id: string; role?: string }
+
+  // Super-admin : priorité au cookie de sélection de mosquée.
+  // Cela lui permet de gérer n'importe quelle mosquée depuis le panel admin normal.
+  if (user.role === "super_admin") {
+    const cookieStore = await cookies()
+    const selectedId = cookieStore.get(COOKIE_NAME)?.value
+    if (selectedId) {
+      const mosque = await getMosqueById(Number(selectedId))
+      if (mosque) return { session, mosque, mosqueId: mosque.id }
+    }
+    // Aucun cookie → aucune mosquée sélectionnée (affichera le sélecteur)
+    return { session, mosque: null, mosqueId: null }
+  }
+
+  // Admin normal : mosquée principale liée à son compte
   const mosque = await getPrimaryMosqueByUserId(session.user.id)
   return { session, mosque, mosqueId: mosque?.id ?? null }
 }

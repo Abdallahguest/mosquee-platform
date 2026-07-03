@@ -29,8 +29,9 @@ export default function LoginPage() {
         logSignIn(email, false).catch(() => {})
       } else {
         logSignIn(email, true).catch(() => {})
-        router.push("/admin")
-        router.refresh()
+        // Navigation complète pour que le middleware et le cookie de session
+        // soient correctement pris en compte (router.push + refresh peut geler)
+        window.location.href = "/admin"
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("genericError"))

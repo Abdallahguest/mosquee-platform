@@ -1,11 +1,12 @@
-import { headers } from "next/headers"
+import { headers, cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { getLocale } from "next-intl/server"
 import { auth } from "@/lib/auth"
-import { getPrimaryMosqueByUserId } from "@/db/queries"
+import { getPrimaryMosqueByUserId, getMosqueById } from "@/db/queries"
 import { getMosqueName } from "@/lib/mosque-name"
 import AdminNav from "@/components/admin/AdminNav"
 import AdminFooter from "@/components/admin/AdminFooter"
+import { SELECTED_MOSQUE_COOKIE } from "@/lib/mosque-cookie"
 
 export default async function AdminLayout({
   children,
@@ -18,8 +19,19 @@ export default async function AdminLayout({
   const user = session.user as { id: string; role?: string }
   const isSuperAdmin = user.role === "super_admin"
 
-  // Récupérer la mosquée pour afficher son nom dans la navbar
-  const mosque = await getPrimaryMosqueByUserId(session.user.id)
+  // Pour le super-admin : utiliser le cookie de sélection de mosquée
+  // pour afficher le bon nom dans la navbar.
+  let mosque = null
+  if (isSuperAdmin) {
+    const cookieStore = await cookies()
+    const selectedId = cookieStore.get(SELECTED_MOSQUE_COOKIE)?.value
+    if (selectedId) {
+      mosque = await getMosqueById(Number(selectedId))
+    }
+  } else {
+    mosque = await getPrimaryMosqueByUserId(session.user.id)
+  }
+
   const locale = await getLocale()
   const mosqueName = mosque ? getMosqueName(mosque, locale) : undefined
 

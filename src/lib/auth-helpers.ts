@@ -2,7 +2,7 @@ import { headers, cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth, type Session } from "@/lib/auth"
 import { getPrimaryMosqueByUserId, getMosquesByUserId, getMosqueById } from "@/db/queries"
-import { COOKIE_NAME } from "@/lib/actions/select-mosque.actions"
+import { SELECTED_MOSQUE_COOKIE } from "@/lib/mosque-cookie"
 
 export async function requireSession(): Promise<Session> {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -18,7 +18,7 @@ export async function getSessionMosque() {
   // Cela lui permet de gérer n'importe quelle mosquée depuis le panel admin normal.
   if (user.role === "super_admin") {
     const cookieStore = await cookies()
-    const selectedId = cookieStore.get(COOKIE_NAME)?.value
+    const selectedId = cookieStore.get(SELECTED_MOSQUE_COOKIE)?.value
     if (selectedId) {
       const mosque = await getMosqueById(Number(selectedId))
       if (mosque) return { session, mosque, mosqueId: mosque.id }

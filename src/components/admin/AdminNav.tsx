@@ -36,7 +36,7 @@ export default function AdminNav({ mosqueName, mosqueSlug, isSuperAdmin }: Admin
         <div className="flex items-center justify-between h-14">
           <Link href="/admin" className="flex items-center gap-2 font-semibold min-w-0 flex-1">
             <span aria-hidden="true" className="shrink-0">🕌</span>
-            <span className="truncate">{mosqueName ?? t("dashboard")}</span>
+            <span className="leading-tight">{mosqueName ?? t("dashboard")}</span>
           </Link>
 
           {/* Liens desktop */}

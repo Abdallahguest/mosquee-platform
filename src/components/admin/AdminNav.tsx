@@ -34,9 +34,9 @@ export default function AdminNav({ mosqueName, mosqueSlug, isSuperAdmin }: Admin
     <nav className="bg-green-800 text-white">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
-          <Link href="/admin" className="flex items-center gap-2 font-semibold">
-            <span aria-hidden="true">🕌</span>
-            <span className="max-w-40 truncate md:max-w-64">{mosqueName ?? t("dashboard")}</span>
+          <Link href="/admin" className="flex items-center gap-2 font-semibold min-w-0 flex-1">
+            <span aria-hidden="true" className="shrink-0">🕌</span>
+            <span className="truncate">{mosqueName ?? t("dashboard")}</span>
           </Link>
 
           {/* Liens desktop */}

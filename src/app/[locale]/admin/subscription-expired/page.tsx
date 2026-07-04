@@ -1,7 +1,8 @@
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 import { getPrimaryMosqueByUserId } from "@/db/queries"
-import { computeSubscriptionStatus } from "@/lib/actions/subscription.actions"import { Link } from "@/i18n/navigation"
+import { computeSubscriptionStatus } from "@/lib/subscription-status"
+import { Link } from "@/i18n/navigation"
 import LogoutButton from "@/components/LogoutButton"
 import { redirect } from "next/navigation"
 

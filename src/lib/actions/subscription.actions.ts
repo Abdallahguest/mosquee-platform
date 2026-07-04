@@ -1,4 +1,5 @@
 "use server"
+"use server"
 
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -8,7 +9,6 @@ import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { logAction } from "@/lib/audit"
 import type { ActionResult } from "./action-result"
-export { computeSubscriptionStatus } from "@/lib/subscription-status"
 
 // ─────────────────────────────────────────────────────────────
 // subscription.actions.ts — Gestion des abonnements

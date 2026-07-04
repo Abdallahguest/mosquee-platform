@@ -1,11 +1,12 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { getAllMosquesAdmin } from "@/db/queries"
-import { computeSubscriptionStatus } from "@/lib/actions/subscription.actions"
+import { computeSubscriptionStatus } from "@/lib/subscription-status"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import RenewButton from "@/components/superadmin/RenewButton"
 import SuspendButton from "@/components/superadmin/SuspendButton"
 import ReactivateButton from "@/components/superadmin/ReactivateButton"
+import { renewSubscription, suspendSubscription, reactivateSubscription } from "@/lib/actions/subscription.actions"
 
 function statusBadge(status: ReturnType<typeof computeSubscriptionStatus>) {
   const config = {

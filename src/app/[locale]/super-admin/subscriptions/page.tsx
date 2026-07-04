@@ -98,7 +98,10 @@ export default async function SubscriptionsPage() {
                   {mosque.computedStatus !== "suspended" ? (
                     <SuspendButton mosqueId={mosque.id} mosqueName={mosque.name} />
                   ) : (
-                    <form action={reactivateSubscription.bind(null, mosque.id)}>
+                  <form action={async () => {
+                    "use server"
+                    await reactivateSubscription(mosque.id)
+                  }}>
                       <button
                         type="submit"
                         className="text-xs text-green-700 hover:underline"

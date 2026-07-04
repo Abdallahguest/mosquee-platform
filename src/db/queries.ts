@@ -1,7 +1,7 @@
 import { db } from "./index"
 import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers, auditLog } from "./schema"
 import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
-import type { Mosque, Announcement, Event, MosqueMember, AuditLog } from "./schema"
+import type { Mosque, Announcement, Event, MosqueMember } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)

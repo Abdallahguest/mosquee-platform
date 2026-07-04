@@ -76,7 +76,8 @@
       "users": "Accounts",
       "backToAdmin": "← My admin",
       "menu": "Menu",
-      "health": "Health"
+      "health": "Health",
+      "subscriptions": "Subscriptions"
     },
     "dashboard": {
       "title": "Dashboard",

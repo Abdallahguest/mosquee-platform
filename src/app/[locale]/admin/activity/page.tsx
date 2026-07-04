@@ -24,6 +24,10 @@ const ACTION_MAP: Record<string, { icon: string; label: string; color: string }>
   // Paramètres
   "settings.update":        { icon: "⚙️",  label: "Paramètres modifiés",   color: "bg-gray-50 text-gray-700 border-gray-200" },
   "prayer_times.update":    { icon: "🕌",  label: "Horaires modifiés",     color: "bg-green-50 text-green-700 border-green-200" },
+  // subscription
+  "subscription.renew":       { icon: "💰", label: "Paiement enregistré",   color: "bg-green-50 text-green-700 border-green-200" },
+  "subscription.suspend":     { icon: "⛔", label: "Abonnement suspendu",    color: "bg-red-50 text-red-700 border-red-200" },
+  "subscription.reactivate":  { icon: "✅", label: "Abonnement réactivé",   color: "bg-green-50 text-green-700 border-green-200" },
   // Super-admin
   "admin.assign":           { icon: "🔗",  label: "Admin assigné",         color: "bg-blue-50 text-blue-700 border-blue-200" },
   "admin.remove":           { icon: "❌",  label: "Admin retiré",          color: "bg-red-50 text-red-700 border-red-200" },

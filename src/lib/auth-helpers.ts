@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { auth, type Session } from "@/lib/auth"
 import { getPrimaryMosqueByUserId, getMosquesByUserId, getMosqueById } from "@/db/queries"
 import { SELECTED_MOSQUE_COOKIE } from "@/lib/mosque-cookie"
+import { computeSubscriptionStatus } from "@/lib/actions/subscription.actions"
 
 export async function requireSession(): Promise<Session> {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -15,7 +16,6 @@ export async function getSessionMosque() {
   const user = session.user as { id: string; role?: string }
 
   // Super-admin : priorité au cookie de sélection de mosquée.
-  // Cela lui permet de gérer n'importe quelle mosquée depuis le panel admin normal.
   if (user.role === "super_admin") {
     const cookieStore = await cookies()
     const selectedId = cookieStore.get(SELECTED_MOSQUE_COOKIE)?.value
@@ -23,12 +23,21 @@ export async function getSessionMosque() {
       const mosque = await getMosqueById(Number(selectedId))
       if (mosque) return { session, mosque, mosqueId: mosque.id }
     }
-    // Aucun cookie → aucune mosquée sélectionnée (affichera le sélecteur)
     return { session, mosque: null, mosqueId: null }
   }
 
   // Admin normal : mosquée principale liée à son compte
   const mosque = await getPrimaryMosqueByUserId(session.user.id)
+
+  // Vérification abonnement : si expiré ou suspendu → rediriger vers page dédiée
+  // sauf si la mosquée n'a pas encore de trialEndsAt (création avant cette fonctionnalité)
+  if (mosque) {
+    const status = computeSubscriptionStatus(mosque)
+    if (status === "expired" || status === "suspended") {
+      redirect("/admin/subscription-expired")
+    }
+  }
+
   return { session, mosque, mosqueId: mosque?.id ?? null }
 }
 

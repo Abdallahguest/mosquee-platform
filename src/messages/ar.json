@@ -76,7 +76,8 @@
       "users": "الحسابات",
       "backToAdmin": "→ لوحتي",
       "menu": "القائمة",
-      "health": "الصحة"
+      "health": "الصحة",
+      "subscriptions": "الاشتراكات"
     },
     "dashboard": {
       "title": "لوحة التحكم",

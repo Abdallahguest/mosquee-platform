@@ -232,6 +232,9 @@ export async function createMosque(formData: FormData): Promise<ActionResult<{ i
         contactEmail: parsed.data.contactEmail || null,
         contactPhone: parsed.data.contactPhone || null,
         orangeMoneyNumber: parsed.data.orangeMoneyNumber || null,
+        // Période gratuite : 3 mois à partir de la création
+        trialEndsAt: new Date(Date.now() + 3 * 30 * 24 * 3600 * 1000),
+        subscriptionStatus: "trial",
       })
       .returning({ id: mosques.id })
 

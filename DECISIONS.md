@@ -212,3 +212,34 @@ est conservé dans `drizzle/` et versionné dans git — c'est la source de vér
 **Migration initiale :** `drizzle/0000_initial_schema.sql` couvre l'état complet
 du schéma au 27 juin 2026. Les migrations suivantes seront numérotées
 `0001_...`, `0002_...`, etc.
+
+## D-015 — Gestion des abonnements : statut et dates dans la table mosques
+
+**Décision :** Les informations d'abonnement sont stockées directement dans la
+table `mosques` (3 champs) plutôt que dans une table séparée.
+
+**Champs :**
+- `trial_ends_at` : date de fin de la période gratuite
+- `paid_until` : date jusqu'à laquelle le service est payé (null = jamais payé)
+- `subscription_status` : `trial` | `active` | `expired` | `suspended`
+
+**Cycle de vie :**
+```
+Création mosquée → status='trial', trial_ends_at = now + 3 mois
+                         ↓ (date dépassée)
+                    status='expired' (calculé dynamiquement)
+                         ↓ (super-admin enregistre un paiement)
+                    status='active', paid_until = date + N mois
+                         ↓ (paid_until dépassé)
+                    status='expired'
+```
+
+**Pourquoi pas une table séparée :** anti-israf. À ce stade, une table séparée
+avec historique des paiements serait prématurée. Un champ `paid_until` suffit.
+L'historique est dans `audit_log` (action `subscription.renew`).
+
+**Règles éthiques :**
+- Anti-jahàla : la mosquée voit toujours son statut et la date d'expiration
+- Anti-gharar : le panel admin montre un avertissement avant expiration (J-7)
+- Les données ne sont jamais effacées — on suspend, jamais on supprime
+- Pas de suspension automatique — le super-admin décide manuellement

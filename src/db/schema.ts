@@ -37,7 +37,23 @@ export const mosques = pgTable("mosques", {
   timezone:          varchar("timezone", { length: 100 }).notNull().default("Africa/Conakry"),
   isVerified:        boolean("is_verified").notNull().default(false),
   createdAt:         timestamp("created_at").notNull().defaultNow(),
-  donationUrl: varchar("donation_url", { length: 500 }),  // lien de don externe, optionnel
+  donationUrl: varchar("donation_url", { length: 500 }),
+
+  // ── Abonnement (gestion du service payant) ──
+  // trialEndsAt  : date de fin de la période gratuite (3 mois par défaut).
+  //                null = pas encore définie (mosquée créée avant cette fonctionnalité).
+  // paidUntil    : date jusqu'à laquelle le service est payé.
+  //                null = service non encore payé (en période gratuite ou expiré).
+  // subscriptionStatus : état de l'abonnement.
+  //   'trial'    → période gratuite en cours
+  //   'active'   → abonnement payé à jour
+  //   'expired'  → période gratuite ou abonnement expiré, paiement en attente
+  //   'suspended'→ suspendu manuellement par le super-admin
+  // Anti-jahàla : l'admin voit toujours son statut clairement.
+  // Anti-gharar : aucune suspension sans affichage préalable du statut.
+  trialEndsAt:        timestamp("trial_ends_at"),
+  paidUntil:          timestamp("paid_until"),
+  subscriptionStatus: varchar("subscription_status", { length: 20 }).notNull().default("trial"),  // lien de don externe, optionnel
   contactEmail: varchar("contact_email", { length: 255 }),  // optionnel
   contactPhone: varchar("contact_phone", { length: 50 }),   // optionnel
   // Numéro Orange Money pour les dons directs (affiché en clair + lien tel:)

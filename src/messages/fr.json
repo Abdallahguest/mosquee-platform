@@ -76,7 +76,8 @@
       "users": "Comptes",
       "backToAdmin": "← Mon admin",
       "menu": "Menu",
-      "health": "Santé"
+      "health": "Santé",
+      "subscriptions": "Abonnements"
     },
     "dashboard": {
       "title": "Tableau de bord",

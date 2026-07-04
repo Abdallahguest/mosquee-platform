@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { auth, type Session } from "@/lib/auth"
 import { getPrimaryMosqueByUserId, getMosquesByUserId, getMosqueById } from "@/db/queries"
 import { SELECTED_MOSQUE_COOKIE } from "@/lib/mosque-cookie"
-import { computeSubscriptionStatus } from "@/lib/actions/subscription.actions"
+import { computeSubscriptionStatus } from "@/lib/subscription-status"
 
 export async function requireSession(): Promise<Session> {
   const session = await auth.api.getSession({ headers: await headers() })

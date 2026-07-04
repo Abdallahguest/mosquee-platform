@@ -8,6 +8,7 @@ import { mosques } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { logAction } from "@/lib/audit"
 import type { ActionResult } from "./action-result"
+export { computeSubscriptionStatus } from "@/lib/subscription-status"
 
 // ─────────────────────────────────────────────────────────────
 // subscription.actions.ts — Gestion des abonnements
@@ -151,33 +152,4 @@ export async function reactivateSubscription(mosqueId: number): Promise<ActionRe
   } catch {
     return { success: false, error: "Erreur lors de la réactivation." }
   }
-}
-
-// Calcule le statut effectif d'une mosquée (en tenant compte des dates réelles).
-// Appelé côté serveur pour afficher le bon badge sans dépendre du champ stocké.
-export function computeSubscriptionStatus(mosque: {
-  subscriptionStatus: string
-  trialEndsAt:        Date | null
-  paidUntil:          Date | null
-}): "trial" | "active" | "expired" | "suspended" | "expiring_soon" {
-  if (mosque.subscriptionStatus === "suspended") return "suspended"
-
-  const now = new Date()
-
-  // Actif et payé jusqu'à...
-  if (mosque.paidUntil && mosque.paidUntil > now) {
-    // Avertissement J-7 : expire dans moins de 7 jours
-    const sevenDays = new Date(now.getTime() + 7 * 24 * 3600 * 1000)
-    if (mosque.paidUntil <= sevenDays) return "expiring_soon"
-    return "active"
-  }
-
-  // En période d'essai
-  if (mosque.trialEndsAt && mosque.trialEndsAt > now) {
-    const sevenDays = new Date(now.getTime() + 7 * 24 * 3600 * 1000)
-    if (mosque.trialEndsAt <= sevenDays) return "expiring_soon"
-    return "trial"
-  }
-
-  return "expired"
 }

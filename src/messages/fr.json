@@ -266,7 +266,13 @@
       "onboardingStep2Link": "Créer une annonce →",
       "onboardingStep3Title": "Visitez votre page publique",
       "onboardingStep3Desc": "Vérifiez ce que voient les fidèles.",
-      "onboardingStep3Link": "Voir la page →"
+      "onboardingStep3Link": "Voir la page →",
+      "trialBannerDays": "Période gratuite : {days} jour(s) restant(s)",
+      "trialBannerExpires": "Votre période gratuite se termine le {date}.",
+      "trialBannerContact": "Contactez-nous pour continuer → WhatsApp",
+      "trialBadge": "{days} j. gratuits restants",
+      "expiringSoonBanner": "⚠️ Votre accès expire dans {days} jour(s). Contactez-nous pour renouveler.",
+      "expiringSoonBadge": "Expire dans {days} j."
     },
     "noMosque": {
       "title": "Aucune mosquée associée à votre compte",

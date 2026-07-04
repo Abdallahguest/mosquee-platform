@@ -7,6 +7,17 @@ import { getAnnouncementsCount, getEventsCount } from "@/db/queries"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { computeSubscriptionStatus } from "@/lib/subscription-status"
+
+function daysUntil(date: Date | null): number {
+  if (!date) return 0
+  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / (1000 * 3600 * 24)))
+}
+
+function formatDate(date: Date | null, locale: string): string {
+  if (!date) return "—"
+  return date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })
+}
 
 export default async function AdminPage() {
   const { session, mosque, mosqueId } = await getSessionMosque()
@@ -51,6 +62,11 @@ export default async function AdminPage() {
 
   const isFirstTime = totalAnnouncements === 0 && totalEvents === 0
 
+  const subscriptionStatus = computeSubscriptionStatus(mosque)
+  const relevantDate = mosque.paidUntil ?? mosque.trialEndsAt
+  const daysLeft = daysUntil(relevantDate)
+  const expiryDateLabel = formatDate(relevantDate, locale)
+
   const connectedDate = new Date(session.session.createdAt).toLocaleString(locale, {
     day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
   })
@@ -70,12 +86,55 @@ export default async function AdminPage() {
           <LogoutButton />
         </div>
 
-        {/* Bloc info mosquée */}
+        {/* Bloc info mosquée + badge jours restants (fonctionnalité 2) */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
-          <p className="text-sm text-green-800">
-            <strong>{t("yourMosque")} :</strong> {mosque.name} — {mosque.city}
-          </p>
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-sm text-green-800">
+              <strong>{t("yourMosque")} :</strong> {mosque.name} — {mosque.city}
+            </p>
+            {/* Badge jours restants — visible uniquement en trial ou expiring_soon */}
+            {(subscriptionStatus === "trial" || subscriptionStatus === "expiring_soon") && daysLeft > 0 && (
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
+                subscriptionStatus === "expiring_soon"
+                  ? "bg-amber-100 text-amber-700 border border-amber-300"
+                  : "bg-blue-100 text-blue-700 border border-blue-300"
+              }`}>
+                {subscriptionStatus === "expiring_soon"
+                  ? t("expiringSoonBadge", { days: daysLeft })
+                  : t("trialBadge", { days: daysLeft })}
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Bannière J-7 (fonctionnalité 1) — avertissement avant expiration */}
+        {subscriptionStatus === "expiring_soon" && (
+          <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4">
+            <p className="text-sm text-amber-800 font-medium mb-1">
+              {t("expiringSoonBanner", { days: daysLeft })}
+            </p>
+            <p className="text-xs text-amber-700 mb-2">
+              {t("trialBannerExpires", { date: expiryDateLabel })}
+            </p>
+            <a
+              href="https://wa.me/224626736219"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+            >
+              💬 {t("trialBannerContact")}
+            </a>
+          </div>
+        )}
+
+        {/* Bannière période gratuite (informative, pas alarmante) */}
+        {subscriptionStatus === "trial" && daysLeft <= 14 && daysLeft > 7 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4">
+            <p className="text-xs text-blue-700">
+              {t("trialBannerDays", { days: daysLeft })} · {t("trialBannerExpires", { date: expiryDateLabel })}
+            </p>
+          </div>
+        )}
 
         <Link
           href={`/m/${mosque.slug}`}

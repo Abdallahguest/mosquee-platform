@@ -266,7 +266,13 @@
       "onboardingStep2Link": "Create an announcement →",
       "onboardingStep3Title": "Visit your public page",
       "onboardingStep3Desc": "See what worshippers see.",
-      "onboardingStep3Link": "View page →"
+      "onboardingStep3Link": "View page →",
+      "trialBannerDays": "Free period: {days} day(s) remaining",
+      "trialBannerExpires": "Your free period ends on {date}.",
+      "trialBannerContact": "Contact us to continue → WhatsApp",
+      "trialBadge": "{days} free days left",
+      "expiringSoonBanner": "⚠️ Your access expires in {days} day(s). Contact us to renew.",
+      "expiringSoonBadge": "Expires in {days} d."
     },
     "noMosque": {
       "title": "No mosque linked to your account",

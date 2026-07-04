@@ -266,7 +266,13 @@
       "onboardingStep2Link": "إنشاء إعلان →",
       "onboardingStep3Title": "زُر صفحتك العامة",
       "onboardingStep3Desc": "شاهد ما يراه المصلون.",
-      "onboardingStep3Link": "عرض الصفحة →"
+      "onboardingStep3Link": "عرض الصفحة →",
+      "trialBannerDays": "الفترة المجانية: {days} يوم متبقٍ",
+      "trialBannerExpires": "تنتهي فترتك المجانية في {date}.",
+      "trialBannerContact": "تواصل معنا للاستمرار ← واتساب",
+      "trialBadge": "{days} يوم مجاني متبقٍ",
+      "expiringSoonBanner": "⚠️ ينتهي وصولك خلال {days} يوم/أيام. تواصل معنا للتجديد.",
+      "expiringSoonBadge": "ينتهي خلال {days} ي."
     },
     "noMosque": {
       "title": "لا يوجد مسجد مرتبط بحسابك",

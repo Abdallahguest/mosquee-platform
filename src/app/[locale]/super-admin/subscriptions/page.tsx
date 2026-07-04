@@ -1,10 +1,11 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { getAllMosquesAdmin } from "@/db/queries"
-import { computeSubscriptionStatus, renewSubscription, suspendSubscription, reactivateSubscription } from "@/lib/actions/subscription.actions"
+import { computeSubscriptionStatus } from "@/lib/actions/subscription.actions"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import RenewButton from "@/components/superadmin/RenewButton"
 import SuspendButton from "@/components/superadmin/SuspendButton"
+import ReactivateButton from "@/components/superadmin/ReactivateButton"
 
 function statusBadge(status: ReturnType<typeof computeSubscriptionStatus>) {
   const config = {
@@ -98,17 +99,7 @@ export default async function SubscriptionsPage() {
                   {mosque.computedStatus !== "suspended" ? (
                     <SuspendButton mosqueId={mosque.id} mosqueName={mosque.name} />
                   ) : (
-                  <form action={async () => {
-                    "use server"
-                    await reactivateSubscription(mosque.id)
-                  }}>
-                      <button
-                        type="submit"
-                        className="text-xs text-green-700 hover:underline"
-                      >
-                        Réactiver
-                      </button>
-                    </form>
+                    <ReactivateButton mosqueId={mosque.id} />
                   )}
                 </div>
               </div>

@@ -1,6 +1,4 @@
-import { headers } from "next/headers"
-import { headers } from "next/headers"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth-helpers"
 import { getPrimaryMosqueByUserId } from "@/db/queries"
 import { computeSubscriptionStatus } from "@/lib/subscription-status"
 import { Link } from "@/i18n/navigation"
@@ -12,8 +10,7 @@ import { redirect } from "next/navigation"
 // Les données de la mosquée sont conservées — rien n'est perdu.
 
 export default async function SubscriptionExpiredPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/login")
+  const session = await requireSession()
 
   const mosque = await getPrimaryMosqueByUserId(session.user.id)
   if (!mosque) redirect("/admin")
@@ -52,7 +49,7 @@ export default async function SubscriptionExpiredPage() {
             </p>
             <p className="text-xs text-green-700">
               Toutes vos annonces, horaires, événements et membres sont conservés.
-              Rien n'a été supprimé. Votre page publique reste visible pour les fidèles.
+              Rien n&apos;a été supprimé. Votre page publique reste visible pour les fidèles.
             </p>
           </div>
 

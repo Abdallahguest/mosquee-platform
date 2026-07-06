@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
-import { mosques } from "@/db/schema"
+import { mosques, payments } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { logAction } from "@/lib/audit"
 import type { ActionResult } from "./action-result"
@@ -66,6 +66,18 @@ export async function renewSubscription(formData: FormData): Promise<ActionResul
         subscriptionStatus: "active",
       })
       .where(eq(mosques.id, parsed.data.mosqueId))
+
+    // Enregistrer dans la table payments (historique structuré)
+    await db.insert(payments).values({
+      mosqueId:      parsed.data.mosqueId,
+      recordedBy:    session.user.id,
+      amountGNF:     parsed.data.amountGNF,
+      months:        parsed.data.months,
+      paymentMethod: parsed.data.paymentMethod,
+      periodStart:   base,
+      periodEnd:     newPaidUntil,
+      note:          parsed.data.note ?? null,
+    })
 
     revalidatePath("/super-admin/subscriptions")
     revalidatePath("/super-admin")

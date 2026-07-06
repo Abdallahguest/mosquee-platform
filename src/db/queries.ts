@@ -1,7 +1,7 @@
 import { db } from "./index"
-import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers, auditLog } from "./schema"
+import { mosques, announcements, events, users, mosqueAdmins, mosqueMembers, auditLog, payments } from "./schema"
 import { eq, and, gt, lt, desc, isNull, or, asc, count } from "drizzle-orm"
-import type { Mosque, Announcement, Event, MosqueMember } from "./schema"
+import type { Mosque, Announcement, Event, MosqueMember, Payment } from "./schema"
 
 // ── LIEN ADMIN ↔ MOSQUÉE (via table de liaison) ──
 // Retourne les mosquées administrées par un utilisateur (par son ID)
@@ -586,5 +586,69 @@ export async function getRecentAuditLog(
   } catch (error) {
     console.error("Erreur récupération journal d'activité:", error)
     return []
+  }
+}
+
+// ── PAIEMENTS ──
+
+export async function getPaymentsByMosque(mosqueId: number): Promise<Payment[]> {
+  try {
+    return await db
+      .select()
+      .from(payments)
+      .where(eq(payments.mosqueId, mosqueId))
+      .orderBy(desc(payments.createdAt))
+  } catch (error) {
+    console.error("Erreur récupération paiements:", error)
+    return []
+  }
+}
+
+export async function getRecentPayments(limit: number = 20): Promise<(Payment & { mosqueName: string })[]> {
+  try {
+    const rows = await db
+      .select({
+        id:            payments.id,
+        mosqueId:      payments.mosqueId,
+        recordedBy:    payments.recordedBy,
+        amountGNF:     payments.amountGNF,
+        months:        payments.months,
+        paymentMethod: payments.paymentMethod,
+        periodStart:   payments.periodStart,
+        periodEnd:     payments.periodEnd,
+        note:          payments.note,
+        createdAt:     payments.createdAt,
+        mosqueName:    mosques.name,
+      })
+      .from(payments)
+      .innerJoin(mosques, eq(payments.mosqueId, mosques.id))
+      .orderBy(desc(payments.createdAt))
+      .limit(limit)
+    return rows
+  } catch (error) {
+    console.error("Erreur récupération paiements récents:", error)
+    return []
+  }
+}
+
+// ── DERNIÈRE MISE À JOUR HORAIRES (via audit_log) ──
+// Retourne la date de la dernière action prayer_times.update pour une mosquée.
+// null = jamais mis à jour ou pas de trace.
+export async function getLastPrayerTimesUpdate(mosqueId: number): Promise<Date | null> {
+  try {
+    const [row] = await db
+      .select({ createdAt: auditLog.createdAt })
+      .from(auditLog)
+      .where(
+        and(
+          eq(auditLog.mosqueId, mosqueId),
+          eq(auditLog.action, "prayer_times.update")
+        )
+      )
+      .orderBy(desc(auditLog.createdAt))
+      .limit(1)
+    return row?.createdAt ?? null
+  } catch {
+    return null
   }
 }

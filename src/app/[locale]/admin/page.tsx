@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation"
 import { getSessionMosque } from "@/lib/auth-helpers"
 import LogoutButton from "@/components/LogoutButton"
 import NoMosque from "@/components/admin/NoMosque"
-import { getAnnouncementsCount, getEventsCount } from "@/db/queries"
+import { getAnnouncementsCount, getEventsCount, getLastPrayerTimesUpdate } from "@/db/queries"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -26,9 +26,10 @@ export default async function AdminPage() {
   const t = await getTranslations("admin.dashboard")
   const locale = await getLocale()
 
-  const [announcementsCount, eventsCount] = await Promise.all([
+  const [announcementsCount, eventsCount, lastPrayerUpdate] = await Promise.all([
     getAnnouncementsCount(mosqueId),
     getEventsCount(mosqueId),
+    getLastPrayerTimesUpdate(mosqueId),
   ])
 
   const publishedAnnouncements = announcementsCount.published
@@ -61,6 +62,13 @@ export default async function AdminPage() {
   ]
 
   const isFirstTime = totalAnnouncements === 0 && totalEvents === 0
+
+  // Rappel horaires : si jamais mis à jour OU pas de mise à jour depuis 30 jours
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 3600 * 1000)
+  const prayerTimesStale = !lastPrayerUpdate || lastPrayerUpdate < thirtyDaysAgo
+  // Ne pas afficher le rappel si la mosquée vient d'être créée (< 3 jours)
+  const mosqueAge = Date.now() - new Date(mosque.createdAt).getTime()
+  const showPrayerReminder = prayerTimesStale && mosqueAge > 3 * 24 * 3600 * 1000
 
   const subscriptionStatus = computeSubscriptionStatus(mosque)
   const relevantDate = mosque.paidUntil ?? mosque.trialEndsAt
@@ -209,6 +217,31 @@ export default async function AdminPage() {
           </Card>
         ))}
       </div>
+
+      {/* Rappel horaires — si pas mis à jour depuis 30 jours (anti-gharar) */}
+      {showPrayerReminder && !isFirstTime && (
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <span className="text-xl shrink-0" aria-hidden="true">🕌</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-blue-900 mb-0.5">
+                {lastPrayerUpdate
+                  ? "Les horaires n'ont pas été mis à jour depuis plus de 30 jours."
+                  : "Les horaires de prière n'ont pas encore été saisis."}
+              </p>
+              <p className="text-xs text-blue-700 mb-2">
+                Les fidèles consultent les horaires en premier. Une information à jour est essentielle.
+              </p>
+              <Link
+                href="/admin/settings"
+                className="text-xs font-medium text-blue-800 hover:underline"
+              >
+                Mettre à jour les horaires →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="space-y-3 mb-8">

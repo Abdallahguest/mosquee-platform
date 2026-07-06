@@ -175,6 +175,27 @@ export const auditLog = pgTable("audit_log", {
 
 export type AuditLog    = typeof auditLog.$inferSelect
 export type NewAuditLog = typeof auditLog.$inferInsert
+
+// ── TABLE PAIEMENTS ──
+// Enregistre chaque paiement reçu pour un abonnement mosquée.
+// Source de vérité pour l'historique commercial — jamais modifiée, jamais supprimée.
+// Anti-jahàla : trace complète pour le super-admin, traçabilité claire.
+export const payments = pgTable("payments", {
+  id:            serial("id").primaryKey(),
+  mosqueId:      integer("mosque_id").notNull().references(() => mosques.id, { onDelete: "cascade" }),
+  recordedBy:    varchar("recorded_by",    { length: 255 }).references(() => users.id),
+  amountGNF:     integer("amount_gnf").notNull(),
+  months:        integer("months").notNull(),
+  paymentMethod: varchar("payment_method", { length: 20 }).notNull(), // 'cash' | 'orange_money'
+  periodStart:   timestamp("period_start").notNull(),
+  periodEnd:     timestamp("period_end").notNull(),
+  note:          text("note"),
+  createdAt:     timestamp("created_at").notNull().defaultNow(),
+})
+
+export type Payment    = typeof payments.$inferSelect
+export type NewPayment = typeof payments.$inferInsert
+
 export type Mosque       = typeof mosques.$inferSelect
 export type NewMosque    = typeof mosques.$inferInsert
 export type Announcement = typeof announcements.$inferSelect

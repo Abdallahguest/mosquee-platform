@@ -1,12 +1,12 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
-import { getAllMosquesAdmin } from "@/db/queries"
+import { getAllMosquesAdmin, getRecentPayments } from "@/db/queries"
 import { computeSubscriptionStatus } from "@/lib/subscription-status"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import RenewButton from "@/components/superadmin/RenewButton"
 import SuspendButton from "@/components/superadmin/SuspendButton"
 import ReactivateButton from "@/components/superadmin/ReactivateButton"
-import { renewSubscription, suspendSubscription, reactivateSubscription } from "@/lib/actions/subscription.actions"
+import { suspendSubscription, reactivateSubscription } from "@/lib/actions/subscription.actions"
 
 function statusBadge(status: ReturnType<typeof computeSubscriptionStatus>) {
   const config = {
@@ -27,7 +27,10 @@ function formatDate(d: Date | null): string {
 
 export default async function SubscriptionsPage() {
   await requireSuperAdmin()
-  const mosques = await getAllMosquesAdmin()
+  const [mosques, recentPayments] = await Promise.all([
+    getAllMosquesAdmin(),
+    getRecentPayments(30),
+  ])
 
   const enriched = mosques.map((m) => ({
     ...m,
@@ -71,8 +74,8 @@ export default async function SubscriptionsPage() {
         ))}
       </div>
 
-      {/* Liste */}
-      <div className="space-y-3">
+      {/* Liste mosquées */}
+      <div className="space-y-3 mb-10">
         {enriched.map((mosque) => (
           <Card key={mosque.id} className={
             mosque.computedStatus === "expired" ? "border-red-200" :
@@ -93,8 +96,6 @@ export default async function SubscriptionsPage() {
                     <span>Payé jusqu'au : <strong>{formatDate(mosque.paidUntil)}</strong></span>
                   </div>
                 </div>
-
-                {/* Actions */}
                 <div className="flex flex-col gap-2 sm:items-end shrink-0">
                   <RenewButton mosqueId={mosque.id} mosqueName={mosque.name} />
                   {mosque.computedStatus !== "suspended" ? (
@@ -107,6 +108,71 @@ export default async function SubscriptionsPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Historique des paiements */}
+      <div>
+        <h2 className="text-lg font-bold text-gray-900 mb-4">
+          Historique des paiements
+          <span className="ml-2 text-sm font-normal text-gray-400">({recentPayments.length} derniers)</span>
+        </h2>
+
+        {recentPayments.length === 0 ? (
+          <div className="text-center py-12 text-gray-400">
+            <div className="text-4xl mb-3" aria-hidden="true">💰</div>
+            <p className="text-sm">Aucun paiement enregistré pour l&apos;instant.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {recentPayments.map((p) => (
+              <Card key={p.id}>
+                <CardContent className="py-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-semibold text-sm text-gray-900">{p.mosqueName}</span>
+                        <Badge variant="outline" className="text-xs text-green-700 border-green-300">
+                          {p.amountGNF.toLocaleString("fr-FR")} GNF
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {p.months} mois
+                        </Badge>
+                        <Badge variant="outline" className="text-xs text-gray-500">
+                          {p.paymentMethod === "cash" ? "💵 Espèces" : "🟠 Orange Money"}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-500">
+                        <span>Du {formatDate(p.periodStart)} au {formatDate(p.periodEnd)}</span>
+                        {p.note && <span className="italic">· {p.note}</span>}
+                      </div>
+                    </div>
+                    <time className="text-xs text-gray-400 whitespace-nowrap shrink-0">
+                      {formatDate(p.createdAt)}
+                    </time>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Total du mois en cours */}
+        {recentPayments.length > 0 && (() => {
+          const now = new Date()
+          const thisMonth = recentPayments.filter((p) => {
+            const d = new Date(p.createdAt)
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+          })
+          const total = thisMonth.reduce((sum, p) => sum + p.amountGNF, 0)
+          return total > 0 ? (
+            <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+              <p className="text-sm text-green-800">
+                <strong>Ce mois-ci :</strong> {total.toLocaleString("fr-FR")} GNF encaissés
+                {" "}({thisMonth.length} paiement{thisMonth.length > 1 ? "s" : ""})
+              </p>
+            </div>
+          ) : null
+        })()}
       </div>
     </div>
   )

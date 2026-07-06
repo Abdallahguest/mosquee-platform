@@ -11,9 +11,16 @@ import { Badge } from "@/components/ui/badge"
 async function getHealthData() {
   const allMosques = await db.select().from(mosques).orderBy(mosques.name)
 
-  // Mosquées sans aucun horaire saisi (aucun adhan renseigné)
+  // Mosquées sans aucun horaire saisi — vérifie adhan ET iqama
+  // Une mosquée est considérée "sans horaire" seulement si ni adhan ni iqama
+  // n'est renseigné pour aucune des 5 prières principales.
   const noSchedule = allMosques.filter(
-    (m) => !m.fajrAdhan && !m.dhuhrAdhan && !m.asrAdhan && !m.maghribAdhan && !m.ishaAdhan
+    (m) =>
+      !m.fajrAdhan  && !m.fajrIqama  &&
+      !m.dhuhrAdhan && !m.dhuhrIqama &&
+      !m.asrAdhan   && !m.asrIqama   &&
+      !m.maghribAdhan && !m.maghribIqama &&
+      !m.ishaAdhan  && !m.ishaIqama
   )
 
   // Mosquées sans annonce active

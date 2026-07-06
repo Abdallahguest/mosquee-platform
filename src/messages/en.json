@@ -77,7 +77,8 @@
       "backToAdmin": "← My admin",
       "menu": "Menu",
       "health": "Health",
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Subscriptions",
+      "activity": "Global Activity"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -341,7 +342,7 @@
     },
     "activityPage": {
       "title": "Activity log",
-      "subtitle": "The last 30 actions performed on your mosque",
+      "subtitle": "The last 50 actions performed on your mosque",
       "empty": "No actions recorded yet.",
       "colAction": "Action",
       "colDate": "Date",

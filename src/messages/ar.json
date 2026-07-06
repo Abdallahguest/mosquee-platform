@@ -77,7 +77,8 @@
       "backToAdmin": "→ لوحتي",
       "menu": "القائمة",
       "health": "الصحة",
-      "subscriptions": "الاشتراكات"
+      "subscriptions": "الاشتراكات",
+      "activity": "النشاط العام"
     },
     "dashboard": {
       "title": "لوحة التحكم",

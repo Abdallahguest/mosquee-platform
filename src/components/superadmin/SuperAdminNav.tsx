@@ -12,11 +12,12 @@ export default function SuperAdminNav() {
   const t = useTranslations("superAdmin.nav")
 
   const navLinks = [
-    { href: "/super-admin",              label: t("dashboard") },
-    { href: "/super-admin/mosques",      label: t("mosques") },
-    { href: "/super-admin/users",        label: t("users") },
+    { href: "/super-admin",               label: t("dashboard") },
+    { href: "/super-admin/mosques",       label: t("mosques") },
+    { href: "/super-admin/users",         label: t("users") },
     { href: "/super-admin/subscriptions", label: t("subscriptions") },
-    { href: "/super-admin/health",       label: t("health") },
+    { href: "/super-admin/activity",      label: t("activity") },
+    { href: "/super-admin/health",        label: t("health") },
   ]
 
   const isActive = (href: string) =>

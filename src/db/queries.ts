@@ -652,3 +652,43 @@ export async function getLastPrayerTimesUpdate(mosqueId: number): Promise<Date |
     return null
   }
 }
+
+// ── JOURNAL D'ACTIVITÉ GLOBAL (super-admin) ──
+// Toutes les actions de toutes les mosquées, avec nom de la mosquée et de l'auteur.
+export interface GlobalAuditEntry {
+  id:         number
+  action:     string
+  details:    string | null
+  targetId:   string | null
+  createdAt:  Date
+  userName:   string | null
+  userEmail:  string | null
+  mosqueName: string | null
+}
+
+export async function getGlobalAuditLog(
+  limit: number = 100
+): Promise<GlobalAuditEntry[]> {
+  try {
+    const rows = await db
+      .select({
+        id:         auditLog.id,
+        action:     auditLog.action,
+        details:    auditLog.details,
+        targetId:   auditLog.targetId,
+        createdAt:  auditLog.createdAt,
+        userName:   users.name,
+        userEmail:  users.email,
+        mosqueName: mosques.name,
+      })
+      .from(auditLog)
+      .leftJoin(users,   eq(auditLog.userId,   users.id))
+      .leftJoin(mosques, eq(auditLog.mosqueId, mosques.id))
+      .orderBy(desc(auditLog.createdAt))
+      .limit(limit)
+    return rows
+  } catch (error) {
+    console.error("Erreur journal global:", error)
+    return []
+  }
+}

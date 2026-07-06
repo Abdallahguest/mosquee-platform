@@ -77,7 +77,8 @@
       "backToAdmin": "← Mon admin",
       "menu": "Menu",
       "health": "Santé",
-      "subscriptions": "Abonnements"
+      "subscriptions": "Abonnements",
+      "activity": "Activité globale"
     },
     "dashboard": {
       "title": "Tableau de bord",
@@ -341,7 +342,7 @@
     },
     "activityPage": {
       "title": "Journal d'activité",
-      "subtitle": "Les 30 dernières actions effectuées sur votre mosquée",
+      "subtitle": "Les 50 dernières actions effectuées sur votre mosquée",
       "empty": "Aucune action enregistrée pour l'instant.",
       "colAction": "Action",
       "colDate": "Date",

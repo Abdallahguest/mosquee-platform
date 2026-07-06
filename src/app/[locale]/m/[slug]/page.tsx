@@ -12,6 +12,7 @@ import AnnouncementCard from "@/components/public/AnnouncementCard"
 import EventCard from "@/components/public/EventCard"
 import PublicFooter from "@/components/public/PublicFooter"
 import OfflineCacheRecorder from "@/components/public/OfflineCacheRecorder"
+import { computeSubscriptionStatus } from "@/lib/subscription-status"
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>
@@ -75,8 +76,20 @@ export default async function MosquePublicPage({ params }: PageProps) {
   // page dédiée (annonces complètes / événements à venir ET archive des passés).
   // C'est notamment le seul accès du public aux événements passés.
 
+  const subscriptionStatus = computeSubscriptionStatus(mosque)
+  const isDataStale = subscriptionStatus === "expired" || subscriptionStatus === "suspended"
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+
+      {/* Bandeau discret données périmées — anti-gharar */}
+      {isDataStale && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center">
+          <p className="text-xs text-amber-700">
+            ⚠️ Les informations de cette mosquée sont susceptibles de ne plus être à jour.
+          </p>
+        </div>
+      )}
       {/* Enregistre les données pour la consultation hors connexion (invisible). */}
       <OfflineCacheRecorder
         slug={slug}

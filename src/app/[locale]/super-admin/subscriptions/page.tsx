@@ -25,6 +25,15 @@ function formatDate(d: Date | null): string {
   return new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })
 }
 
+// Génère le lien WhatsApp avec message pré-rédigé selon le statut
+function generateWhatsAppLink(mosqueName: string, status: string): string {
+  const phone = "224626736219"
+  const message = status === "expired"
+    ? `Assalamu alaykum. Je me permets de vous contacter au sujet de la mosquée ${mosqueName} sur Amana Connect. Votre période d'accès a expiré. Pour continuer à utiliser le service, le tarif est de 40 000 GNF/mois. Je reste disponible pour tout arrangement. Abdoulaye Bah.`
+    : `Assalamu alaykum. Je vous contacte au sujet de la mosquée ${mosqueName} sur Amana Connect. Votre accès expire très bientôt. Pour renouveler, le tarif est de 40 000 GNF/mois (espèces ou Orange Money). N'hésitez pas à me contacter. Abdoulaye Bah.`
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+}
+
 export default async function SubscriptionsPage() {
   await requireSuperAdmin()
   const [mosques, recentPayments] = await Promise.all([
@@ -98,6 +107,19 @@ export default async function SubscriptionsPage() {
                 </div>
                 <div className="flex flex-col gap-2 sm:items-end shrink-0">
                   <RenewButton mosqueId={mosque.id} mosqueName={mosque.name} />
+
+                  {/* Bouton WhatsApp rappel — visible si expire bientôt ou expiré */}
+                  {(mosque.computedStatus === "expiring_soon" || mosque.computedStatus === "expired") && (
+                    <a
+                      href={generateWhatsAppLink(mosque.name, mosque.computedStatus)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 hover:text-green-800 border border-green-300 rounded-lg px-3 py-1.5 bg-green-50 hover:bg-green-100 transition-colors"
+                    >
+                      💬 Envoyer rappel WhatsApp
+                    </a>
+                  )}
+
                   {mosque.computedStatus !== "suspended" ? (
                     <SuspendButton mosqueId={mosque.id} mosqueName={mosque.name} />
                   ) : (

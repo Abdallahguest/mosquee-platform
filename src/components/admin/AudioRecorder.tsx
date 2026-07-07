@@ -5,7 +5,8 @@ import { uploadAudioFile, deleteAudioFile } from "@/lib/actions/upload-audio.act
 import { showToast } from "@/components/ui/toast-provider"
 import { Button } from "@/components/ui/button"
 
-const MAX_SECONDS = 180 // 3 minutes
+const MAX_SECONDS    = 180  // 3 minutes
+const MAX_SIZE_BYTES = 5 * 1024 * 1024  // 5 Mo
 
 interface AudioRecorderProps {
   // URL audio actuelle (si édition)
@@ -31,6 +32,15 @@ export default function AudioRecorder({
   const chunksRef    = useRef<Blob[]>([])
   const timerRef     = useRef<ReturnType<typeof setInterval> | null>(null)
   const previewRef   = useRef<string | null>(null)
+  const audioUrlRef  = useRef<string | null>(currentAudioUrl ?? null)
+
+  // ── Supprimer l'ancien audio R2 avant d'en uploader un nouveau ──
+  const deletePreviousIfR2 = useCallback(async (url: string | null) => {
+    if (!url) return
+    if (url.includes("r2.dev") || url.includes("cloudflarestorage")) {
+      await deleteAudioFile(url).catch(() => {})
+    }
+  }, [])
 
   // ── Sélectionner un fichier existant ──
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,6 +52,9 @@ export default function AudioRecorder({
       setError("Fichier trop volumineux (maximum 5 Mo).")
       return
     }
+
+    // Supprimer l'ancien audio R2 s'il existe avant d'uploader le nouveau
+    await deletePreviousIfR2(audioUrlRef.current)
 
     setState("uploading")
     const formData = new FormData()
@@ -57,10 +70,11 @@ export default function AudioRecorder({
     }
 
     setAudioUrl(result.data.url)
+    audioUrlRef.current = result.data.url
     onAudioUrlChange(result.data.url)
     setState("done")
     showToast("Audio envoyé avec succès.", "success")
-  }, [onAudioUrlChange])
+  }, [onAudioUrlChange, deletePreviousIfR2])
 
   // ── Démarrer l'enregistrement ──
   const startRecording = useCallback(async () => {
@@ -105,13 +119,14 @@ export default function AudioRecorder({
           return
         }
 
-        setAudioUrl(result.data.url)
-        onAudioUrlChange(result.data.url)
-        setState("done")
-        showToast("Audio enregistré avec succès.", "success")
-      }
+    setAudioUrl(result.data.url)
+    audioUrlRef.current = result.data.url
+    onAudioUrlChange(result.data.url)
+    setState("done")
+    showToast("Audio enregistré avec succès.", "success")
+  }
 
-      recorder.start(200) // collecte toutes les 200ms
+  recorder.start(200) // collecte toutes les 200ms
       mediaRef.current = recorder
       setState("recording")
       setSeconds(0)
@@ -140,16 +155,17 @@ export default function AudioRecorder({
 
   // ── Supprimer l'audio ──
   const handleDelete = useCallback(async () => {
-    if (!audioUrl) return
-    // Si c'est une URL R2, supprimer côté serveur
-    if (audioUrl.includes("r2.dev") || audioUrl.includes("cloudflarestorage")) {
-      await deleteAudioFile(audioUrl)
+    const url = audioUrlRef.current
+    if (!url) return
+    if (url.includes("r2.dev") || url.includes("cloudflarestorage")) {
+      await deleteAudioFile(url).catch(() => {})
     }
     if (previewRef.current) {
       URL.revokeObjectURL(previewRef.current)
       previewRef.current = null
     }
     setAudioUrl(null)
+    audioUrlRef.current = null
     onAudioUrlChange(null)
     setState("idle")
     setSeconds(0)

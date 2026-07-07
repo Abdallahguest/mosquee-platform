@@ -32,6 +32,36 @@ export default function AudioRecorder({
   const timerRef     = useRef<ReturnType<typeof setInterval> | null>(null)
   const previewRef   = useRef<string | null>(null)
 
+  // ── Sélectionner un fichier existant ──
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setError("")
+
+    if (file.size > MAX_SIZE_BYTES) {
+      setError("Fichier trop volumineux (maximum 5 Mo).")
+      return
+    }
+
+    setState("uploading")
+    const formData = new FormData()
+    formData.append("audio", file, file.name)
+
+    const result = await uploadAudioFile(formData)
+
+    if (!result.success) {
+      setError(result.error)
+      setState("idle")
+      showToast(result.error, "error")
+      return
+    }
+
+    setAudioUrl(result.data.url)
+    onAudioUrlChange(result.data.url)
+    setState("done")
+    showToast("Audio envoyé avec succès.", "success")
+  }, [onAudioUrlChange])
+
   // ── Démarrer l'enregistrement ──
   const startRecording = useCallback(async () => {
     setError("")
@@ -135,20 +165,34 @@ export default function AudioRecorder({
     <div className="space-y-2">
       <p className="text-sm font-medium text-gray-700">{label}</p>
 
-      {/* État : pas d'audio */}
+      {/* État : pas d'audio — deux options */}
       {state === "idle" && (
-        <div className="flex flex-col gap-2">
+        <div className="space-y-2">
+          {/* Option 1 — Sélectionner un fichier (universel) */}
+          <label className="flex items-center gap-2 w-full cursor-pointer border border-green-300 text-green-700 hover:bg-green-50 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+            <span aria-hidden="true">📎</span>
+            Choisir un fichier audio
+            <input
+              type="file"
+              accept="audio/*"
+              className="sr-only"
+              onChange={handleFileSelect}
+            />
+          </label>
+
+          {/* Option 2 — Enregistrement direct (si supporté) */}
           <Button
             type="button"
             variant="outline"
             onClick={startRecording}
-            className="flex items-center gap-2 border-green-300 text-green-700 hover:bg-green-50"
+            className="w-full flex items-center gap-2 border-gray-300 text-gray-600 hover:bg-gray-50 text-sm"
           >
             <span aria-hidden="true">🎤</span>
-            Enregistrer un audio
+            Enregistrer maintenant
           </Button>
+
           <p className="text-xs text-muted-foreground">
-            Maximum 3 minutes · Parlez clairement dans le micro
+            Maximum 3 min · Formats : MP3, MP4, OGG, WebM
           </p>
         </div>
       )}

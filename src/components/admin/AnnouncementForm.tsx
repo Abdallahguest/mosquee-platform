@@ -11,6 +11,7 @@ import {
 import { useRouter } from "@/i18n/navigation"
 import { useDraftPersistence } from "@/lib/use-draft-persistence"
 import { showToast } from "@/components/ui/toast-provider"
+import AudioRecorder from "@/components/admin/AudioRecorder"
 import { Button }   from "@/components/ui/button"
 import { Input }    from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -43,6 +44,7 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
   const router = useRouter()
   const [error, setError]     = useState("")
   const [loading, setLoading] = useState(false)
+  const [audioUrl, setAudioUrl] = useState<string | null>(announcement?.audioUrl ?? null)
   const formRef = useRef<HTMLFormElement>(null)
 
   // ── Écriture résiliente : sauvegarde locale du brouillon (Niveau A) ──
@@ -166,17 +168,15 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
             </p>
           </div>
 
-          {/* Lien audio externe (facultatif). Aucun fichier stocké. */}
-          <div className="space-y-1.5">
-            <Label htmlFor="audioUrl">{t("fieldAudioUrl")}</Label>
-            <Input
-              id="audioUrl"
-              name="audioUrl"
-              type="url"
-              dir="ltr"
-              placeholder="https://..."
-              defaultValue={announcement?.audioUrl ?? ""}
+          {/* Audio — enregistrement direct ou lien externe */}
+          <div className="space-y-3">
+            <AudioRecorder
+              currentAudioUrl={audioUrl}
+              onAudioUrlChange={setAudioUrl}
+              label={t("fieldAudioUrl")}
             />
+            {/* Champ caché qui transmet l'URL au formulaire */}
+            <input type="hidden" name="audioUrl" value={audioUrl ?? ""} />
             <p className="text-xs text-muted-foreground">{t("audioUrlHelp")}</p>
           </div>
 

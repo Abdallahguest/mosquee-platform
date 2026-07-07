@@ -243,7 +243,8 @@
       "logout": "Se déconnecter",
       "members": "Membres",
       "activity": "Journal d'activité",
-      "selectMosque": "Changer de mosquée"
+      "selectMosque": "Changer de mosquée",
+      "profile": "Mon profil"
     },
     "dashboard": {
       "greeting": "Assalamu alaykum",
@@ -339,6 +340,26 @@
       "subtitle": "Créez et gérez les événements de votre mosquée",
       "listTitle": "Événements ({count})",
       "newCardTitle": "Nouvel événement"
+    },
+    "profile": {
+      "title": "Mon profil",
+      "subtitle": "Modifier votre nom et votre mot de passe",
+      "nameTitle": "Informations",
+      "nameDesc": "Votre nom affiché dans l'interface",
+      "fieldName": "Nom complet",
+      "fieldEmail": "Email",
+      "emailNote": "L'email ne peut pas être modifié ici. Contactez l'administrateur.",
+      "saveName": "Enregistrer le nom",
+      "nameSaved": "Nom mis à jour.",
+      "passwordTitle": "Mot de passe",
+      "passwordDesc": "Changez votre mot de passe de connexion",
+      "fieldCurrentPassword": "Mot de passe actuel",
+      "fieldNewPassword": "Nouveau mot de passe",
+      "fieldConfirmPassword": "Confirmer le nouveau mot de passe",
+      "passwordHint": "Minimum 8 caractères",
+      "savePassword": "Changer le mot de passe",
+      "passwordSaved": "Mot de passe modifié avec succès.",
+      "saving": "Enregistrement..."
     },
     "activityPage": {
       "title": "Journal d'activité",

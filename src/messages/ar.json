@@ -242,6 +242,7 @@
       "menu": "القائمة",
       "activity": "سجل النشاط",
       "selectMosque": "تغيير المسجد",
+      "profile": "ملفي الشخصي",
       "logout": "تسجيل الخروج",
       "members": "الأعضاء"
     },
@@ -339,6 +340,26 @@
       "subtitle": "أنشئ وأدِر فعاليات مسجدك",
       "listTitle": "الفعاليات ({count})",
       "newCardTitle": "فعالية جديدة"
+    },
+    "profile": {
+      "title": "ملفي الشخصي",
+      "subtitle": "تعديل اسمك وكلمة مرورك",
+      "nameTitle": "المعلومات",
+      "nameDesc": "اسمك المعروض في الواجهة",
+      "fieldName": "الاسم الكامل",
+      "fieldEmail": "البريد الإلكتروني",
+      "emailNote": "لا يمكن تغيير البريد الإلكتروني من هنا. تواصل مع المسؤول.",
+      "saveName": "حفظ الاسم",
+      "nameSaved": "تم تحديث الاسم.",
+      "passwordTitle": "كلمة المرور",
+      "passwordDesc": "تغيير كلمة مرور الدخول",
+      "fieldCurrentPassword": "كلمة المرور الحالية",
+      "fieldNewPassword": "كلمة المرور الجديدة",
+      "fieldConfirmPassword": "تأكيد كلمة المرور الجديدة",
+      "passwordHint": "٨ أحرف على الأقل",
+      "savePassword": "تغيير كلمة المرور",
+      "passwordSaved": "تم تغيير كلمة المرور بنجاح.",
+      "saving": "جارٍ الحفظ..."
     },
     "activityPage": {
       "title": "سجل النشاط",

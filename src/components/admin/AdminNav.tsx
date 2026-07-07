@@ -24,6 +24,7 @@ export default function AdminNav({ mosqueName, mosqueSlug, isSuperAdmin }: Admin
     { href: "/admin/members",       label: t("members") },
     { href: "/admin/settings",      label: t("settings") },
     { href: "/admin/activity",      label: t("activity") },
+    { href: "/admin/profile",       label: t("profile") },
   ]
 
   // Section active : correspondance exacte pour /admin, sinon préfixe

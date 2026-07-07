@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
 import { logSignIn } from "@/lib/actions/auth-log.actions"
+import { getClientIp } from "@/lib/actions/get-ip.actions"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -26,16 +27,14 @@ export default function LoginPage() {
 
       if (result.error) {
         setError(result.error.message || t("genericError"))
-        logSignIn(email, false).catch(() => {})
+        getClientIp().then(ip => logSignIn(email, false, ip ?? undefined).catch(() => {}))
       } else {
-        logSignIn(email, true).catch(() => {})
-        // Navigation complète pour que le middleware et le cookie de session
-        // soient correctement pris en compte (router.push + refresh peut geler)
+        getClientIp().then(ip => logSignIn(email, true, ip ?? undefined).catch(() => {}))
         window.location.href = "/admin"
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("genericError"))
-      logSignIn(email, false).catch(() => {})
+      getClientIp().then(ip => logSignIn(email, false, ip ?? undefined).catch(() => {}))
     } finally {
       setLoading(false)
     }

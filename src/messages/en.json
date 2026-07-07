@@ -242,6 +242,7 @@
       "menu": "Menu",
       "activity": "Activity log",
       "selectMosque": "Switch mosque",
+      "profile": "My profile",
       "logout": "Log out",
       "members": "Members"
     },
@@ -339,6 +340,26 @@
       "subtitle": "Create and manage your mosque's events",
       "listTitle": "Events ({count})",
       "newCardTitle": "New event"
+    },
+    "profile": {
+      "title": "My profile",
+      "subtitle": "Update your name and password",
+      "nameTitle": "Information",
+      "nameDesc": "Your display name in the interface",
+      "fieldName": "Full name",
+      "fieldEmail": "Email",
+      "emailNote": "Email cannot be changed here. Contact the administrator.",
+      "saveName": "Save name",
+      "nameSaved": "Name updated.",
+      "passwordTitle": "Password",
+      "passwordDesc": "Change your login password",
+      "fieldCurrentPassword": "Current password",
+      "fieldNewPassword": "New password",
+      "fieldConfirmPassword": "Confirm new password",
+      "passwordHint": "Minimum 8 characters",
+      "savePassword": "Change password",
+      "passwordSaved": "Password changed successfully.",
+      "saving": "Saving..."
     },
     "activityPage": {
       "title": "Activity log",

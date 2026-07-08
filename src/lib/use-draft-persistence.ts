@@ -184,4 +184,6 @@ export function useDraftPersistence({
     // Sinon l'admin verrait la même proposition à chaque rechargement.
     clearDraft()
   }, [clearDraft])
+
+  return { hasDraft, draftSavedAt, restoreDraft, clearDraft, dismissDraft }
 }

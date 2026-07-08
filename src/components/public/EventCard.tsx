@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server"
 import { contentLanguageName, shouldShowContentLangNote } from "@/lib/content-language"
 import { Link } from "@/i18n/navigation"
+import AudioButton from "@/components/public/AudioButton"
 
 interface Event {
   id: number
@@ -82,6 +83,11 @@ export default async function EventCard({ event, slug }: EventCardProps) {
             </span>
           )}
         </div>
+        {event.audioUrl && (
+          <div className="relative z-10 mt-2">
+            <AudioButton url={event.audioUrl} label={te("listenAudio")} />
+          </div>
+        )}
         <Link
           href={href}
           className="relative z-10 inline-flex items-center mt-2 text-sm font-medium text-green-700 hover:text-green-800"

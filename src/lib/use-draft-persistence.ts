@@ -178,10 +178,10 @@ export function useDraftPersistence({
     }
   }, [storageKey])
 
-  // ── Ignorer la proposition de restauration (sans effacer le stockage) ──
+  // ── Ignorer la proposition de restauration — EFFACE définitivement ──
   const dismissDraft = useCallback(() => {
-    setHasDraft(false)
-  }, [])
-
-  return { hasDraft, draftSavedAt, restoreDraft, clearDraft, dismissDraft }
+    // On efface le brouillon plutôt que de juste masquer la bannière.
+    // Sinon l'admin verrait la même proposition à chaque rechargement.
+    clearDraft()
+  }, [clearDraft])
 }

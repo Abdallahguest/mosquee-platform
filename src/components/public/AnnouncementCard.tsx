@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server"
 import { contentLanguageName, shouldShowContentLangNote } from "@/lib/content-language"
 import { Link } from "@/i18n/navigation"
 import MarkdownContent from "./MarkdownContent"
+import AudioButton from "@/components/public/AudioButton"
 
 interface Announcement {
   id: number
@@ -57,6 +58,12 @@ export default async function AnnouncementCard({ announcement, slug }: Announcem
       </div>
       {/* Lien explicite "Lire la suite" — relative z-10 pour passer AU-DESSUS
           du lien étiré (sinon le clic serait capté par la zone de fond). */}
+      {/* Bouton audio visible directement dans la carte */}
+      {announcement.audioUrl && (
+        <div className="relative z-10 mt-3">
+          <AudioButton url={announcement.audioUrl} label={ta("listenAudio")} />
+        </div>
+      )}
       <Link
         href={href}
         className="relative z-10 inline-flex items-center mt-3 text-sm font-medium text-green-700 hover:text-green-800"

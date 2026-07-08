@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+// Lecteur audio pour les pages de détail.
+// Sur mobile : ouvre l'audio nativement (plus fiable que le lecteur HTML5 intégré
+// qui peut bloquer à cause des restrictions CORS ou des formats M4A).
 
 interface AudioPlayerProps {
   url: string
@@ -12,71 +14,48 @@ interface AudioPlayerProps {
 export default function AudioPlayer({
   url,
   listenLabel,
-  openLabel,
 }: AudioPlayerProps) {
   const displayLabel = listenLabel ?? "Écouter le message"
-  const [audioError, setAudioError] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+
+  function handlePlay(e: React.MouseEvent) {
+    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      e.preventDefault()
+      window.open(url, "_blank", "noopener")
+    }
+  }
 
   return (
-    <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-4 py-3 space-y-3">
+    <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-4 py-4 space-y-3">
       <p className="text-sm font-semibold text-green-800 flex items-center gap-2">
         <span aria-hidden="true">🔊</span>
         {displayLabel}
       </p>
 
-      {/* Lecteur natif — crossOrigin anonymous pour permettre le chargement R2 */}
-      {!audioError ? (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <audio
-          controls
-          src={url}
-          className="w-full"
-          crossOrigin="anonymous"
-          preload="metadata"
-          onCanPlay={() => setLoaded(true)}
-          onError={() => setAudioError(true)}
-          style={{ minHeight: "40px" }}
-        />
-      ) : null}
+      {/* Lecteur natif HTML5 — fonctionne sur desktop et certains mobiles */}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio
+        controls
+        src={url}
+        className="w-full"
+        preload="none"
+        style={{ minHeight: "40px" }}
+      />
 
-      {/* Fallback si le lecteur natif ne charge pas (CORS, format, etc.) */}
-      {(audioError || !loaded) && (
-        <div className={`space-y-2 ${!audioError ? "hidden" : ""}`}>
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-            Le lecteur intégré ne peut pas charger cet audio sur votre appareil.
-            Appuyez sur le bouton ci-dessous pour l&apos;écouter.
-          </p>
-        </div>
-      )}
-
-      {/* Bouton principal — téléchargement/lecture native */}
+      {/* Bouton principal — toujours visible, ouvre nativement sur mobile */}
       <a
         href={url}
-        download
-        className="flex items-center justify-center gap-2 w-full bg-green-700 hover:bg-green-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
-        onClick={(e) => {
-          // Sur mobile : essayer d'ouvrir directement (lecture) plutôt que télécharger
-          if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-            e.preventDefault()
-            window.open(url, "_blank", "noopener")
-          }
-        }}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handlePlay}
+        className="flex items-center justify-center gap-2 w-full bg-green-700 hover:bg-green-800 active:bg-green-900 text-white text-sm font-semibold px-4 py-3 rounded-xl transition-colors"
       >
         <span aria-hidden="true">▶</span>
-        Écouter l&apos;audio
+        Appuyez ici pour écouter
       </a>
 
-      {openLabel && (
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-green-700 hover:underline inline-flex items-center gap-1"
-        >
-          {openLabel} ↗
-        </a>
-      )}
+      <p className="text-[11px] text-green-600 text-center">
+        Message audio de la mosquée
+      </p>
     </div>
   )
 }

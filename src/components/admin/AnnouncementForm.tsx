@@ -83,8 +83,13 @@ export default function AnnouncementForm({ announcement }: AnnouncementFormProps
     }
 
     showToast(t("createdSuccess"), "success")
-    formRef.current?.reset()
+    // Reset d'abord, clearDraft ensuite — évite que la sauvegarde périodique
+    // re-sauve un brouillon vide juste après le clearDraft.
     setLoading(false)
+    setAudioUrl(null)
+    formRef.current?.reset()
+    // Délai court pour laisser le reset propager avant d'effacer le brouillon
+    setTimeout(() => clearDraft(), 100)
   }
 
   return (

@@ -84,8 +84,10 @@ export default function EventForm({ event }: EventFormProps) {
     }
 
     showToast(t("createdSuccess"), "success")
-    formRef.current?.reset()
     setLoading(false)
+    setAudioUrl(null)
+    formRef.current?.reset()
+    setTimeout(() => clearDraft(), 100)
   }
 
   return (

@@ -258,7 +258,16 @@ export default function AudioRecorder({
             </button>
           </div>
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <audio controls src={audioUrl} className="w-full h-8" />
+          <audio controls src={audioUrl} className="w-full h-8" crossOrigin="anonymous" />
+          {/* Bouton fallback si le lecteur ne charge pas */}
+          <a
+            href={audioUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-green-700 hover:underline"
+          >
+            ▶ Écouter dans le navigateur
+          </a>
         </div>
       )}
 

@@ -184,35 +184,33 @@ export default function AudioRecorder({
       {/* État : pas d'audio — deux options */}
       {state === "idle" && (
         <div className="space-y-2">
-          {/* Option 1 — Enregistrement direct via l'app native Android/iOS
-              capture="user" ouvre l'enregistreur vocal natif sur mobile.
-              Sur desktop, ouvre le sélecteur de fichiers normalement. */}
+          {/* Option 1 — Enregistrement direct via l'app native Android/iOS */}
           <label className="flex items-center justify-center gap-2 w-full cursor-pointer bg-green-700 hover:bg-green-800 text-white rounded-xl px-4 py-3 text-sm font-semibold transition-colors">
             <span aria-hidden="true">🎤</span>
             Enregistrer un audio
             <input
               type="file"
-              accept="audio/*"
+              accept="audio/*,.m4a,.aac,.amr,.3gp"
               capture="user"
               className="sr-only"
               onChange={handleFileSelect}
             />
           </label>
 
-          {/* Option 2 — Sélectionner un fichier existant (si déjà enregistré) */}
+          {/* Option 2 — Sélectionner un fichier existant */}
           <label className="flex items-center justify-center gap-2 w-full cursor-pointer border border-gray-300 text-gray-600 hover:bg-gray-50 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
             <span aria-hidden="true">📎</span>
             Choisir un fichier audio existant
             <input
               type="file"
-              accept="audio/*"
+              accept="audio/*,.m4a,.aac,.amr,.3gp"
               className="sr-only"
               onChange={handleFileSelect}
             />
           </label>
 
           <p className="text-xs text-muted-foreground text-center">
-            Maximum 3 min · MP3, MP4, OGG, WebM
+            Maximum 3 min · MP3, M4A, MP4, OGG, AAC, WebM
           </p>
         </div>
       )}

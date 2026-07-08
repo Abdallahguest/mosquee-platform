@@ -5,7 +5,19 @@ import { uploadAudio, deleteAudio, extractKeyFromUrl } from "@/lib/r2"
 import type { ActionResult } from "./action-result"
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024  // 5 Mo max (3 min audio ~= 2-3 Mo en webm)
-const ALLOWED_TYPES  = ["audio/webm", "audio/mp4", "audio/ogg", "audio/mpeg", "audio/wav"]
+const ALLOWED_TYPES = [
+  "audio/webm",
+  "audio/mp4",
+  "audio/ogg",
+  "audio/mpeg",   // MP3
+  "audio/wav",
+  "audio/x-m4a",  // M4A Android natif
+  "audio/m4a",
+  "audio/aac",    // AAC (autre format Android courant)
+  "audio/x-aac",
+  "audio/3gpp",   // 3GP (anciens Android)
+  "audio/amr",    // AMR (enregistreur natif Samsung)
+]
 
 /**
  * Upload un fichier audio vers R2.

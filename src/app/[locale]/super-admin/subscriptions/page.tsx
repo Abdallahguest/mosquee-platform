@@ -6,8 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import RenewButton from "@/components/superadmin/RenewButton"
 import SuspendButton from "@/components/superadmin/SuspendButton"
 import ReactivateButton from "@/components/superadmin/ReactivateButton"
-import { suspendSubscription, reactivateSubscription } from "@/lib/actions/subscription.actions"
-
 function statusBadge(status: ReturnType<typeof computeSubscriptionStatus>) {
   const config = {
     trial:          { label: "Période gratuite", className: "bg-blue-100 text-blue-700 border-blue-200" },
@@ -101,8 +99,8 @@ export default async function SubscriptionsPage() {
                   </div>
                   <p className="text-xs text-gray-500">{mosque.city}, {mosque.country}</p>
                   <div className="mt-2 flex flex-wrap gap-4 text-xs text-gray-500">
-                    <span>Essai jusqu'au : <strong>{formatDate(mosque.trialEndsAt)}</strong></span>
-                    <span>Payé jusqu'au : <strong>{formatDate(mosque.paidUntil)}</strong></span>
+                    <span>Essai jusqu&apos;au : <strong>{formatDate(mosque.trialEndsAt)}</strong></span>
+                    <span>Payé jusqu&apos;au : <strong>{formatDate(mosque.paidUntil)}</strong></span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 sm:items-end shrink-0">

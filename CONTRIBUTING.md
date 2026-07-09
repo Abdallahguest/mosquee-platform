@@ -42,7 +42,7 @@ pnpm dev       # Turbopack (dev uniquement)
 
 # 5. Vérifier avant de commiter
 pnpm exec tsc --noEmit   # TypeScript strict
-pnpm test:run            # 127 tests Vitest
+pnpm test:run            # 148 tests Vitest
 ```
 
 ---
@@ -91,7 +91,7 @@ pnpm test:coverage  # Avec couverture
 
 Chaque nouvelle logique métier doit être couverte par des tests. Suivre le
 pattern existant dans `src/test/` (mock Drizzle) ou `src/lib/__tests__/`
-(modules purs).
+(modules purs). Les actions super-admin suivent `superadmin.actions.test.ts`.
 
 ---
 

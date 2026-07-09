@@ -116,7 +116,7 @@ Contrainte d'unicité : `(mosque_id, user_id)`.
 | `expires_at` | timestamp | nullable | Dépublication automatique à cette date |
 | `is_published` | boolean | NOT NULL, default false | |
 | `is_pinned` | boolean | NOT NULL, default false | Épinglée en tête de liste |
-| `audio_url` | varchar(500) | nullable | Lien audio externe (jamais de fichier stocké) |
+| `audio_url` | varchar(500) | nullable | URL publique R2 ou lien audio (audio uniquement, 5 Mo max) |
 | `created_at` | timestamp | NOT NULL | |
 
 **Index :** `mosque_id`, `is_published`, `published_at`
@@ -135,7 +135,7 @@ Contrainte d'unicité : `(mosque_id, user_id)`.
 | `start_at` | timestamp | NOT NULL | |
 | `end_at` | timestamp | nullable | |
 | `is_published` | boolean | NOT NULL, default false | |
-| `audio_url` | varchar(500) | nullable | Lien audio externe |
+| `audio_url` | varchar(500) | nullable | URL publique R2 (audio uniquement, 5 Mo max) |
 
 **Index :** `mosque_id`, `is_published`, `start_at`
 

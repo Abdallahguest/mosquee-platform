@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { authClient } from "@/lib/auth-client"
@@ -9,7 +8,6 @@ import { logSignIn } from "@/lib/actions/auth-log.actions"
 import { getClientIp } from "@/lib/actions/get-ip.actions"
 
 export default function LoginPage() {
-  const router = useRouter()
   const t = useTranslations("auth")
 
   const [email, setEmail]       = useState("")

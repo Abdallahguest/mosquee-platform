@@ -30,8 +30,8 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 ### Panneau d'administration
 
 - Authentification sécurisée (email + mot de passe)
-- Gestion des annonces (créer, publier, épingler, supprimer)
-- Gestion des événements
+- Gestion des annonces (créer, publier, épingler, supprimer, audio optionnel)
+- Gestion des événements (avec audio optionnel)
 - Gestion des membres (imams, conseillers, équipe)
 - Configuration de la mosquée (identité, localisation, horaires, contact)
 
@@ -56,7 +56,8 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 | Hors-ligne (PWA) | Serwist (service worker) |
 | Validation | Zod |
 | E-mail | Resend |
-| Tests | Vitest (115 tests) |
+| Stockage audio | Cloudflare R2 (audio uniquement, 5 Mo max) |
+| Tests | Vitest (148 tests) |
 | Hébergement | Vercel |
 
 ## 🏗️ Architecture
@@ -66,7 +67,7 @@ du fiqh al-muamalat : sans riba, sans gharar, sans ghich, sans jahàla.
 - Server Components par défaut (performance, zéro JS inutile)
 - Server Actions pour les mutations (pas d'API REST séparée)
 - Module d'autorisation centralisé, couvert par des tests prouvant l'absence
-  de fuite de données entre mosquées
+  de fuite de données entre mosquées (admin + super-admin)
 - Validation Zod systématique côté serveur
 - Stratégie hors-ligne « réseau d'abord » : le contenu frais est toujours
   privilégié quand le réseau est disponible ; le cache ne sert que de secours
@@ -107,7 +108,8 @@ pnpm test:coverage  # avec couverture
 - Lighthouse : Performance 94 · Accessibilité 100 · Best Practices 100 · SEO 100
 - Conformité WCAG 2.1 AA
 - TypeScript strict, ESLint, Prettier
-- 115 tests automatisés (logique métier + intégration des actions serveur)
+- 148 tests automatisés (autorisation, actions admin, actions super-admin, horaires)
+- Couverture CI : seuil minimum 80 % (lignes et fonctions)
 - **Validation terrain** : testé et approuvé par le responsable de la mosquée
   Masdjid TAQWA (Conakry) dans le cadre d'une expérimentation réelle
 

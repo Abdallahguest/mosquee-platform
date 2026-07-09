@@ -14,6 +14,17 @@ function daysUntil(date: Date | null): number {
   return Math.max(0, Math.ceil((date.getTime() - Date.now()) / (1000 * 3600 * 24)))
 }
 
+function shouldShowPrayerReminder(
+  lastPrayerUpdate: Date | null,
+  mosqueCreatedAt: Date
+): boolean {
+  const nowMs = Date.now()
+  const thirtyDaysAgo = new Date(nowMs - 30 * 24 * 3600 * 1000)
+  const prayerTimesStale = !lastPrayerUpdate || lastPrayerUpdate < thirtyDaysAgo
+  const mosqueAge = nowMs - new Date(mosqueCreatedAt).getTime()
+  return prayerTimesStale && mosqueAge > 3 * 24 * 3600 * 1000
+}
+
 function formatDate(date: Date | null, locale: string): string {
   if (!date) return "—"
   return date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })
@@ -63,12 +74,7 @@ export default async function AdminPage() {
 
   const isFirstTime = totalAnnouncements === 0 && totalEvents === 0
 
-  // Rappel horaires : si jamais mis à jour OU pas de mise à jour depuis 30 jours
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 3600 * 1000)
-  const prayerTimesStale = !lastPrayerUpdate || lastPrayerUpdate < thirtyDaysAgo
-  // Ne pas afficher le rappel si la mosquée vient d'être créée (< 3 jours)
-  const mosqueAge = Date.now() - new Date(mosque.createdAt).getTime()
-  const showPrayerReminder = prayerTimesStale && mosqueAge > 3 * 24 * 3600 * 1000
+  const showPrayerReminder = shouldShowPrayerReminder(lastPrayerUpdate, mosque.createdAt)
 
   const subscriptionStatus = computeSubscriptionStatus(mosque)
   const relevantDate = mosque.paidUntil ?? mosque.trialEndsAt

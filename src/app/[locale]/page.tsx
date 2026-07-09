@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server"
-import { Link } from "@/i18n/navigation"
 import { getAllMosques } from "@/db/queries"
 import LanguageSwitcher from "@/components/public/LanguageSwitcher"
 import HomeFooter from "@/components/public/HomeFooter"

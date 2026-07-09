@@ -61,16 +61,17 @@ src/
 │
 ├── i18n/                   # Config next-intl (routing, navigation)
 ├── messages/               # Traductions fr/en/ar (~350 clés)
-├── test/                   # Suite Vitest (127 tests)
-│   ├── helpers/            # drizzle-mock.ts, setup.ts
-│   └── *.test.ts           # authorization, announcement, event, member, prayer-times
+├── test/                   # Suite Vitest (148 tests)
+│   ├── helpers/            # drizzle-mock.ts
+│   └── *.test.ts           # authorization, announcement, event, member,
+│                           # prayer-times, superadmin
 └── proxy.ts                # Middleware (auth guard + i18n)
 ```
 
-> `src/lib/` contient aussi : `audit.ts` (journal d'activité), `orange-money.ts`
-> (validation/formatage numéros), `offline-cache.ts` (cache localStorage),
-> `use-draft-persistence.ts` (écriture résiliente), `__tests__/` (tests unitaires
-> audio-link, mosque-name, orange-money).
+> `src/lib/` contient aussi : `audit.ts` (journal d'activité), `r2.ts`
+> (stockage audio Cloudflare R2), `orange-money.ts` (validation/formatage numéros),
+> `offline-cache.ts` (cache localStorage), `use-draft-persistence.ts` (écriture
+> résiliente), `__tests__/` (tests unitaires audio-link, mosque-name, orange-money).
 ```
 
 ## Isolation multi-tenant

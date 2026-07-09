@@ -30,7 +30,7 @@ export default function SuspendButton({ mosqueId, mosqueName }: { mosqueId: numb
         onClick={() => setConfirm(true)}
         className="text-xs text-red-600 hover:underline"
       >
-        Suspendre l'accès
+        Suspendre l&apos;accès
       </button>
     )
   }

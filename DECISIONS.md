@@ -85,14 +85,27 @@ l'utilisateur pour qu'il sache que ce sont les dernières données connues.
 
 ---
 
-## D-007 — Pas d'upload de fichiers
+## D-007 — Audio uniquement (pas d'images ni de documents)
 
-**Décision :** Les liens audio sont des URLs externes (Google Drive, etc.),
-pas des fichiers uploadés sur la plateforme.
+**Décision :** Les annonces et événements peuvent avoir un message audio
+optionnel. L'admin l'ajoute via enregistrement natif mobile ou sélection d'un
+fichier existant — le fichier est stocké sur **Cloudflare R2** (pas d'images,
+pas de documents, pas de galerie).
 
-**Pourquoi :** Principe anti-israf. Stocker des fichiers audio nécessiterait
-R2/S3, une politique de taille, une modération. Le besoin réel est de partager
-un lien — pas de stocker des fichiers.
+**Limites (anti-israf) :**
+- Taille max : **5 Mo** (~3 min d'audio)
+- Formats autorisés : WebM, MP3, M4A, MP4, OGG, AAC, AMR, 3GP
+- Un seul audio par annonce/événement
+- Remplacement : l'ancien fichier R2 est supprimé automatiquement
+
+**Pourquoi R2 et pas un lien externe seul :** le besoin terrain est un message
+vocal court (rappel de prière, annonce urgente). L'enregistrement direct depuis
+le téléphone de l'imam est plus fiable qu'un lien Google Drive à copier-coller.
+R2 reste minimal : un bucket, une politique de taille, aucune modération
+d'images ni de documents.
+
+**Implémentation :** `src/lib/r2.ts`, `upload-audio.actions.ts`,
+`AudioRecorder.tsx` (admin), `AudioPlayer.tsx` (public).
 
 ---
 
@@ -121,6 +134,31 @@ reçoivent les données en paramètre et retournent une décision booléenne.
 **Pourquoi :** Testabilité maximale. Toutes les règles de sécurité multi-tenant
 sont couvertes par des tests unitaires sans mock de base de données. La sécurité
 est vérifiable, pas implicite.
+
+**Complément :** les garde-fous des Server Actions super-admin (suppression de
+compte, protection peer-to-peer) sont couverts par `superadmin.actions.test.ts`
+— voir D-016.
+
+---
+
+## D-016 — Tests super-admin sur les Server Actions
+
+**Décision :** Les mutations super-admin (`superadmin.actions.ts`) sont couvertes
+par des tests Vitest avec mock Drizzle, sur le même modèle que les actions admin.
+
+**Cas CRITIQUE testés :**
+- Refus si `requireSuperAdmin()` échoue (non super-admin)
+- Impossible de supprimer son propre compte
+- Impossible de supprimer ou modifier un autre super-admin (protection peer-to-peer)
+- Impossible de supprimer un admin encore lié à une mosquée
+- Création de compte : email vérifié, mot de passe hashé (Modèle B)
+- Création de mosquée : statut `trial`, `trialEndsAt` à 3 mois
+
+**Pourquoi :** Anti-ghich. La zone la plus sensible de la plateforme ne doit pas
+reposer uniquement sur de la documentation — les garde-fous sont prouvés par
+des tests reproductibles.
+
+**Fichier :** `src/test/superadmin.actions.test.ts` (21 tests, juillet 2026).
 
 ---
 

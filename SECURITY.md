@@ -42,7 +42,8 @@ Module `src/lib/authorization.ts` — logique pure sans dépendance DB.
 - Un admin ne peut accéder qu'aux données de SA mosquée
 - Toutes les mutations vérifient `mosqueId` côté serveur (jamais côté client)
 - Un super-admin ne peut pas agir sur un autre super-admin (protection peer-to-peer)
-- Couvert par des tests unitaires (`src/test/authorization.test.ts`)
+- Couvert par des tests unitaires (`authorization.test.ts` pour les règles pures,
+  `superadmin.actions.test.ts` pour les garde-fous des actions super-admin)
 
 ---
 
@@ -88,7 +89,10 @@ style-src 'self' 'unsafe-inline'
 
 ### Données sensibles
 
-- Aucun fichier uploadé — liens externes uniquement (audio, don)
+- **Audio uniquement** — pas d'images, pas de documents. Deux modes côté admin :
+  enregistrement natif mobile (`<input capture="user">`) ou sélection d'un fichier
+  existant → stockage Cloudflare R2 (5 Mo max, formats : WebM, MP3, M4A, MP4, OGG,
+  AAC, AMR, 3GP). L'ancien fichier R2 est supprimé lors d'un remplacement.
 - Aucune photo de personne stockée (principe éthique non négociable)
 - Pas de carte bancaire, pas de paiement en ligne
 - Données exportables en JSON par l'admin (anti-jahàla)

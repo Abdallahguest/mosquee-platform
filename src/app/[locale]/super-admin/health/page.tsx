@@ -1,7 +1,7 @@
 import { requireSuperAdmin } from "@/lib/auth-helpers"
 import { db } from "@/db/index"
-import { mosques, announcements, auditLog, session as sessionTable } from "@/db/schema"
-import { eq, desc, and, gte } from "drizzle-orm"
+import { mosques, announcements, auditLog } from "@/db/schema"
+import { eq, desc } from "drizzle-orm"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -129,7 +129,7 @@ export default async function HealthPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-amber-700 mb-3">
-              Ces mosquées ont un compte mais n'ont effectué aucune action depuis au moins 14 jours. Relancer leur admin.
+              Ces mosquées ont un compte mais n&apos;ont effectué aucune action depuis au moins 14 jours. Relancer leur admin.
             </p>
             <ul className="space-y-1">
               {data.inactive.map((m) => {

@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 // Page 404 racine — couvre toutes les routes hors segment [locale].
 // Doit être autonome : pas de next-intl (pas de locale disponible ici),
 // pas de layout [locale] (html/body non fournis par le layout racine).
@@ -23,7 +25,7 @@ export default function RootNotFound() {
             <p style={{ color: "#6b7280", marginBottom: 32 }}>
               Cette page n&apos;existe pas.
             </p>
-            <a
+            <Link
               href="/"
               style={{
                 background: "#15803d",
@@ -33,10 +35,11 @@ export default function RootNotFound() {
                 fontWeight: 600,
                 textDecoration: "none",
                 fontSize: 15,
+                display: "inline-block",
               }}
             >
               Retour à l&apos;accueil
-            </a>
+            </Link>
           </div>
         </main>
       </body>

@@ -33,7 +33,7 @@ export async function updateProfileName(formData: FormData): Promise<ActionResul
 }
 
 export async function updateProfilePassword(formData: FormData): Promise<ActionResult> {
-  const session = await requireSession()
+  await requireSession()
 
   const currentPassword = formData.get("currentPassword") as string
   const newPassword     = formData.get("newPassword") as string

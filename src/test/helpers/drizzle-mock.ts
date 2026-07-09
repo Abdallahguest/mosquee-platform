@@ -29,12 +29,15 @@ export interface DrizzleMock {
     selectCount: number
   }
   setSelectResult: (rows: unknown[]) => void
+  /** Résultats successifs pour les requêtes SELECT multiples dans une même action. */
+  setSelectResults: (results: unknown[][]) => void
   setInsertReturning: (rows: unknown[]) => void
   reset: () => void
 }
 
 export function createDrizzleMock(vi: ViLike): DrizzleMock {
   let selectResult: unknown[] = []
+  let selectQueue: unknown[][] = []
   let insertReturning: unknown[] = [{ id: 1 }]
   const captured = {
     inserts: [] as { values: Record<string, unknown> }[],
@@ -46,12 +49,17 @@ export function createDrizzleMock(vi: ViLike): DrizzleMock {
   const insert = vi.fn(() => ({
     values: vi.fn((v: Record<string, unknown>) => {
       captured.inserts.push({ values: v })
-      return {
+      const chain = {
         returning: vi.fn(() => Promise.resolve(insertReturning)),
+        onConflictDoNothing: vi.fn(() => Promise.resolve(undefined)),
         then: (r: (x: unknown) => void) => r(insertReturning),
       }
+      return chain
     }),
   }))
+
+  const resolveSelect = () =>
+    selectQueue.length > 0 ? selectQueue.shift()! : selectResult
 
   const makeSelectChain = () => {
     const chain: Record<string, unknown> = {}
@@ -60,8 +68,8 @@ export function createDrizzleMock(vi: ViLike): DrizzleMock {
     chain.where = step
     chain.orderBy = step
     chain.innerJoin = step
-    chain.limit = vi.fn(() => Promise.resolve(selectResult))
-    chain.then = (r: (x: unknown) => void) => r(selectResult)
+    chain.limit = vi.fn(() => Promise.resolve(resolveSelect()))
+    chain.then = (r: (x: unknown) => void) => r(resolveSelect())
     return chain
   }
   const select = vi.fn(() => { captured.selectCount++; return makeSelectChain() })
@@ -83,10 +91,12 @@ export function createDrizzleMock(vi: ViLike): DrizzleMock {
   return {
     db: { insert, select, update, delete: del },
     captured,
-    setSelectResult: (rows) => { selectResult = rows },
+    setSelectResult: (rows) => { selectResult = rows; selectQueue = [] },
+    setSelectResults: (results) => { selectQueue = [...results]; selectResult = [] },
     setInsertReturning: (rows) => { insertReturning = rows },
     reset: () => {
       selectResult = []
+      selectQueue = []
       insertReturning = [{ id: 1 }]
       captured.inserts.length = 0
       captured.updates.length = 0

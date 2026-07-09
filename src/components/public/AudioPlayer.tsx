@@ -32,7 +32,6 @@ export default function AudioPlayer({
       </p>
 
       {/* Lecteur natif HTML5 — fonctionne sur desktop et certains mobiles */}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio
         controls
         src={url}

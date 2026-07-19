@@ -30,8 +30,8 @@
   "auth": {
     "loginTitle": "Sign in",
     "loginSubtitle": "Access your administration panel",
-    "registerTitle": "Create an account",
-    "registerSubtitle": "Sign up to manage your mosque",
+    "registerTitle": "Create an account for your mosque",
+    "registerSubtitle": "Sign up for free and start managing your mosque",
     "registerDisabledTitle": "Registration disabled",
     "registerDisabledBody": "Accounts are created by the platform administrator. If you need access to your mosque, contact the person who manages Amana Connect.",
     "fieldEmail": "Email",
@@ -67,7 +67,19 @@
     "resetLoading": "Changing...",
     "resetInvalidToken": "Invalid or expired link.",
     "resetExpiredToken": "The link has expired or is invalid. Please request a new one.",
-    "resetConfirmPlaceholder": "••••••••"
+    "resetConfirmPlaceholder": "••••••••",
+    "personalInfo": "Personal information",
+    "mosqueInfo": "Mosque information",
+    "mosqueName": "Mosque name",
+    "city": "City",
+    "country": "Country",
+    "trialInfoTitle": "Free trial period",
+    "trialInfoBody": "Your mosque will benefit from 3 months of free access to discover all features.",
+    "registerSuccess": "Registration successful! Check your email to activate your account.",
+    "registerRedirecting": "Redirecting to sign in page...",
+    "registering": "Signing up...",
+    "createAccount": "Create my account",
+    "termsAgreement": "By signing up, you agree to our terms of service and privacy policy."
   },
   "superAdmin": {
     "nav": {

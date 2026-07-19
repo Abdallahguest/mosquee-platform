@@ -31,15 +31,19 @@ la DB sont dans le même fichier. Moins de surface d'attaque, moins de code.
 
 ---
 
-## D-003 — Modèle B : comptes créés par le super-admin
+## D-003 — Modèle C hybride : inscription self-service avec validation
 
-**Décision :** L'inscription publique est désactivée (`disableSignUp: true`
-dans Better-Auth + page `/register` remplacée par un message). Les comptes sont
-créés uniquement par le super-admin, qui les marque vérifiés directement.
+**Décision :** L'inscription publique est activée (`disableSignUp: false`
+dans Better-Auth). Les utilisateurs peuvent s'inscrire et créer leur mosquée
+en mode trial (3 mois). L'email doit être vérifié avant d'accéder au panel admin.
 
-**Pourquoi :** Resend est en mode test (envoi uniquement vers l'adresse du
-développeur). Une inscription libre créerait des comptes non vérifiables et des
-comptes orphelins sans mosquée assignée.
+**Pourquoi :** Pour permettre l'adoption de masse sans goulot d'étranglement
+opérationnel. Le super-admin n'a plus besoin de créer manuellement chaque compte.
+Les comptes créés via inscription publique sont marqués `isPendingSetup` et
+doivent vérifier leur email.
+
+**Transition :** Remplace le Modèle B (inscription désactivée) pour permettre
+la scalabilité.
 
 ---
 
@@ -281,3 +285,63 @@ L'historique est dans `audit_log` (action `subscription.renew`).
 - Anti-gharar : le panel admin montre un avertissement avant expiration (J-7)
 - Les données ne sont jamais effacées — on suspend, jamais on supprime
 - Pas de suspension automatique — le super-admin décide manuellement
+
+---
+
+## D-017 — Rôles granulaires : super_admin, support, billing
+
+**Décision :** Le système de rôles est étendu pour supporter plusieurs niveaux
+d'administration : `super_admin` (tous droits), `support` (lecture seule sur
+toutes les mosquées), `billing` (accès aux infos d'abonnement), `admin` (droits
+sur sa mosquée).
+
+**Pourquoi :** Pour éviter le single point of failure d'un seul super-admin.
+Permet la délégation des tâches (support technique, facturation) tout en
+maintenant la séparation des responsabilités.
+
+**Conséquence :** Nouveaux champs dans `users.role` et mise à jour de
+`authorization.ts` avec les fonctions `isSupport()`, `isBilling()`,
+`isAdminLevel()`.
+
+---
+
+## D-018 — MFA (TOTP) obligatoire pour super-admins
+
+**Décision :** Les super-admins doivent activer l'authentification à deux facteurs
+via TOTP (Google Authenticator, etc.) avant d'accéder aux fonctions sensibles.
+
+**Pourquoi :** Sécurité critique pour les comptes avec accès total à la plateforme.
+Un compte compromis = accès à toutes les données de toutes les mosquées.
+
+**Implémentation :** Utilise `otpauth` pour la génération et vérification des codes.
+Stocke le secret TOTP et les codes de récupération dans la table `users`.
+Le MFA est optionnel par défaut mais fortement recommandé.
+
+---
+
+## D-019 — Procédure de récupération d'urgence pour super-admins
+
+**Décision :** Les super-admins peuvent configurer un email d'urgence. En cas de
+perte d'accès, une procédure de récupération envoie un lien temporaire (1h) à
+cet email pour réinitialiser le mot de passe.
+
+**Pourquoi :** Pour éviter le single point of failure. Si le super-admin perd ses
+accès (oubli MFA, perte device), il doit pouvoir récupérer son compte sans
+intervention manuelle en base de données.
+
+**Conséquence :** Nouveaux champs `emergencyEmail` dans `users` et actions
+`initiateEmergencyRecovery`, `completeEmergencyRecovery`.
+
+---
+
+## D-020 — Tests E2E avec Playwright pour flux critiques
+
+**Décision :** Implémentation d'une suite de tests E2E avec Playwright pour les
+flux critiques : inscription self-service, MFA, récupération d'urgence.
+
+**Pourquoi :** Les tests unitaires Vitest ne suffisent pas pour valider les flux
+complets de bout en bout. Les régressions sur les flux critiques sont inacceptables
+pour une adoption de masse.
+
+**Implémentation :** Playwright configuré avec Chromium, Firefox, WebKit. Tests
+écrits dans `e2e/` directory. Exécution via `pnpm exec playwright test`.

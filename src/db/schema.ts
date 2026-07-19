@@ -88,7 +88,18 @@ export const users = pgTable("users", {
   email:         varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image:         text("image"),
-  role:          text("role").notNull().default("admin"),  // "admin" ou "super_admin"
+  // Rôles granulaires : admin, super_admin, support, billing
+  role:          text("role").notNull().default("admin"),
+  // MFA TOTP secret (optionnel, pour super-admins)
+  totpSecret:    varchar("totp_secret", { length: 32 }),
+  // MFA enabled flag
+  totpEnabled:   boolean("totp_enabled").notNull().default(false),
+  // Recovery codes pour MFA (JSON array de strings)
+  recoveryCodes: text("recovery_codes"),
+  // Emergency contact email pour récupération accès super-admin
+  emergencyEmail: varchar("emergency_email", { length: 255 }),
+  // Flag pour indiquer si le compte est en cours de création self-service
+  isPendingSetup: boolean("is_pending_setup").notNull().default(false),
   createdAt:     timestamp("created_at").notNull().defaultNow(),
   updatedAt:     timestamp("updated_at").notNull().defaultNow(),
 })

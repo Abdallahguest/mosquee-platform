@@ -3,6 +3,8 @@ import path from "path"
 
 export default defineConfig({
   test: {
+    include: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
+    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
     globals: true,
     environment: "node",
     coverage: {

@@ -30,8 +30,8 @@
   "auth": {
     "loginTitle": "تسجيل الدخول",
     "loginSubtitle": "ادخل إلى لوحة الإدارة",
-    "registerTitle": "إنشاء حساب",
-    "registerSubtitle": "سجّل للإدارة مسجدك",
+    "registerTitle": "إنشاء حساب لمسجدك",
+    "registerSubtitle": "سجّل مجاناً وابدأ إدارة مسجدك",
     "registerDisabledTitle": "التسجيل معطّل",
     "registerDisabledBody": "تُنشأ الحسابات من قِبل مسؤول المنصة. إذا كنت بحاجة إلى الوصول لمسجدك، تواصل مع الشخص الذي يدير Amana Connect.",
     "fieldEmail": "البريد الإلكتروني",
@@ -67,7 +67,19 @@
     "resetLoading": "جارٍ التغيير...",
     "resetInvalidToken": "الرابط غير صالح أو منتهي الصلاحية.",
     "resetExpiredToken": "انتهت صلاحية الرابط أو أنه غير صالح. أعد الطلب.",
-    "resetConfirmPlaceholder": "••••••••"
+    "resetConfirmPlaceholder": "••••••••",
+    "personalInfo": "المعلومات الشخصية",
+    "mosqueInfo": "معلومات المسجد",
+    "mosqueName": "اسم المسجد",
+    "city": "المدينة",
+    "country": "البلد",
+    "trialInfoTitle": "فترة التجربة المجانية",
+    "trialInfoBody": "سيستفيد مسجدكم من ٣ أشهر من الوصول المجاني لاكتشاف جميع الميزات.",
+    "registerSuccess": "تم التسجيل بنجاح! تحقق من بريدك الإلكتروني لتفعيل حسابك.",
+    "registerRedirecting": "جارٍ التوجيه إلى صفحة تسجيل الدخول...",
+    "registering": "جارٍ التسجيل...",
+    "createAccount": "إنشاء حسابي",
+    "termsAgreement": "بالتسجيل، أنت توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا."
   },
   "superAdmin": {
     "nav": {

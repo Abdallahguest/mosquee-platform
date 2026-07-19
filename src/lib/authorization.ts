@@ -10,7 +10,7 @@
  * et ne laisse aucune ambiguïté sur qui peut faire quoi.
  */
 
-export type UserRole = "member" | "admin" | "super_admin"
+export type UserRole = "admin" | "super_admin" | "support" | "billing"
 
 export interface AuthUser {
   id: string
@@ -25,6 +25,27 @@ export function isSuperAdmin(user: AuthUser | null | undefined): boolean {
 }
 
 /**
+ * Un support a accès en lecture seule à toutes les mosquées pour le support.
+ */
+export function isSupport(user: AuthUser | null | undefined): boolean {
+  return user?.role === "support"
+}
+
+/**
+ * Un billing a accès aux informations d'abonnement de toutes les mosquées.
+ */
+export function isBilling(user: AuthUser | null | undefined): boolean {
+  return user?.role === "billing"
+}
+
+/**
+ * Vérifie si un utilisateur a un rôle de niveau administrateur (super_admin, support, billing).
+ */
+export function isAdminLevel(user: AuthUser | null | undefined): boolean {
+  return isSuperAdmin(user) || isSupport(user) || isBilling(user)
+}
+
+/**
  * Un utilisateur peut-il gérer (modifier/supprimer) une mosquée donnée ?
  *
  * @param user            L'utilisateur connecté (ou null si non connecté)
@@ -34,6 +55,8 @@ export function isSuperAdmin(user: AuthUser | null | undefined): boolean {
  * Règles :
  *  - non connecté → refusé
  *  - super-admin → autorisé (tous droits)
+ *  - support → lecture seule (pas de modification)
+ *  - billing → lecture seule sur les infos d'abonnement
  *  - admin lié à cette mosquée → autorisé
  *  - sinon → refusé
  */
@@ -45,6 +68,33 @@ export function canManageMosque(
   if (!user) return false
   if (targetMosqueId == null) return false
   if (isSuperAdmin(user)) return true
+  // Support et billing n'ont pas accès en écriture
+  if (isSupport(user) || isBilling(user)) return false
+  return userMosqueIds.includes(targetMosqueId)
+}
+
+/**
+ * Un utilisateur peut-il voir une mosquée donnée (lecture seule) ?
+ *
+ * @param user            L'utilisateur connecté
+ * @param targetMosqueId  L'ID de la mosquée
+ * @param userMosqueIds   Les mosquées de l'utilisateur
+ *
+ * Règles :
+ *  - super-admin → autorisé (toutes les mosquées)
+ *  - support → autorisé (toutes les mosquées pour support)
+ *  - billing → autorisé (toutes les mosquées pour facturation)
+ *  - admin lié à cette mosquée → autorisé
+ *  - sinon → refusé
+ */
+export function canViewMosque(
+  user: AuthUser | null | undefined,
+  targetMosqueId: number | null | undefined,
+  userMosqueIds: number[]
+): boolean {
+  if (!user) return false
+  if (targetMosqueId == null) return false
+  if (isAdminLevel(user)) return true
   return userMosqueIds.includes(targetMosqueId)
 }
 

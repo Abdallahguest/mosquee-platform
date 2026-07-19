@@ -45,10 +45,10 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     requireEmailVerification: true,
-    // Modèle B : les comptes sont créés uniquement par le super-admin.
-    // L'endpoint POST /api/auth/sign-up/email est désactivé côté serveur —
-    // même un appel direct (curl, Postman) retourne une erreur 403.
-    disableSignUp: true,
+    // Modèle C hybride : inscription self-service activée avec workflow de validation
+    // Les comptes créés via inscription publique sont en mode "isPendingSetup"
+    // et doivent vérifier leur email avant d'accéder au panel admin.
+    disableSignUp: false,
     sendResetPassword: async ({ user, url }) => {
       await sendEmail({
         to: user.email,

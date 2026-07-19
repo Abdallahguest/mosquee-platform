@@ -8,6 +8,13 @@
       "when": 1782872814170,
       "tag": "0000_initial_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783596035492,
+      "tag": "0001_add_roles_mfa_emergency_recovery",
+      "breakpoints": true
     }
   ]
 }

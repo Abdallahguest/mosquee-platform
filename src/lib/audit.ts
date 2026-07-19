@@ -66,4 +66,16 @@ export const AUDIT_ACTIONS = {
   USER_DELETE:     "user.delete",
   ADMIN_ASSIGN:    "admin.assign",
   ADMIN_REMOVE:    "admin.remove",
+  // MFA
+  MFA_SETUP_INITIATED:     "mfa.setup_initiated",
+  MFA_ENABLED:             "mfa.enabled",
+  MFA_DISABLED:            "mfa.disabled",
+  MFA_VERIFICATION_FAILED: "mfa.verification_failed",
+  EMERGENCY_EMAIL_UPDATED:  "emergency_email.updated",
+  // Self-service registration
+  SELF_SERVICE_REGISTER:   "self_service.register",
+  SELF_SERVICE_MOSQUE_CREATE: "self_service.mosque_create",
+  // Emergency recovery
+  EMERGENCY_RECOVERY_INITIATED: "emergency_recovery.initiated",
+  EMERGENCY_RECOVERY_COMPLETED: "emergency_recovery.completed",
 } as const

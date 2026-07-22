@@ -20,3 +20,16 @@ export function isDirectAudioFile(url: string): boolean {
     return false
   }
 }
+
+// Vérifie qu'une clé R2 appartient bien à la mosquée donnée.
+// Les clés d'upload sont de la forme "mosques/{mosqueId}/audio/...".
+// Sécurité multi-tenant : empêche un admin de supprimer le fichier audio
+// d'une AUTRE mosquée via une URL forgée. Le "/" final est essentiel :
+// sans lui, la mosquée 42 pourrait matcher la clé de la mosquée 420.
+export function isAudioKeyOwnedByMosque(
+  key: string | null | undefined,
+  mosqueId: number
+): boolean {
+  if (!key) return false
+  return key.startsWith(`mosques/${mosqueId}/`)
+}

@@ -2,6 +2,7 @@
 
 import { getSessionMosque } from "@/lib/auth-helpers"
 import { uploadAudio, deleteAudio, extractKeyFromUrl } from "@/lib/r2"
+import { isAudioKeyOwnedByMosque } from "@/lib/audio-link"
 import type { ActionResult } from "./action-result"
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024  // 5 Mo max (3 min audio ~= 2-3 Mo en webm)
@@ -64,10 +65,17 @@ export async function uploadAudioFile(
  * Appelée quand on remplace ou supprime un audio existant.
  */
 export async function deleteAudioFile(url: string): Promise<ActionResult> {
-  await getSessionMosque()
+  const { mosqueId } = await getSessionMosque()
+  if (!mosqueId) return { success: false, error: "NO_MOSQUE" }
 
   const key = extractKeyFromUrl(url)
   if (!key) return { success: false, error: "AUDIO_KEY_NOT_FOUND" }
+
+  // Sécurité multi-tenant : on ne supprime QUE les fichiers de sa propre mosquée.
+  // Empêche la suppression de l'audio d'une autre mosquée via une URL forgée.
+  if (!isAudioKeyOwnedByMosque(key, mosqueId)) {
+    return { success: false, error: "UNAUTHORIZED" }
+  }
 
   try {
     await deleteAudio(key)
